@@ -52,6 +52,11 @@ set smartcase
 set incsearch 
 """ - General
 
+""" + Encoding
+set enc=utf-8
+set fencs=utf-8,euc-kr
+""" - Encoding
+
 """ + Formatting
 " Allow backspace in insert mode
 set backspace=indent,eol,start
