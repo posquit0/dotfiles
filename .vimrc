@@ -1,4 +1,122 @@
-set nocompatible              " be iMproved, required
+" .vimrc
+"
+" maintained by Posquit0.BJ <poqsuit0.bj@gmail.com>
+" http://www.poqsuit0.com/
+
+""" + General
+" Make Vim more useful
+set nocompatible
+" Enhance command-line completion
+set wildmenu
+" Allow cursor keys in insert mode
+set esckeys
+" Number of things to remember in history
+set history=256
+" Time to wait after ESC (default causes an annoying delay)
+set timeoutlen=250
+" Use the OS clipboard by default (on versions compiled with `+clipboard`)
+set clipboard+=unnamed
+" Optimize for fast terminal connections
+set ttyfast
+" Enable mouse in all modes
+set mouse=a
+" Walk directory tree upto $HOME looking for tags
+set tags=./tags;$HOME
+" Don’t add empty newlines at the end of files
+set binary
+set noeol
+
+"" Backup and swap
+" Centralize backups, swapfiles and undo history
+set backupdir=~/.vim/backups
+set directory=~/.vim/swaps
+if exists("&undodir")
+  set undodir=~/.vim/undo
+endif
+" Don’t create backups when editing files in certain directories
+set backupskip=/tmp/*
+
+"" Modeline
+" Respect modeline in files
+set modeline
+set modelines=4
+
+"" Match and search
+" Highlight searches
+set hlsearch
+" Ignore case of searches
+set ignorecase
+" be sensitive when there's a capital letter
+set smartcase
+" Highlight dynamically as pattern is typed
+set incsearch 
+""" - General
+
+""" + Formatting
+" Allow backspace in insert mode
+set backspace=indent,eol,start
+
+" Set the default tabstop
+set tabstop=2
+set softtabstop=2
+" Set the default shift width for indents
+set shiftwidth=2
+" Make tabs into spaces (set by tabstop)
+set expandtab
+" Smarter tab levels
+set smarttab
+""" - Formatting
+
+""" + Visual
+" Line numbers on
+set number
+" Show matching brackets
+set showmatch
+" Bracket blinking
+set matchtime=5
+" No blinking
+set novisualbell
+" No noise
+set noerrorbells
+" Always show status line.
+set laststatus=2
+" Show ruler
+set ruler
+" Show the current mode
+set showmode
+" Enable syntax highlighting
+syntax on
+" Highlight current line 
+set cursorline
+""" - Visual
+
+""" + Hex Editor
+nnoremap <silent> <F5> :%!xxd<CR>
+nnoremap <silent> <F6> :%!xxd -r<CR>
+""" - Hex Editor
+
+""" + Tabs
+nnoremap <silent> <Tab><Tab> :tabnew<CR>
+nnoremap <silent> <Tab>q :tabclose<CR>
+nnoremap <silent> <Tab>o :tabonly<CR>
+nnoremap <silent> <Tab>s :tabs<CR>
+nnoremap <silent> <Tab>f :tabfirst<CR>
+nnoremap <silent> <Tab>l :tablast<CR>
+nnoremap <silent> <Tab>n :tabnext<CR>
+nnoremap <silent> <Tab>p :tabprevious<CR>
+nnoremap <silent> <Tab><Right> :tabnext<CR>
+nnoremap <silent> <Tab><Left> :tabprevious<CR>
+nnoremap <silent> <Tab>1 :tabnext 1<CR>
+nnoremap <silent> <Tab>2 :tabnext 2<CR>
+nnoremap <silent> <Tab>3 :tabnext 3<CR>
+nnoremap <silent> <Tab>4 :tabnext 4<CR>
+nnoremap <silent> <Tab>5 :tabnext 5<CR>
+nnoremap <silent> <Tab>6 :tabnext 6<CR>
+nnoremap <silent> <Tab>7 :tabnext 7<CR>
+nnoremap <silent> <Tab>8 :tabnext 8<CR>
+nnoremap <silent> <Tab>9 :tabnext 9<CR>
+""" - Tabs
+
 filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
