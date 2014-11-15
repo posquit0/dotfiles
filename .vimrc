@@ -149,10 +149,7 @@ Plugin 'gmarik/Vundle.vim'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-Plugin 'tpope/vim-fugitive'
 " plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'L9'
 " Git plugin not hosted on GitHub
 " Plugin 'git://git.wincent.com/command-t.git'
 " git repos on your local machine (i.e. when working on your own plugin)
@@ -163,28 +160,157 @@ Plugin 'tpope/vim-fugitive'
 " Avoid a name conflict with L9
 " Plugin 'user/L9', {'name': 'newL9'}
 
-" Scala
-Plugin 'derekwyatt/vim-scala'
+""" + Plugin: L9
+" Provide some utility functions and commands for programming in Vim
+Plugin 'L9'
+""" - Plugin: L9
+
+""" + Plugin: WebAPI Vim
+" Provide interface for Web API
+" Dependency for Emmet-Vim Custom Snippet
+Plugin 'mattn/webapi-vim'
+""" - Plugin: WebAPI Vim
+
+""" + Plugin: Vim Git
+" For syntax highlighting and other Git niceties
+Plugin 'tpope/vim-git'
+""" - Plugin: Vim Git
+
+""" + Plugin: Vim Fugitive
+" The best Git wrapper
+Plugin 'tpope/vim-fugitive'
+""" - Plugin: Vim Fugitive
+
+""" + Plugin: Gundo
+" Make browsing Vim's powerful undo tree less painful
+Plugin 'sjl/gundo.vim'
+" Map GundoToggle to <F12>
+nnoremap <silent> <F12> :GundoToggle<CR>
+" Set the horizontal width of Gundo graph
+let g:gundo_width=40
+" Force the preview window below current windows
+let g:gundo_preview_bottom=1
+" Set 1 to open the right side instead of the left
+let g:gundo_right=0
+" Disable Gundo entirely if machine not support python
+if v:version < '703' || !has('python')
+  let g:gundo_disable=1
+endif
+" Rendering diff automatically with cursor move
+let g:gundo_auto_preview=1
+""" - Plugin: Gundo
+
+""" + Plugin: Tagbar
+" Easy way to browse the tags
+Plugin 'majutsushi/tagbar'
+" Map TagbarToggle to <F3>
+nnoremap <silent> <F3> :TagbarToggle<CR>
+""" - Plugin: Tagbar
+
+""" + Plugin: NERD Tree
+" Explore filesystem with Vim
+Plugin 'scrooloose/nerdtree'
+" Map NERDTreeToggle to <F2>
+nnoremap <silent> <F2> :NERDTreeToggle<CR>
+" Ignore some extensions
+let NERDTreeIgnore=['.o$','.pyc$']
+" Automatically open NERDTree when vim start up with no files
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+""" - Plugin: NERD Tree
 
 """ + Plugin: Sherlock
 " Add completion for command line mode ':' after a '/', and in command line mode '/' and '?'.
 " Using <C-Tab>, <C-S-Tab>
-Bundle 'sherlock.vim'
+Plugin 'sherlock.vim'
 """ - Plugin: Sherlock
 
 """ + Plugin: Airline
 " Use statusline more effective
 Plugin 'bling/vim-airline'
-let g:airline_powerline_fonts=1
-let g:airline_theme='powerlineish'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ""
-let g:airline#extensions#tabline#left_alt_sep = '|'
+" let g:airline_powerline_fonts=1
+let g:airline_theme='sol'
+let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#left_sep=""
+let g:airline#extensions#tabline#left_alt_sep='|'
 let g:airline_section_b="%{strftime('%H:%M:%S')}"
 let g:airline_section_y="[%{&fileformat}/%{strlen(&fenc)?&fenc:&enc}]"
 " Use airline's showmode
 set noshowmode
 """ - Plugin: Airline
+
+""" + Plugin: Easymotion
+" Provides a much simpler way to use motions in Vim
+Plugin 'Lokaltog/vim-easymotion'
+
+""" - Plugin: Easymotion
+
+" General
+""" + Plugin: Vim Polyglot
+" A collection of language packs for Vim
+Plugin 'sheerun/vim-polyglot'
+""" - Plugin: Vim Polyglot
+
+""" + Plugin: Syntastic
+" Syntax checking for Vim with external syntax checker
+Plugin 'scrooloose/syntastic'
+""" - Plugin: Syntastic
+
+""" + Plugin: UltiSnips
+" Snippet engine for Vim
+Plugin 'SirVer/ultisnips'
+" Configure keys trigerring UltiSnips
+let g:UltiSnipsExpandTrigger="<Tab>"
+let g:UltiSnipsJumpForwardTrigger="<Tab>"
+let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+let g:UltiSnipsListSnippets="<Tab><Tab>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+""" - Plugin: UltiSnips
+
+""" + Plugin: Vim Snippets
+" Snippets are separated from the engine (for UltiSnips)
+Plugin 'honza/vim-snippets'
+""" - Plugin: Vim Snippets
+
+" Scala
+" Plugin 'derekwyatt/vim-scala'
+
+" Python
+""" + Plugin: Vim Virtualenv
+Plugin 'jmcantrell/vim-virtualenv'
+""" - Plugin: Vim Virtualenv
+
+" HTML & CSS
+""" + Plugin: Emmet
+" Provide Zen-coding for Vim
+Plugin 'mattn/emmet-vim'
+" Enable all functions, which is equal to
+" n: normal, i: insert: v: visual, a: all
+let g:user_emmet_mode='i'
+" Remap the default Emmet leader key <C-Y>
+let g:user_emmet_leader_key='<C-Y>'
+" Customize the behavior of the languages
+let g:user_emmet_settings = {
+\ 'xml': {
+\   'extends': 'html',
+\ },
+\ 'haml': {
+\   'extends': 'html',
+\ },
+\}
+""" - Plugin: Emmet
+
+" Themes
+" Plugin 'flazz/vim-colorschemes'
+Plugin 'jnurmine/Zenburn'
+Plugin 'tomasr/molokai'
+" Match the original monokai background color
+let g:molokai_original = 1
+" Bring the 256 color version
+let g:rehash256 = 1
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -200,5 +326,7 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
-"
 
+""" + Themes
+colorscheme molokai
+""" - Themes
