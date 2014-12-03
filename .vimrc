@@ -30,7 +30,8 @@ set tags=./tags;$HOME
 " Don’t add empty newlines at the end of files
 set binary
 set noeol
-
+" automatically change window's cwd to file's dir
+set autochdir
 "" Backup and swap
 " Centralize backups, swapfiles and undo history
 " set backupdir=~/.vim/backups
@@ -221,6 +222,13 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 """ - Plugin: NERD Tree
 
+""" + Plugin: Vim Shell
+" 
+Plugin 'shougo/vimproc'
+Plugin 'shougo/vimshell'
+" http://code.hootsuite.com/vimshell/
+""" - Plugin: Vim Shell
+
 """ + Plugin: Sherlock
 " Add completion for command line mode ':' after a '/', and in command line mode '/' and '?'.
 " Using <C-Tab>, <C-S-Tab>
@@ -241,10 +249,16 @@ let g:airline_section_y="[%{&fileformat}/%{strlen(&fenc)?&fenc:&enc}]"
 set noshowmode
 """ - Plugin: Airline
 
+""" + Plugin: indentLine
+" Displying thin vertical lines at each indentation level for code
+Plugin 'Yggdroot/indentLine'
+" Change indentLine char
+let g:indentLine_char = '┆'
+""" - Plugin: indentLine
+
 """ + Plugin: Easymotion
 " Provides a much simpler way to use motions in Vim
 Plugin 'Lokaltog/vim-easymotion'
-
 """ - Plugin: Easymotion
 
 " General
@@ -256,6 +270,7 @@ Plugin 'sheerun/vim-polyglot'
 """ + Plugin: Syntastic
 " Syntax checking for Vim with external syntax checker
 Plugin 'scrooloose/syntastic'
+" let g:syntastic_scala_checkers=['fsc', 'scalac']
 """ - Plugin: Syntastic
 
 """ + Plugin: UltiSnips
@@ -280,6 +295,7 @@ Plugin 'honza/vim-snippets'
 
 " Python
 """ + Plugin: Vim Virtualenv
+" Provide virtualenv's functions for Vim
 Plugin 'jmcantrell/vim-virtualenv'
 """ - Plugin: Vim Virtualenv
 
