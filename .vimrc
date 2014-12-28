@@ -222,6 +222,19 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 """ - Plugin: NERD Tree
 
+""" + Plugin: CtrlP
+" Full path fuzzy file, buffer, mru, tag finder for Vim
+Plugin 'kien/ctrlp.vim'
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+""" - Plugin: CtrlP
+
+""" + Plugin: Sudo-Vim
+" Sudo will ask for your password if need be
+" Usage: :e sudo:/etc/passwd
+Plugin 'sudo.vim'
+""" - Plugin: Sudo-Vim
+
 """ + Plugin: Vim Shell
 " 
 Plugin 'shougo/vimproc'
