@@ -23,8 +23,8 @@ set mouse=a
 " Hide the mouse cursor while typing
 set mousehide
 " Map <leader> key
-let mapleader = ","
-let g:mapleader = ","
+let mapleader=","
+let g:mapleader=","
 " Walk directory tree upto $HOME looking for tags
 set tags=./tags;$HOME
 " Don’t add empty newlines at the end of files
@@ -225,8 +225,8 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 """ + Plugin: CtrlP
 " Full path fuzzy file, buffer, mru, tag finder for Vim
 Plugin 'kien/ctrlp.vim'
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_map='<c-p>'
+let g:ctrlp_cmd='CtrlP'
 """ - Plugin: CtrlP
 
 """ + Plugin: Sudo-Vim
@@ -266,7 +266,7 @@ set noshowmode
 " Displying thin vertical lines at each indentation level for code
 Plugin 'Yggdroot/indentLine'
 " Change indentLine char
-let g:indentLine_char = '┆'
+let g:indentLine_char='┆'
 """ - Plugin: indentLine
 
 """ + Plugin: Easymotion
@@ -307,6 +307,33 @@ Plugin 'honza/vim-snippets'
 " Plugin 'derekwyatt/vim-scala'
 
 " Python
+""" + Plugin: Jedi-Vim
+" Vim binding for the autocompletion library Jedi
+Plugin 'davidhalter/jedi-vim'
+" Enable the default initialization routine
+let g:jedi#auto_initialization=1
+" Disable the default vim configuration
+let g:jedi#auto_vim_configuration=0
+" Automatically starts completion upon typing
+let g:jedi#popup_on_dot=1
+" Automatically select the first entry upon starting completion
+let g:jedi#popup_select_first=1
+" Enable Jedi completions
+let g:jedi#completions_enabled=1
+" Don't want the docstring window to popup during compeletion
+" autocmd FileType python setlocal completeopt-=preview
+" Key Bindings for Jedi-Vim
+let g:jedi#goto_assignments_command="<leader>g"
+let g:jedi#goto_definitions_command="<leader>d"
+let g:jedi#documentation_command="K"
+let g:jedi#usages_command="<leader>n"
+let g:jedi#completions_command="<C-Space>"
+let g:jedi#rename_command="<leader>r"
+" Don't want the function call signature window to popup during completion
+let g:jedi#show_call_signatures="2"
+let g:jedi#use_splits_not_buffers="bottom"
+""" - Plugin: Jedi-Vim
+
 """ + Plugin: Vim Virtualenv
 " Provide virtualenv's functions for Vim
 Plugin 'jmcantrell/vim-virtualenv'
@@ -322,7 +349,7 @@ let g:user_emmet_mode='i'
 " Remap the default Emmet leader key <C-Y>
 let g:user_emmet_leader_key='<C-Y>'
 " Customize the behavior of the languages
-let g:user_emmet_settings = {
+let g:user_emmet_settings={
 \ 'xml': {
 \   'extends': 'html',
 \ },
@@ -337,9 +364,9 @@ let g:user_emmet_settings = {
 Plugin 'jnurmine/Zenburn'
 Plugin 'tomasr/molokai'
 " Match the original monokai background color
-let g:molokai_original = 1
+let g:molokai_original=1
 " Bring the 256 color version
-let g:rehash256 = 1
+let g:rehash256=1
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
