@@ -29,4 +29,13 @@ else
     git submodule update --init --recursive --quiet
 fi
 
+ln -fs ~/.dotfiles/ctags/.* ~/
+ln -fs ~/.dotfiles/curl/.* ~/
+ln -fs ~/.dotfiles/git/.* ~/
+ln -fs ~/.dotfiles/irssi/.* ~/
+ln -fs ~/.dotfiles/screen/.* ~/
+ln -fs ~/.dotfiles/tmux/.* ~/
+ln -fs ~/.dotfiles/vim/.* ~/
+ln -fs ~/.dotfiles/wget/.* ~/
+ln -fs ~/.dotfiles/zsh/.* ~/
 echo "Installation complete!"
