@@ -1,3 +1,6 @@
+# Vim Bundle
+vim/.vim/bundle
+
 # Compiled Python files
 *.pyc
 
