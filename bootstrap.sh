@@ -29,4 +29,4 @@ else
     git submodule update --init --recursive --quiet
 fi
 
-log_info "Installation complete!"
+echo "Installation complete!"

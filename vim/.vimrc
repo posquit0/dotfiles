@@ -317,7 +317,7 @@ let g:jedi#auto_vim_configuration=0
 " Automatically starts completion upon typing
 let g:jedi#popup_on_dot=1
 " Automatically select the first entry upon starting completion
-let g:jedi#popup_select_first=1
+let g:jedi#popup_select_first=0
 " Enable Jedi completions
 let g:jedi#completions_enabled=1
 " Don't want the docstring window to popup during compeletion
