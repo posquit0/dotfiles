@@ -27,9 +27,9 @@ PROMPT="
 %{$fg[white]%}at \
 %{$fg[green]%}$(box_name) \
 %{$fg[white]%}in \
-%{$terminfo[bold]$fg[yellow]%}${current_dir}%{$reset_color%}\
+%{$terminfo[bold]$fg[yellow]%}${current_dir}%{$reset_color%} \
 ${git_info} \
-%{$fg[white]%}[%*]]%}
+%{$fg[white]%}[%*]
 %{$fg[yellow]%}$(virtualenv_prompt_info)\
 %{$terminfo[bold]$fg[red]%}$ %{$reset_color%}"
 
@@ -40,8 +40,9 @@ PROMPT="
 %{$fg[white]%}at \
 %{$fg[green]%}$(box_name) \
 %{$fg[white]%}in \
-%{$terminfo[bold]$fg[yellow]%}${current_dir}%{$reset_color%}\
+%{$terminfo[bold]$fg[yellow]%}${current_dir}%{$reset_color%} \
 ${git_info} \
 %{$fg[white]%}[%*]
+%{$fg[yellow]%}$(virtualenv_prompt_info)\
 %{$terminfo[bold]$fg[red]%}$ %{$reset_color%}"
 fi
