@@ -5,10 +5,6 @@
 # Jan 2015 posquit0
 # Virtualenv info.
 
-function virtualenv_info {
-  [ $VIRTUAL_ENV ] && echo '('`basename $VIRTUAL_ENV`') '
-}
-
 # Machine name.
 function box_name {
     [ -f ~/.box-name ] && cat ~/.box-name || echo $HOST
@@ -33,8 +29,8 @@ PROMPT="
 %{$fg[white]%}in \
 %{$terminfo[bold]$fg[yellow]%}${current_dir}%{$reset_color%}\
 ${git_info} \
-%{$fg[white]%}[%*]]%}"
-%{$fg[yellow]%}$(virtualenv_info) \
+%{$fg[white]%}[%*]]%}
+%{$fg[yellow]%}$(virtualenv_prompt_info)\
 %{$terminfo[bold]$fg[red]%}$ %{$reset_color%}"
 
 if [[ "$USER" == "root" ]]; then
