@@ -36,7 +36,7 @@ ln -fs ~/.dotfiles/irssi/.* ~/
 ln -fs ~/.dotfiles/screen/.* ~/
 ln -fs ~/.dotfiles/tmux/.* ~/
 ln -fs ~/.dotfiles/vim/.* ~/
-ln -fs ~/.dotfiles/eamcs/.* ~/
+ln -fs ~/.dotfiles/emacs/.* ~/
 ln -fs ~/.dotfiles/wget/.* ~/
 ln -fs ~/.dotfiles/zsh/.* ~/
 echo "Installation complete!"
