@@ -99,4 +99,7 @@ alias zshconfig="editor ~/.zshrc"
 alias ohmyzsh="editor ~/.oh-my-zsh"
 
 # Java & Scala
-export PATH=$PATH:$HOME/utils/sbt/bin
+export PATH="$PATH:$HOME/utils/sbt/bin"
+
+# Cask
+export PATH="$PATH:$HOME/.cask/bin"
