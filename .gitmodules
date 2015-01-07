@@ -4,3 +4,6 @@
 [submodule "zsh/.oh-my-zsh"]
 	path = zsh/.oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh
+[submodule "emacs/.cask"]
+	path = emacs/.cask
+	url = https://github.com/cask/cask.git
