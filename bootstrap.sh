@@ -39,4 +39,5 @@ ln -fs ~/.dotfiles/vim/.* ~/
 ln -fs ~/.dotfiles/emacs/.* ~/
 ln -fs ~/.dotfiles/wget/.* ~/
 ln -fs ~/.dotfiles/zsh/.* ~/
+ln -fs ~/.dotfiles/npm/.* ~/
 echo "Installation complete!"
