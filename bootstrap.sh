@@ -40,4 +40,6 @@ ln -fs ~/.dotfiles/emacs/.* ~/
 ln -fs ~/.dotfiles/wget/.* ~/
 ln -fs ~/.dotfiles/zsh/.* ~/
 ln -fs ~/.dotfiles/npm/.* ~/
+
+vim +PluginInstall +all
 echo "Installation complete!"
