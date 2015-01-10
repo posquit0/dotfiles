@@ -104,8 +104,18 @@ set cursorline
 """ - Visual
 
 """ + Hex Editor
-nnoremap <silent> <F5> :%!xxd<CR>
-nnoremap <silent> <F6> :%!xxd -r<CR>
+" Map HexEditToggle to <F9>
+nnoremap <silent> <F9> :call HexEditToggle()<CR>
+let g:hexmode=0
+function! HexEditToggle()
+  if g:hexmode
+    let g:hexmode=0
+    %!xxd -r
+  else
+    let g:hexmode=1
+    %!xxd
+  endif
+endfunction
 """ - Hex Editor
 
 """ + Windows
@@ -204,15 +214,15 @@ let g:gundo_auto_preview=1
 """ + Plugin: Tagbar
 " Easy way to browse the tags
 Plugin 'majutsushi/tagbar'
-" Map TagbarToggle to <F3>
-nnoremap <silent> <F3> :TagbarToggle<CR>
+" Map TagbarToggle to <F10>
+nnoremap <silent> <F10> :TagbarToggle<CR>
 """ - Plugin: Tagbar
 
 """ + Plugin: NERD Tree
 " Explore filesystem with Vim
 Plugin 'scrooloose/nerdtree'
-" Map NERDTreeToggle to <F2>
-nnoremap <silent> <F2> :NERDTreeToggle<CR>
+" Map NERDTreeToggle to <F11>
+nnoremap <silent> <F11> :NERDTreeToggle<CR>
 " Ignore some extensions
 let NERDTreeIgnore=['.o$','.pyc$']
 " Automatically open NERDTree when vim start up with no files
@@ -293,6 +303,39 @@ let g:syntastic_check_on_wq=0
 let g:syntastic_python_checkers = ['flake8']
 " let g:syntastic_scala_checkers=['fsc', 'scalac']
 """ - Plugin: Syntastic
+
+""" + Plugin: Vdebug
+" Powerful debugger client for Vim using DBGP protocol
+" Tested with PHP, Python, Ruby, Perl, TCL and NodeJS
+Plugin 'joonty/vdebug'
+let g:vdebug_keymap = {
+\ "run": "<F5>",
+\ "run_to_cursor": "<F6>",
+\ "step_over": "<F2>",
+\ "step_into": "<F3>",
+\ "step_out": "<F4>",
+\ "close": "<F7>",
+\ "detach": "<F8>",
+\ "set_breakpoint": "<Leader>b",
+\ "eval_visual": "<Leader>e"
+\}
+let g:vdebug_options = {
+\ "port": 9000,
+\ "server": 'localhost',
+\ "timeout": 20,
+\ "on_close": 'detach',
+\ "break_on_open": 0,
+\ "ide_key": '',
+\ "path_maps": {},
+\ "debug_window_level": 0,
+\ "debug_file_level": 1,
+\ "debug_file": "/tmp/vdebug.log",
+\ "watch_window_style": 'expanded',
+\ "marker_default": '*',
+\ "marker_closed_tree": '▸',
+\ "marker_open_tree": '▾'
+\}
+""" - Plugin: Vdebug
 
 """ + Plugin: UltiSnips
 " Snippet engine for Vim
