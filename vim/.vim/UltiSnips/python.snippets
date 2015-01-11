@@ -1,0 +1,9 @@
+snippet dbgp "Set dbgp breakpoint" b
+from dbgp.client import brk
+brk(host='${2:localhost}', port=${1:9000})
+endsnippet
+
+snippet dbgpe "Set dbgp breakpoint at Exception" b
+from dbgp.client import brkOnExcept
+brkOnExcept(host='${2:127.0.0.1}', port=${1:9000})
+endsnippet
