@@ -32,6 +32,19 @@ set binary
 set noeol
 " automatically change window's cwd to file's dir
 set autochdir
+
+"" Folding
+" Trun on folding
+set foldenable
+" Make folding indent sensitive
+set foldmethod=indent
+" Don't autofold anything
+set foldlevel=99
+" Don't open folds when search into them
+set foldopen-=search
+" Don't open folds when undo stuff
+set foldopen-=undo
+
 "" Backup and swap
 " Centralize backups, swapfiles and undo history
 " set backupdir=~/.vim/backups
