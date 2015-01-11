@@ -96,6 +96,8 @@ set smarttab
 set t_Co=256
 " Line numbers on
 set number
+" Show the command typing
+set showcmd
 " Show matching brackets
 set showmatch
 " Bracket blinking
