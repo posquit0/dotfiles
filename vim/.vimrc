@@ -373,6 +373,33 @@ Plugin 'honza/vim-snippets'
 " Plugin 'derekwyatt/vim-scala'
 
 " Python
+""" + Plugin: Jedi-Vim
+" Vim binding for the autocompletion library Jedi
+Plugin 'davidhalter/jedi-vim'
+" Enable the default initialization routine
+let g:jedi#auto_initialization=1
+" Disable the default vim configuration
+let g:jedi#auto_vim_configuration=0
+" Show the function call signature window during writing arugments
+let g:jedi#show_call_signatures=1
+" Disable automatically starts completion upon typing
+let g:jedi#popup_on_dot=0
+" Automatically select the first entry upon starting completion
+let g:jedi#popup_select_first=0
+" Enable Jedi completions
+let g:jedi#completions_enabled=1
+" Open a new tab if use the go to
+let g:jedi#use_tabs_not_buffers=1
+" Don't want the docstring window to popup during compeletion
+autocmd FileType python setlocal completeopt-=preview
+" Key Bindings for Jedi-Vim
+let g:jedi#goto_assignments_command="<leader>g"
+let g:jedi#goto_definitions_command="<leader>d"
+let g:jedi#documentation_command="K"
+let g:jedi#usages_command="<leader>n"
+let g:jedi#completions_command="<C-Space>"
+let g:jedi#rename_command="<leader>r"
+""" - Plugin: Jedi-Vim
 
 """ + Plugin: Vim Virtualenv
 " Provide virtualenv's functions for Vim
@@ -426,31 +453,3 @@ filetype plugin indent on    " required
 """ + Themes
 colorscheme molokai
 """ - Themes
-
-""" + Plugin: Jedi-Vim
-" Vim binding for the autocompletion library Jedi
-Plugin 'davidhalter/jedi-vim'
-" Enable the default initialization routine
-let g:jedi#auto_initialization=1
-" Disable the default vim configuration
-let g:jedi#auto_vim_configuration=0
-" Show the function call signature window during writing arugments
-let g:jedi#show_call_signatures=1
-" Disable automatically starts completion upon typing
-let g:jedi#popup_on_dot=0
-" Automatically select the first entry upon starting completion
-let g:jedi#popup_select_first=0
-" Enable Jedi completions
-let g:jedi#completions_enabled=1
-" Open a new tab if use the go to
-let g:jedi#use_tabs_not_buffers=1
-" Don't want the docstring window to popup during compeletion
-autocmd FileType python setlocal completeopt-=preview
-" Key Bindings for Jedi-Vim
-let g:jedi#goto_assignments_command="<leader>g"
-let g:jedi#goto_definitions_command="<leader>d"
-let g:jedi#documentation_command="K"
-let g:jedi#usages_command="<leader>n"
-let g:jedi#completions_command="<C-Space>"
-let g:jedi#rename_command="<leader>r"
-""" - Plugin: Jedi-Vim
