@@ -7,3 +7,6 @@
 [submodule "emacs/.cask"]
 	path = emacs/.cask
 	url = https://github.com/cask/cask.git
+[submodule "ruby/.rbenv"]
+	path = ruby/.rbenv
+	url = https://github.com/sstephenson/rbenv.git

@@ -103,3 +103,7 @@ export PATH="$PATH:$HOME/utils/sbt/bin"
 
 # Cask
 export PATH="$PATH:$HOME/.cask/bin"
+
+# Ruby
+export PATH="$PATH:$HOME/.rbenv/bin"
+eval "$(rbenv init -)"

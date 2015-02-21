@@ -40,6 +40,8 @@ ln -fs ~/.dotfiles/emacs/.* ~/
 ln -fs ~/.dotfiles/wget/.* ~/
 ln -fs ~/.dotfiles/zsh/.* ~/
 ln -fs ~/.dotfiles/npm/.* ~/
+ln -fs ~/.dotfiles/ruby/.* ~/
+git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 
 vim +PluginInstall +all
 echo "Installation complete!"
