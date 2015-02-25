@@ -45,17 +45,19 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh-custom
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-# ToDo: Bower, cake, cap, Bundler, git-flow, laravel4, pyenv, ruby, rvm, tmuxinator, vagrant, gem
+# ToDo: cake, cap, Bundler, git-flow, laravel4, pyenv, ruby, rvm, tmuxinator, vagrant
 plugins=(
   # Autocompletion or alias
   screen supervisor 
-  git mercurial
+  git mercurial docker
   mvn scala sbt
-  python pip virtualenv virtualenvwrapper fabric
-  node npm cofee
+  python pip pylint pep8 virtualenv virtualenvwrapper fabric
+  gem
+  node npm cofee bower
   colored-man
   # Useful tools  
-  colorize catimg command-not-found encode64 jsontools urltools sudo gitignore themes
+  colorize catimg command-not-found common-aliases 
+  encode64 jsontools urltools sudo gitignore themes
   # Just for fun
   nyan
 )
