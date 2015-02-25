@@ -291,7 +291,8 @@ set noshowmode
 " Displying thin vertical lines at each indentation level for code
 Plugin 'Yggdroot/indentLine'
 " Change indentLine char
-let g:indentLine_char='┆'
+"let g:indentLine_char='┆'
+let g:indentLine_char='|'
 """ - Plugin: indentLine
 
 """ + Plugin: Easymotion
@@ -315,7 +316,12 @@ let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_check_on_open=1
 let g:syntastic_check_on_wq=0
-let g:syntastic_python_checkers = ['flake8']
+" For C / C++
+let g:syntastic_cpp_compiler='clang++'
+let g:syntastic_cpp_compiler_options=' -std=c++11'
+" For Python
+let g:syntastic_python_checkers=['flake8']
+" For Scala & Java
 " let g:syntastic_scala_checkers=['fsc', 'scalac']
 """ - Plugin: Syntastic
 
