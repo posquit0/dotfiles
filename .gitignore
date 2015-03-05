@@ -1,5 +1,5 @@
-# Vim Bundle
-vim/.vim/bundle
+# Vim Plugins
+vim/.vim/plugged
 
 # Compiled Python files
 *.pyc

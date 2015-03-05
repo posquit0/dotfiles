@@ -43,5 +43,5 @@ ln -fs ~/.dotfiles/npm/.* ~/
 ln -fs ~/.dotfiles/ruby/.* ~/
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 
-vim +PluginInstall +all
+vim +PlugInstall +qall now
 echo "Installation complete!"
