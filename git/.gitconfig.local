@@ -1,0 +1,10 @@
+# vim: set ft=gitconfig:
+# .gitconfig.local
+#
+# Maintained by Claud D. Park <poqsuit0.bj@gmail.com>
+# http://www.poqsuit0.com/
+
+
+[user]
+	name = Posquit0.BJ
+  email = posquit0.bj@gmail.com

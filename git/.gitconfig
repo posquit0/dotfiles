@@ -1,6 +1,14 @@
-[user]
-	name = Posquit0.BJ
-  email = posquit0.bj@gmail.com
+# vim: set ft=gitconfig:
+# .gitconfig
+#
+# Maintained by Claud D. Park <poqsuit0.bj@gmail.com>
+# http://www.poqsuit0.com/
+
+
+[include]
+  # include external gitconfig file (requires git 1.7.10+)
+  # typically, user.name and user.email is configured.
+  path = ~/.gitconfig.local
 [push]
   # push should only push current branch, not all branches
   default = current
