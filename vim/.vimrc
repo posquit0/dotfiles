@@ -10,5 +10,10 @@ source ~/.vim/global.vim
 
 " GUI specific settings
 if has('gui_running')
-  source ~/.vim/gvim.vim
+  source \~/.vim/gvim.vim
 end
+
+" Use local vimrc if available
+if filereadable(expand("\~/.vimrc.local"))
+  source \~/.vimrc.local
+endif
