@@ -25,6 +25,7 @@ set binary
 set noeol
 " Automatically change window's cwd to file's dir
 set autochdir
+set viminfo='100,n$HOME/.vim.info
 "" Modeline
 " Respect modeline in files
 set modeline

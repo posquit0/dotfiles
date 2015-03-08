@@ -28,6 +28,13 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Vim Fugitive {{{
     " The best Git wrapper
     Plug 'tpope/vim-fugitive'
+    " Key mappings for convenience
+    nnoremap <leader>gd :Gvdiff<CR>
+    nnoremap <leader>gD :Gvdiff HEAD<CR>
+    nnoremap <leader>gs :Gstatus<CR>:20wincmd +<CR>
+    nnoremap <leader>gw :Gwrite<CR>
+    nnoremap <leader>gb :Gblame -w<CR>:vertical resize 10<CR>
+    nnoremap <leader>gci :Gcommit --verbose<CR>
   "" }}}
 
   "" Plugin: Sudo-Vim {{{
@@ -48,7 +55,12 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Airline {{{
     " Use statusline more effective
     Plug 'bling/vim-airline'
-    " let g:airline_powerline_fonts=1
+    if has('gui_running')
+      " Automatic population of the g:airline_symbols dictionary with
+      " powerline symbols
+      let g:airline_powerline_fonts=1
+    endif
+    " Specify theme for airline
     let g:airline_theme='sol'
     let g:airline#extensions#tabline#enabled=1
     let g:airline#extensions#tabline#left_sep=""
@@ -57,6 +69,23 @@ call plug#begin('~/.vim/plugged')
     let g:airline_section_y="[%{&fileformat}/%{strlen(&fenc)?&fenc:&enc}]"
     " Use airline's showmode
     set noshowmode
+  "" }}}
+
+  "" Plugin: Vim Startify {{{
+    " A fancy start screen for Vim
+    Plug 'mhinz/vim-startify'
+    " A list of files to bookmark
+    let g:startify_bookmarks = [
+    \ '~/.vimrc',
+    \ '~/.vim/plugins.vim',
+    \]
+    " A list of Vim regular expressions that filters recently used files
+    let g:startify_skiplist = [
+    \ 'COMMIT_EDITMSG',
+    \ $VIMRUNTIME .'/doc',
+    \ 'plugged/.*/doc',
+    \ 'bundle/.*/doc',
+    \]
   "" }}}
 
   "" Plugin: Gundo {{{
@@ -93,8 +122,8 @@ call plug#begin('~/.vim/plugged')
     " Ignore some extensions
     let NERDTreeIgnore=['.o$','.pyc$']
     " Automatically open NERDTree when vim start up with no files
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    " autocmd StdinReadPre * let s:std_in=1
+    " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
     " Close vim if the only window left open is a NERDTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
   "" }}}
@@ -273,6 +302,9 @@ call plug#begin('~/.vim/plugged')
   "" Theme: Zenburn {{{
     Plug 'jnurmine/Zenburn'
   "" }}}
+  "" Theme: Solarized {{{
+    Plug 'altercation/vim-colors-solarized'
+  ""}}}
   "" Theme: Seoul256 {{{
     Plug 'junegunn/seoul256.vim'
   "" }}}

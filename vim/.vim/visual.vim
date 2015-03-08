@@ -63,5 +63,8 @@ set laststatus=2
   " Set to 'light' to use colors that look good on a light background
   set background=dark
   " Set colorscheme
-  colorscheme molokai
+  colorscheme summerfruit256
+  " colorscheme gruvbox
+  " colorscheme seoul256-light
+  " colorscheme molokai
 """ }}}
