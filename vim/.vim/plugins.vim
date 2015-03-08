@@ -240,6 +240,12 @@ call plug#begin('~/.vim/plugged')
     " For intensely orgasmic commenting
     Plug 'scrooloose/nerdcommenter'
   "" }}}
+
+  "" Plugin: Auto Pairs {{{
+    " For intensely orgasmic commenting
+    Plug 'jiangmiao/auto-pairs'
+  "" }}}
+
   " Python
   "" Plugin: Jedi-Vim {{{
     " Vim binding for the autocompletion library Jedi
