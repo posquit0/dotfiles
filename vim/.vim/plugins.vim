@@ -156,11 +156,6 @@ call plug#begin('~/.vim/plugged')
   "" }}}
 """ }}}
 
-"" Plugin: Vim Surround {{{
-  " All about surroundings: parenthless, brackets, quotes, XML tags, and more
-  Plug 'tpope/vim-surround'
-"" }}}
-
 """ Programming {{{
   "" Plugin: Vim Polyglot {{{
     " A collection of language packs for Vim
@@ -236,6 +231,15 @@ call plug#begin('~/.vim/plugged')
     Plug 'honza/vim-snippets'
   "" }}}
 
+  "" Plugin: Vim Surround {{{
+    " All about surroundings: parenthless, brackets, quotes, XML tags, and more
+    Plug 'tpope/vim-surround'
+  "" }}}
+
+  "" Plugin: Nerd Commenter {{{
+    " For intensely orgasmic commenting
+    Plug 'scrooloose/nerdcommenter'
+  "" }}}
   " Python
   "" Plugin: Jedi-Vim {{{
     " Vim binding for the autocompletion library Jedi
