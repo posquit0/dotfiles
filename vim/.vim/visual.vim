@@ -9,6 +9,8 @@ syntax on
 
 " Line numbers on
 set number
+" Set relative number for line
+set relativenumber
 " Show ruler
 set ruler
 " Always show tab pannel
@@ -63,8 +65,8 @@ set laststatus=2
   " Set to 'light' to use colors that look good on a light background
   set background=dark
   " Set colorscheme
-  colorscheme summerfruit256
-  " colorscheme gruvbox
+  " colorscheme summerfruit256
+  colorscheme gruvbox
   " colorscheme seoul256-light
   " colorscheme molokai
 """ }}}
