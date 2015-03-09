@@ -20,6 +20,8 @@ set mousehide
 
 " Handy command-line mode
 nnoremap ; :
+" <Esc> is too annoying to type
+inoremap jk <Esc>
 " Screen sucks, redraw everything
 nnoremap <leader>r :redraw!<CR>
 " Make Q meaningless (Q: Entering to Ex mode) 
