@@ -10,6 +10,3 @@
 [submodule "ruby/.rbenv"]
 	path = ruby/.rbenv
 	url = https://github.com/sstephenson/rbenv.git
-[submodule "vim/.vim/plugged/vim-plug"]
-	path = vim/.vim/plugged/vim-plug
-	url = https://github.com/junegunn/vim-plug
