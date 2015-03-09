@@ -184,7 +184,7 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Vdebug {{{
     " Powerful debugger client for Vim using DBGP protocol
     " Tested with PHP, Python, Ruby, Perl, TCL and NodeJS
-    Plug 'joonty/vdebug'
+    Plug 'joonty/vdebug', { 'for': ['php', 'python', 'ruby', 'perl'] }
     let g:vdebug_keymap = {
     \ "run": "<F5>",
     \ "run_to_cursor": "<F6>",
@@ -249,7 +249,7 @@ call plug#begin('~/.vim/plugged')
   " Python
   "" Plugin: Jedi-Vim {{{
     " Vim binding for the autocompletion library Jedi
-    Plug 'davidhalter/jedi-vim'
+    Plug 'davidhalter/jedi-vim', { 'for': 'python' }
     " Enable the default initialization routine
     let g:jedi#auto_initialization=1
     " Disable the default vim configuration
@@ -277,7 +277,7 @@ call plug#begin('~/.vim/plugged')
 
   "" Plugin: Vim Virtualenv {{{
     " Provide virtualenv's functions for Vim
-    Plug 'jmcantrell/vim-virtualenv'
+    Plug 'jmcantrell/vim-virtualenv', { 'for': 'python' }
   "" }}}
 
   " HTML & CSS
