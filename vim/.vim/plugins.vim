@@ -75,12 +75,12 @@ call plug#begin('~/.vim/plugged')
     " A fancy start screen for Vim
     Plug 'mhinz/vim-startify'
     " A list of files to bookmark
-    let g:startify_bookmarks = [
+    let g:startify_bookmarks=[
     \ '~/.vimrc',
     \ '~/.vim/plugins.vim',
     \]
     " A list of Vim regular expressions that filters recently used files
-    let g:startify_skiplist = [
+    let g:startify_skiplist=[
     \ 'COMMIT_EDITMSG',
     \ $VIMRUNTIME .'/doc',
     \ 'plugged/.*/doc',
@@ -181,11 +181,84 @@ call plug#begin('~/.vim/plugged')
     " let g:syntastic_scala_checkers=['fsc', 'scalac']
   "" }}}
 
+  "" Plugin: YouCompleteMe {{{
+    " Code Completion Engine for Vim that is so fast, fuzzy-search
+    " Clang based engine for C/C++/Object-C/Object-C++
+    " Jedi based engine for Python
+    " OmniSharp based engine for C#
+    " Omnifunc based engine for other many languages
+    function! BuildYCM(info)
+      " info is a dictionary with 3 fields
+      " - name:   name of the plugin
+      " - status: 'installed', 'updated', or 'unchanged'
+      " - force:  set on PlugInstall! or PlugUpdate!
+      if a:info.status == 'installed' || a:info.force
+        !./install.sh --clang-completer
+      endif
+    endfunction
+    Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+    " Specifies a fallback path to a config file which is used 
+    " if no '.ycm_extra_conf.py' is found
+    let g:ycm_global_ycm_extra_conf="~/.vim/ycm_extra_conf.py"
+    " Auto trigger for identifier completer and semantic completer
+    let g:ycm_auto_trigger=1
+    " Show the completion menu even when typing inside comments
+    let g:ycm_complete_in_comments=0
+    " Show the completion menu even when typing inside strings
+    let g:ycm_complete_in_strings=1
+    " The number of characters needs to type before identifier-based completion suggestions
+    let g:ycm_min_num_of_chars_for_completion=2
+    " Read identifiers from comments and strings
+    let g:ycm_collect_identifiers_from_comments_and_strings=0
+    " Read identifiers from my tags files (have to use Exuberant Ctags)
+    let g:ycm_collect_identifiers_from_tags_files=1
+    " Disable YCM's diagnostic functionality (Use Syntastic)
+    let g:ycm_show_diagnostics_ui=0
+    let g:ycm_enable_diagnostic_signs=0
+    let g:ycm_enable_diagnostic_highlighting=0
+    let g:ycm_echo_current_diagnostic=0
+    let g:ycm_always_populate_location_list=0
+    let g:ycm_open_loclist_on_ycm_diags=0
+    " Auto-close preview window after completion
+    let g:ycm_autoclose_preview_window_after_completion=1
+    " Auto-close preview window after leaving inserting mode
+    let g:ycm_autoclose_preview_window_after_insertion=1
+    " Define where 'GoTo*' commands result should be opened
+    " ['same-buffer', 'horizontal-split', 'vertical-split', 'new-tab']
+    let g:ycm_goto_buffer_command='new-tab'
+    " Define the max size(in Kb) for a file to be considered for completion
+    let g:ycm_disable_for_files_larger_than_kb=1000
+    " Determine for possible completions of snippet triggers
+    let g:ycm_use_ultisnips_completer=0
+    " Key mappings used to select the first completion string
+    let g:ycm_key_list_select_completion=['<Down>']
+    " Key mappings used to select the previous completion string
+    let g:ycm_key_list_previous_completion=['<Up>']
+    " Key mapping used to invoke the menu for semantic completion
+    let g:ycm_key_invoke_completion='<C-Space>'
+    " Key mapping used to show the full diagnostic
+    let g:ycm_key_detailed_diagnostics=''
+    " Controls the character-based triggers for the various language
+    let g:ycm_semantic_triggers={
+    \ 'c' : ['->', '.'],
+    \ 'objc' : ['->', '.'],
+    \ 'ocaml' : ['.', '#'],
+    \ 'cpp,objcpp' : ['->', '.', '::'],
+    \ 'perl' : ['->'],
+    \ 'php' : ['->', '::'],
+    \ 'cs,java,javascript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+    \ 'vim' : ['re![_a-zA-Z]+[_\w]*\.'],
+    \ 'ruby' : ['.', '::'],
+    \ 'lua' : ['.', ':'],
+    \ 'erlang' : [':'],
+    \}
+  "" }}}
+
   "" Plugin: Vdebug {{{
     " Powerful debugger client for Vim using DBGP protocol
     " Tested with PHP, Python, Ruby, Perl, TCL and NodeJS
     Plug 'joonty/vdebug', { 'for': ['php', 'python', 'ruby', 'perl'] }
-    let g:vdebug_keymap = {
+    let g:vdebug_keymap={
     \ "run": "<F5>",
     \ "run_to_cursor": "<F6>",
     \ "step_over": "<F2>",
@@ -196,7 +269,7 @@ call plug#begin('~/.vim/plugged')
     \ "set_breakpoint": "<Leader>b",
     \ "eval_visual": "<Leader>e"
     \}
-    let g:vdebug_options = {
+    let g:vdebug_options={
     \ "port": 9000,
     \ "server": 'localhost',
     \ "timeout": 20,
@@ -257,11 +330,11 @@ call plug#begin('~/.vim/plugged')
     " Show the function call signature window during writing arugments
     let g:jedi#show_call_signatures=1
     " Disable automatically starts completion upon typing
-    let g:jedi#popup_on_dot=0
+    let g:jedi#popup_on_dot=1
     " Automatically select the first entry upon starting completion
     let g:jedi#popup_select_first=0
     " Enable Jedi completions
-    let g:jedi#completions_enabled=1
+    let g:jedi#completions_enabled=0
     " Open a new tab if use the go to
     let g:jedi#use_tabs_not_buffers=1
     " Don't want the docstring window to popup during compeletion
