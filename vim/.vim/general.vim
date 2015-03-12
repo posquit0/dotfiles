@@ -46,11 +46,11 @@ set modelines=4
   " Make folding indent sensitive
   set foldmethod=indent
   " Don't autofold anything
-  "set foldlevel=99
+  set foldlevel=99
   " Don't open folds when search into them
-  "set foldopen-=search
+  set foldopen-=search
   " Don't open folds when undo stuff
-  "set foldopen-=undo
+  set foldopen-=undo
 """ }}}
 
 """ Backup & Swap {{{
