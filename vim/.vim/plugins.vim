@@ -90,7 +90,7 @@ call plug#begin('~/.vim/plugged')
 
   "" Plugin: Gundo {{{
     " Make browsing Vim's powerful undo tree less painful
-    Plug 'sjl/gundo.vim'
+    Plug 'sjl/gundo.vim', { 'on': 'GundoToggle' }
     " Map GundoToggle to <F12>
     nnoremap <silent> <F12> :GundoToggle<CR>
     " Set the horizontal width of Gundo graph
@@ -116,7 +116,7 @@ call plug#begin('~/.vim/plugged')
 
   "" Plugin: NERD Tree {{{
     " Explore filesystem with Vim
-    Plug 'scrooloose/nerdtree'
+    Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
     " Map NERDTreeToggle to <F11>
     nnoremap <silent> <F11> :NERDTreeToggle<CR>
     " Ignore some extensions
@@ -205,9 +205,9 @@ call plug#begin('~/.vim/plugged')
     " Show the completion menu even when typing inside comments
     let g:ycm_complete_in_comments=0
     " Show the completion menu even when typing inside strings
-    let g:ycm_complete_in_strings=1
+    let g:ycm_complete_in_strings=0
     " The number of characters needs to type before identifier-based completion suggestions
-    let g:ycm_min_num_of_chars_for_completion=2
+    let g:ycm_min_num_of_chars_for_completion=3
     " Read identifiers from comments and strings
     let g:ycm_collect_identifiers_from_comments_and_strings=0
     " Read identifiers from my tags files (have to use Exuberant Ctags)
@@ -356,7 +356,7 @@ call plug#begin('~/.vim/plugged')
   " HTML & CSS
   "" Plugin: Emmet {{{
     " Provide Zen-coding for Vim
-    Plug 'mattn/emmet-vim'
+    Plug 'mattn/emmet-vim', { 'for': ['html', 'haml', 'xml', 'css', 'less', 'sass'] }
     " Enable all functions, which is equal to
     " n: normal, i: insert: v: visual, a: all
     let g:user_emmet_mode='i'
