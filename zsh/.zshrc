@@ -95,10 +95,12 @@ fi
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
-#
-# Example aliases
 alias zshconfig="editor ~/.zshrc"
 alias ohmyzsh="editor ~/.oh-my-zsh"
+
+if [ -f "$HOME/.alias" ]; then
+    source "$HOME/.alias"
+fi
 
 # Java & Scala
 export PATH="$PATH:$HOME/utils/sbt/bin"

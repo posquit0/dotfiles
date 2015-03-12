@@ -1,0 +1,7 @@
+# .alias
+#
+# Maintained by Claud D. Park <poqsuit0.bj@gmail.com>
+# http://www.poqsuit0.com/
+
+
+alias tmux="tmux -2"
