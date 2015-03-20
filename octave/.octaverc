@@ -1,0 +1,9 @@
+# Matlab like prompt
+PS1(">> ")
+ 
+#Clear the startup screen
+clc;
+
+# Use vim as editor
+edit mode sync
+edit home .
