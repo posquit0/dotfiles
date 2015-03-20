@@ -32,6 +32,7 @@ set modeline
 set modelines=4
 
 """ Auto Commands {{{
+  " Auto reload vimrc
   if has("autocmd")
     augroup reload_vimrc
       autocmd!

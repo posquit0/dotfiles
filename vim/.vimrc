@@ -3,7 +3,7 @@
 " Maintained by Claud D. Park <poqsuit0.bj@gmail.com>
 " http://www.poqsuit0.com/
 
-""" General Configuration(Excepting Visual)
+""" General Configuration (excepting visual.vim)
 source \~/.vim/general.vim
 source \~/.vim/key-mapping.vim
 
@@ -19,6 +19,9 @@ endif
 """ General Configuration - Visual
 source \~/.vim/visual.vim
 
+
+""" Override Configuration (because of plugins.vim)
+source \~/.vim/override.vim
 
 """ GUI Specific Configuration
 if has('gui_running')
