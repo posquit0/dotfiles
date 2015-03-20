@@ -3,6 +3,10 @@
 " Maintained by Claud D. Park <poqsuit0.bj@gmail.com>
 " http://www.poqsuit0.com/
 
+" Set octave-friendly tabbing
+set expandtab
+set tabstop=4
+set shiftwidth=4
 
 " Type `K` in normal mode and the word under the cursor will be searched for in
 " the GNU Octave documentation index. Pressing `,` yields the next occurrence
