@@ -41,6 +41,7 @@ ln -fs ~/.dotfiles/wget/.* ~/
 ln -fs ~/.dotfiles/zsh/.* ~/
 ln -fs ~/.dotfiles/npm/.* ~/
 ln -fs ~/.dotfiles/ruby/.* ~/
+ln -fs ~/.dotfiles/octave/.* ~/
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
 
 vim +PlugInstall +qall now
