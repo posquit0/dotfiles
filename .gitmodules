@@ -10,3 +10,9 @@
 [submodule "ruby/.rbenv"]
 	path = ruby/.rbenv
 	url = https://github.com/sstephenson/rbenv.git
+[submodule "gdb/.gef"]
+	path = gdb/.gef
+	url = https://github.com/hugsy/gef.git
+[submodule "gdb/.peda"]
+	path = gdb/.peda
+	url = https://github.com/longld/peda.git
