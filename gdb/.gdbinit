@@ -1,1 +1,1 @@
-source .gef/gef.py
+source ~/.gef/gef.py
