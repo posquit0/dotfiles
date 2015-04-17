@@ -42,15 +42,32 @@
   untracked = cyan
 
 [alias]
+  ls      = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+  last    = log -1 HEAD
+  today   = log --since=midnight --color --graph \
+            --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset' \
+            --abbrev-commit
+  yesterday = log --since yesterday --until=midnight --color --graph \
+            --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset' \
+            --abbrev-commit
   history = log --graph --pretty=format:'%C(yellow)%h%Creset \
             -%C(yellow)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' \
             --abbrev-commit --date=short --date-order -n30
   unstage = reset HEAD --
+
+  df      = diff
+
   discard = checkout --
   co      = checkout
-  s       = status -sb
-  st      = status --short --branch --untracked-files=no
+  com     = checkout master
+
+  ca      = commit --amend
+  cm      = commit -m
+
+  s       = status --short --branch
+  st      = status
   sta     = status --short --branch --untracked-files=normal
+
   sync    = !git pull && git push
   ta      = tag -a
 
