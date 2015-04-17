@@ -5,3 +5,4 @@
 
 
 alias tmux="tmux -2"
+alias weechat="weechat-curses"

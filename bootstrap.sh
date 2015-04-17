@@ -33,6 +33,7 @@ ln -fs ~/.dotfiles/ctags/.* ~/
 ln -fs ~/.dotfiles/curl/.* ~/
 ln -fs ~/.dotfiles/git/.* ~/
 ln -fs ~/.dotfiles/irssi/.* ~/
+ln -fs ~/.dotfiles/weechat/.* ~/
 ln -fs ~/.dotfiles/screen/.* ~/
 ln -fs ~/.dotfiles/tmux/.* ~/
 ln -fs ~/.dotfiles/vim/.* ~/
