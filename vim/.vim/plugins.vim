@@ -179,6 +179,8 @@ call plug#begin('~/.vim/plugged')
     let g:syntastic_python_checkers=['flake8']
     " For Scala & Java
     " let g:syntastic_scala_checkers=['fsc', 'scalac']
+    " For Javascript & Node.JS
+    let g:syntastic_javascript_checkers = ['standard', 'jshint']
   "" }}}
 
   "" Plugin: YouCompleteMe {{{
