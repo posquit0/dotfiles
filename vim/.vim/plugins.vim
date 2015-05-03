@@ -180,7 +180,7 @@ call plug#begin('~/.vim/plugged')
     " For Scala & Java
     " let g:syntastic_scala_checkers=['fsc', 'scalac']
     " For Javascript & Node.JS
-    let g:syntastic_javascript_checkers = ['standard', 'jshint']
+    let g:syntastic_javascript_checkers = ['jshint']
   "" }}}
 
   "" Plugin: YouCompleteMe {{{
@@ -259,7 +259,7 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Vdebug {{{
     " Powerful debugger client for Vim using DBGP protocol
     " Tested with PHP, Python, Ruby, Perl, TCL and NodeJS
-    Plug 'joonty/vdebug', { 'for': ['php', 'python', 'ruby', 'perl'] }
+    Plug 'joonty/vdebug', { 'for': ['php', 'python', 'ruby', 'perl', 'javascript'] }
     let g:vdebug_keymap={
     \ "run": "<F5>",
     \ "run_to_cursor": "<F6>",
@@ -374,6 +374,24 @@ call plug#begin('~/.vim/plugged')
     \ },
     \}
   "" }}}
+
+  " Javascript & Node
+  "" Plugin: Tern for Vim {{{
+  " Tern-based Javascript editing support
+  " Hook into omni completion to handle autocompletion and provide more
+    function! BuildTern(info)
+      " info is a dictionary with 3 fields
+      " - name:   name of the plugin
+      " - status: 'installed', 'updated', or 'unchanged'
+      " - force:  set on PlugInstall! or PlugUpdate!
+      if a:info.status == 'installed' || a:info.force
+        !npm install
+      endif
+    endfunction
+    Plug 'marijnh/tern_for_vim', { 'for': ['javascript'], 'do': function('BuildTern') }
+    " Display argument type hints when the cursor is left over a function
+    let g:tern_show_argument_hints="on_hold"
+  "" "}}}
 """ }}}
 
 """ Themes {{{

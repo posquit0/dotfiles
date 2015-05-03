@@ -66,7 +66,7 @@ set laststatus=2
   set background=dark
   " Set colorscheme
   " colorscheme summerfruit256
-  colorscheme gruvbox
+  " colorscheme gruvbox
   " colorscheme seoul256-light
-  " colorscheme molokai
+  colorscheme molokai
 """ }}}
