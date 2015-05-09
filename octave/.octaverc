@@ -1,7 +1,12 @@
+# .octaverc
+#
+# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# http://www.posquit0.com/
+
 # Matlab like prompt
 PS1(">> ")
  
-#Clear the startup screen
+# Clear the startup screen
 clc;
 
 # Use vim as editor

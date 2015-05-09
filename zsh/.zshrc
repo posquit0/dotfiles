@@ -1,3 +1,8 @@
+# .zshrc
+#
+# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# http://www.posquit0.com/
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -77,7 +82,7 @@ export LC_ALL=ko_KR.UTF-8
 export GREP_OPTIONS="--color=auto";
 
 # Set term that supports 256 colors
-# export TERM=xterm-256color
+# export TERM=screen-256color
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'

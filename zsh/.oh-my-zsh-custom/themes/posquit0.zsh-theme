@@ -1,9 +1,11 @@
 # It is recommended to use with a dark background and the font Inconsolata.
 # Colors: black, red, green, yellow, *blue, magenta, cyan, and white.
 # 
-# https://github.com/posquit0/dotfiles
-# Jan 2015 posquit0
-# Virtualenv info.
+# Posquit0's Zsh Theme
+#
+# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# http://www.posquit0.com/
+
 
 # Machine name.
 function box_name {

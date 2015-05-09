@@ -1,7 +1,7 @@
 " matlab.vim
 "
-" Maintained by Claud D. Park <poqsuit0.bj@gmail.com>
-" http://www.poqsuit0.com/
+" Maintained by Claud D. Park <posquit0.bj@gmail.com>
+" http://www.posquit0.com/
 
 " Set octave-friendly tabbing
 set expandtab
