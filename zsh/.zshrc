@@ -54,7 +54,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh-custom
 plugins=(
   # Autocompletion or alias
   screen supervisor 
-  git mercurial docker
+  git git-flow mercurial docker
   mvn scala sbt
   python pip pylint pep8 virtualenv virtualenvwrapper fabric
   gem
