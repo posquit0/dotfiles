@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2008-2014 Sebastien Helleu <flashcode@flashtux.org>
-# Copyright (C) 2010-2014 Nils Görs <weechatter@arcor.de>
+# Copyright (C) 2010-2015 Nils Görs <weechatter@arcor.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,12 @@
 #
 # History:
 #
+# 2015-05-16, Sebastien Helleu <flashcode@flashtux.org>:
+#     version 3.9: fix cursor position when editing an option with WeeChat >= 1.2
+# 2015-05-02, arza <arza@arza.us>:
+#     version 3.8: don't append "null" to /set when setting an undefined setting
+# 2015-05-01, nils_2 <weechatter@arcor.de>:
+#     version 3.7: fix two perl warnings (reported by t3chguy)
 # 2014-09-30, arza <arza@arza.us>:
 #     version 3.6: fix current line counter when options aren't found
 # 2014-06-03, nils_2 <weechatter@arcor.de>:
@@ -117,7 +123,7 @@
 use strict;
 
 my $PRGNAME = "iset";
-my $VERSION = "3.6";
+my $VERSION = "3.9";
 my $DESCR   = "Interactive Set for configuration options";
 my $AUTHOR  = "Sebastien Helleu <flashcode\@flashtux.org>";
 my $LICENSE = "GPL3";
@@ -237,6 +243,10 @@ sub iset_create_filter
 sub iset_buffer_input
 {
     my ($data, $buffer, $string) = ($_[0], $_[1], $_[2]);
+
+    # string begins with space?
+    return weechat::WEECHAT_RC_OK if (substr($string, 0, 1 ) eq " ");
+
     if ($string eq "q")
     {
         weechat::buffer_close($buffer);
@@ -976,22 +986,34 @@ sub iset_cmd_cb
             my $value = $options_values[$current_line];
             if ($options_is_null[$current_line])
             {
-                $value = "null";
+                $value = "";
             }
             else
             {
                 $quote = "\"" if ($options_types[$current_line] eq "string");
             }
-            my $set_command = "/set";
-            $set_command = "/mute " . $set_command if (weechat::config_boolean($options_iset{"use_mute"}) == 1);
+            $value = " ".$quote.$value.$quote if ($value ne "" or $quote ne "");
 
-            weechat::buffer_set($iset_buffer, "input", $set_command." ".$options_names[$current_line]." ".$quote.$value.$quote);
-            weechat::command($iset_buffer, "/input move_beginning_of_line");
-            weechat::command($iset_buffer, "/input move_next_word");
-            weechat::command($iset_buffer, "/input move_next_word");
-            weechat::command($iset_buffer, "/input move_next_word") if (weechat::config_boolean($options_iset{"use_mute"}) == 1);
-            weechat::command($iset_buffer, "/input move_next_char");
-            weechat::command($iset_buffer, "/input move_next_char") if ($quote ne "");
+            my $set_command = "/set";
+            my $start_index = 5;
+            if (weechat::config_boolean($options_iset{"use_mute"}) == 1)
+            {
+                $set_command = "/mute ".$set_command;
+                $start_index += 11;
+            }
+            $set_command = $set_command." ".$options_names[$current_line].$value;
+            my $pos_space = index($set_command, " ", $start_index);
+            if ($pos_space < 0)
+            {
+                $pos_space = 9999;
+            }
+            else
+            {
+                $pos_space = $pos_space + 1;
+                $pos_space = $pos_space + 1 if ($quote ne "");
+            }
+            weechat::buffer_set($iset_buffer, "input", $set_command);
+            weechat::buffer_set($iset_buffer, "input_pos", "".$pos_space);
         }
     }
     weechat::bar_item_update("isetbar_help") if (weechat::config_boolean($options_iset{"show_help_bar"}) == 1);
@@ -1161,6 +1183,8 @@ sub hook_focus_iset_cb
 sub iset_hsignal_mouse_cb
 {
     my ($data, $signal, %hash) = ($_[0], $_[1], %{$_[2]});
+
+    return weechat::WEECHAT_RC_OK unless (@options_types);
 
     if ($hash{"_buffer_name"} eq $PRGNAME && ($hash{"_buffer_plugin"} eq $LANG))
     {
