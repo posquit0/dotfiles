@@ -121,6 +121,8 @@ call plug#begin('~/.vim/plugged')
     nnoremap <silent> <F11> :NERDTreeToggle<CR>
     " Ignore some extensions
     let NERDTreeIgnore=['.o$','.pyc$']
+    " Show hidden files
+    let NERDTreeShowHidden=1
     " Automatically open NERDTree when vim start up with no files
     " autocmd StdinReadPre * let s:std_in=1
     " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
