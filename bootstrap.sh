@@ -29,6 +29,7 @@ else
     git submodule update --init --recursive --quiet
 fi
 
+ln -fs ~/.dotfiles/.alias ~/
 ln -fs ~/.dotfiles/ctags/.* ~/
 ln -fs ~/.dotfiles/curl/.* ~/
 ln -fs ~/.dotfiles/git/.* ~/
@@ -45,6 +46,15 @@ ln -fs ~/.dotfiles/gdb/.* ~/
 ln -fs ~/.dotfiles/ruby/.* ~/
 ln -fs ~/.dotfiles/octave/.* ~/
 git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+
+# start a server but don't attach to it
+tmux start-server
+# create a new session but don't attach to it either
+tmux new-session -d
+# install the plugins
+~/.tmux/plugins/tpm/scripts/install_plugins.sh
+# killing the server is not required
+tmux kill-server
 
 vim +PlugInstall +qall now
 echo "Installation complete!"
