@@ -1,5 +1,7 @@
-# Vim Plugins
-vim/.vim/plugged
+# .gitignore for dotfiles
+#
+# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# http://www.posquit0.com/
 
 # Compiled Python files
 *.pyc

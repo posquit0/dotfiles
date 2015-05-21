@@ -1,9 +1,7 @@
-# .gitignore for vim
+# .gitignore for tmux
 #
 # Maintained by Claud D. Park <posquit0.bj@gmail.com>
 # http://www.posquit0.com/
 
-# Vim Plugins
-.vim/plugged
-
-.netrwhist
+# TMUX Plugins
+.tmux/plugins
