@@ -5,3 +5,6 @@
 
 # TMUX Plugins
 .tmux/plugins
+
+# TMUX environments
+.tmux/resurrect
