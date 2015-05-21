@@ -16,3 +16,6 @@
 [submodule "gdb/.peda"]
 	path = gdb/.peda
 	url = https://github.com/longld/peda.git
+[submodule "tmux/.tmux/plugins/tpm"]
+	path = tmux/.tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm
