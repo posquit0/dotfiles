@@ -28,3 +28,6 @@
 [submodule "zsh/.oh-my-zsh-custom/plugins/alias-tips"]
 	path = zsh/.oh-my-zsh-custom/plugins/alias-tips
 	url = https://github.com/djui/alias-tips
+[submodule "zsh/.oh-my-zsh-custom/plugins/zsh-history-substring-search"]
+	path = zsh/.oh-my-zsh-custom/plugins/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search.git

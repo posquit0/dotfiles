@@ -64,7 +64,8 @@
     # Just for fun
     nyan
     # Custom or 3rd-party
-    alias-tips zsh-syntax-highlighting autosuggestions
+    alias-tips zsh-syntax-highlighting zsh-history-substring-search
+    autosuggestions
   )
 ### }}}
 
@@ -126,5 +127,21 @@ source $ZSH/oh-my-zsh.sh
     # use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
     # zsh-autosuggestions is designed to be unobtrusive)
     bindkey '^T' autosuggest-toggle
+    # Accept suggestions without leaving insert mode
+    bindkey '^f' vi-forward-blank-word
+    AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
+  ## }}
+  ## Plugin: History-Substring-Search {{
+    # Bind UP and DOWN arrow keys
+    zmodload zsh/terminfo
+    bindkey "$terminfo[kcuu1]" history-substring-search-up
+    bindkey "$terminfo[kcud1]" history-substring-search-down
+    # Bind UP and DOWN arrow keys (compatibility fallback
+    # for Ubuntu 12.04, Fedora 21, and MacOSX 10.9 users)
+    bindkey '^[[A' history-substring-search-up
+    bindkey '^[[B' history-substring-search-down
+    # Bind k and j for VI mode
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
   ## }}
 ### }}}
