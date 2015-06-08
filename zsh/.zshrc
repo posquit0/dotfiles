@@ -124,11 +124,12 @@ source $ZSH/oh-my-zsh.sh
       zle autosuggest-start
     }
     zle -N zle-line-init
-    # use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
+    # Use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
     # zsh-autosuggestions is designed to be unobtrusive)
     bindkey '^T' autosuggest-toggle
     # Accept suggestions without leaving insert mode
     bindkey '^f' vi-forward-blank-word
+    # Complete entire suggestion with right arrow
     AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
   ## }}
   ## Plugin: History-Substring-Search {{
