@@ -299,7 +299,7 @@ call plug#begin('~/.vim/plugged')
     let g:UltiSnipsExpandTrigger="<Tab>"
     let g:UltiSnipsJumpForwardTrigger="<Tab>"
     let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-    let g:UltiSnipsListSnippets="<Tab><Tab>"
+    let g:UltiSnipsListSnippets="<Tab>l"
     " If you want :UltiSnipsEdit to split your window.
     let g:UltiSnipsEditSplit="vertical"
   "" }}}
