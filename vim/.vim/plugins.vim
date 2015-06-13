@@ -136,6 +136,8 @@ call plug#begin('~/.vim/plugged')
     " Change indentLine char
     " let g:indentLine_char='┆'
     let g:indentLine_char='|'
+    " Allow to see the concealed in the current cursor line when in normal & indent mode as intended
+    let g:indentLine_noConcealCursor=""
   "" }}}
 
   "" Plugin: CtrlP {{{
