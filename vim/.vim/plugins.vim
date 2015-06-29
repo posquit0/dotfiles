@@ -330,6 +330,12 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Auto Pairs {{{
     " For intensely orgasmic commenting
     Plug 'jiangmiao/auto-pairs'
+    " Shortcut for fast wrapping the word
+    let g:AutoPairsShortcutFastWrap="<C-e>"
+    " Enable FlyMode
+    let g:AutoPairsFlyMode=1
+    " Insert the key at the Fly Mode jumped postion
+    let g:AutoPairsShortcutBackInsert="<C-b>"
   "" }}}
 
   " Python
@@ -371,7 +377,8 @@ call plug#begin('~/.vim/plugged')
     " Provide Zen-coding for Vim
     Plug 'mattn/emmet-vim', { 
     \ 'for': [
-    \   'html', 'haml', 'hbs', 'html.handlebars', 'xml', 'css', 'less', 'sass'
+    \   'html', 'haml', 'jinja', 'hbs', 'html.handlebars', 'xml',
+    \   'css', 'less', 'sass'
     \ ]
     \}
     " Enable all functions, which is equal to
@@ -387,7 +394,21 @@ call plug#begin('~/.vim/plugged')
     \ 'haml': {
     \   'extends': 'html',
     \ },
+    \ 'jinja': {
+    \   'extends': 'html',
+    \ },
+    \ 'hbs': {
+    \   'extends': 'html',
+    \ },
+    \ 'html.handlebars': {
+    \   'extends': 'html',
+    \ },
     \}
+  "" }}}
+
+  "" Plugin: Jinja {{{
+    " Syntax file for vim with the ability to detect either HTML or Jinja
+    Plug 'Glench/Vim-Jinja2-Syntax'
   "" }}}
 
   " Javascript & Node
@@ -406,7 +427,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'marijnh/tern_for_vim', { 'for': ['javascript'], 'do': function('BuildTern') }
     " Display argument type hints when the cursor is left over a function
     let g:tern_show_argument_hints="on_hold"
-  "" "}}}
+  "" }}}
 """ }}}
 
 """ Themes {{{
@@ -422,12 +443,12 @@ call plug#begin('~/.vim/plugged')
   "" }}}
   "" Theme: Solarized {{{
     Plug 'altercation/vim-colors-solarized'
-  ""}}}
+  "" }}}
   "" Theme: Seoul256 {{{
     Plug 'junegunn/seoul256.vim'
   "" }}}
   "" Theme: All-in-One {{{
     Plug 'flazz/vim-colorschemes'
-  ""}}}
+  "" }}}
 """ }}}
 call plug#end()
