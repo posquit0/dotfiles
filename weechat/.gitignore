@@ -5,3 +5,5 @@
 
 logs/
 *.log
+sec.conf
+*.cache
