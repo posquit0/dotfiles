@@ -1,0 +1,8 @@
+{
+  "analytics": false,
+  "directory": "static/lib",
+  "registry": "https://bower.herokuapp.com",
+  "color": true,
+  "timeout": 60000,
+  "interactive": true
+}

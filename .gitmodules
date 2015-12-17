@@ -34,3 +34,6 @@
 [submodule "weechat/.weechat-plugins/wee-slack"]
 	path = weechat/.weechat-plugins/wee-slack
 	url = https://github.com/rawdigits/wee-slack.git
+[submodule "tools/dotbot"]
+	path = tools/dotbot
+	url = https://github.com/anishathalye/dotbot

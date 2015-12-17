@@ -1,0 +1,65 @@
+- clean: ['~']
+
+- shell:
+	- echo "Installing Posquit0's dotfiles"
+	- [git pull, Updating dotfiles]
+	- [git submodule update --init --recursive --quiet, Installing submodules]
+
+- link:
+	~/.alias: '.alias'
+	~/.bowerrc:
+		relink: true
+		path: '.bowerrc'
+	~/.ctags:
+		force: true
+		path: 'ctags/.ctags'
+	~/.curlrc:
+		relink: true
+		path: 'curl/.curlrc'
+  ~/.gdbinit: 'gdb/.gdbinit'
+	~/.gitconfig:
+		force: true
+		path: 'git/.gitconfig'
+	~/.gitconfig.local: 'git/.gitconfig.local'
+	~/.irssi: 'irssi/.irssi'
+	~/.npmrc: 'npm/.npmrc'
+	~/.octaverc: 'octave/.octaverc'
+	~/.screenrc: 'screen/.screenrc'
+	~/.tmux: 
+		force: true
+		path: 'tmux/.tmux'
+	~/.tmux.conf:
+		force: true
+		path: 'tmux/.tmux.conf'
+	~/.weechat: 'weechat/.weechat'
+	~/.weechat-plugins: 'weechat/.weechat-plugins'
+	~/.wgetrc:
+		relink: true
+		path: 'wget/.wgetrc'
+	~/.vim:
+		force: true
+		path: 'vim/.vim'
+	~/.vimrc:
+		force: true
+		path: 'vim/.vimrc'
+	~/.oh-my-zsh:
+		force: true
+		path: 'zsh/.oh-my-zsh'
+	~/.oh-my-zsh-custom:
+		force: true
+		path: 'zsh/.oh-my-zsh-custom'
+	~/.zshenv:
+		force: true
+		path: 'zsh/.zshenv'
+	~/.zshrc:
+		force: true
+		path: 'zsh/.zshrc'
+	~/.dotfiles: ''
+
+- shell:
+	- tmux start-server
+	- tmux new-session -d
+	- [~/.tmux/plugins/tpm/scripts/install_plugins.sh, Installing TMUX plugins]
+	- tmux kill-server
+	- [vim +PlugInstall +qall now, Installing Vim plugins]
+
