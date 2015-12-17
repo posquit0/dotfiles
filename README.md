@@ -1,13 +1,20 @@
-# dotfiles
+# Posquit0's dotfiles
 
-Config files(dotfiles) for super geeks.
+**[Posquit0's dotfiles](https://github.com/posquit0/dotfiles)** is Config files(dotfiles) for super geeks.
 
-## Quick Start
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+## Table of contents
+
+* [Quick Start](#quick-start)
+* [Contact](#contact)
+
+## <a name="quick-start">Quick Start
+
+```bash
+$ git clone https://github.com/posquit0/dotfiles.git ~/.dotfiles
+$ cd ~/.dotfiles
+$ ./install
+```
 
 ## What's in it?
 
@@ -63,23 +70,10 @@ Vim's plugin managed using [Vundle](https://github.com/gmarik/Vundle.vim)
 * `<F11>` brings up [NERDTree](https://github.com/scrooloose/nerdtree), a sidebar buffer for navigating and manipulating files
 * `<F12>` brings up [Gundo](https://github.com/sjl/gundo.vim), a function to browse Vim's powerful undo tree less painful
 
-## Install
+## <a name="contact">Contact
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+You are free to take my dotfiles and modify it to create your own dotfiles.
 
-## Uninstall
+If you have any questions, feel free to join me at [`#posquit0` on Freenode](irc://irc.freenode.net/posquit0) and ask away. Click [here](https://kiwiirc.com/client/irc.freenode.net/posquit0) to connect.
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
-
-## Contribute
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Good luck!
