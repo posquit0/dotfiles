@@ -34,3 +34,6 @@
 [submodule "tools/rbenv"]
 	path = tools/rbenv
 	url = https://github.com/rbenv/rbenv.git
+[submodule "tools/sqlmap"]
+	path = tools/sqlmap
+	url = https://github.com/sqlmapproject/sqlmap.git
