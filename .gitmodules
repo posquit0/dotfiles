@@ -1,21 +1,6 @@
-[submodule "vim/.vim/bundle/Vundle.vim"]
-	path = vim/.vim/bundle/Vundle.vim
-	url = http://github.com/gmarik/vundle.git
 [submodule "zsh/.oh-my-zsh"]
 	path = zsh/.oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh
-[submodule "emacs/.cask"]
-	path = tools/cask
-	url = https://github.com/cask/cask.git
-[submodule "ruby/.rbenv"]
-	path = tools/rbenv
-	url = https://github.com/sstephenson/rbenv.git
-[submodule "gdb/.gef"]
-	path = tools/gef
-	url = https://github.com/hugsy/gef.git
-[submodule "gdb/.peda"]
-	path = tools/peda
-	url = https://github.com/longld/peda.git
 [submodule "tmux/.tmux/plugins/tpm"]
 	path = tmux/.tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
@@ -28,9 +13,6 @@
 [submodule "zsh/.oh-my-zsh-custom/plugins/alias-tips"]
 	path = zsh/.oh-my-zsh-custom/plugins/alias-tips
 	url = https://github.com/djui/alias-tips
-[submodule "zsh/.oh-my-zsh-custom/plugins/zsh-history-substring-search"]
-	path = zsh/.oh-my-zsh-custom/plugins/zsh-history-substring-search
-	url = https://github.com/zsh-users/zsh-history-substring-search.git
 [submodule "weechat/.weechat-plugins/wee-slack"]
 	path = weechat/.weechat-plugins/wee-slack
 	url = https://github.com/rawdigits/wee-slack.git
@@ -40,3 +22,15 @@
 [submodule "tools/ruby-build"]
 	path = tools/ruby-build
 	url = https://github.com/rbenv/ruby-build
+[submodule "tools/gef"]
+	path = tools/gef
+	url = https://github.com/hugsy/gef
+[submodule "tools/peda"]
+	path = tools/peda
+	url = https://github.com/longld/peda.git
+[submodule "tools/cask"]
+	path = tools/cask
+	url = https://github.com/cask/cask.git
+[submodule "tools/rbenv"]
+	path = tools/rbenv
+	url = https://github.com/rbenv/rbenv.git
