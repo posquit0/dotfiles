@@ -58,13 +58,14 @@
     gem
     node npm cofee bower
     colored-man
+    history-substring-search
     # Useful tools  
     colorize catimg command-not-found common-aliases 
     encode64 jsontools urltools sudo gitignore themes
     # Just for fun
     nyan
     # Custom or 3rd-party
-    alias-tips zsh-syntax-highlighting zsh-history-substring-search
+    alias-tips zsh-syntax-highlighting
     autosuggestions
   )
 ### }}}
@@ -113,6 +114,22 @@ source $ZSH/oh-my-zsh.sh
 
 
 ### Plugin Configuration {{{
+  ## Plugin: History-Substring-Search {{
+    # Bind UP and DOWN arrow keys
+    zmodload zsh/terminfo
+    bindkey "$terminfo[kcuu1]" history-substring-search-up
+    bindkey "$terminfo[kcud1]" history-substring-search-down
+    # Bind UP and DOWN arrow keys (compatibility fallback
+    # for Ubuntu 12.04, Fedora 21, and MacOSX 10.9 users)
+    bindkey '^[[A' history-substring-search-up
+    bindkey '^[[B' history-substring-search-down
+    # Bind P and N for EMACS mode
+    bindkey -M emacs '^P' history-substring-search-up
+    bindkey -M emacs '^N' history-substring-search-down
+    # Bind k and j for VI mode
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
+  ## }}
   ## Plugin: Autosuggestions {{
     # Enable autosuggestions automatically.
     zle-line-init() {
@@ -126,18 +143,5 @@ source $ZSH/oh-my-zsh.sh
     bindkey '^f' vi-forward-blank-word
     # Complete entire suggestion with right arrow
     AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
-  ## }}
-  ## Plugin: History-Substring-Search {{
-    # Bind UP and DOWN arrow keys
-    zmodload zsh/terminfo
-    bindkey "$terminfo[kcuu1]" history-substring-search-up
-    bindkey "$terminfo[kcud1]" history-substring-search-down
-    # Bind UP and DOWN arrow keys (compatibility fallback
-    # for Ubuntu 12.04, Fedora 21, and MacOSX 10.9 users)
-    bindkey '^[[A' history-substring-search-up
-    bindkey '^[[B' history-substring-search-down
-    # Bind k and j for VI mode
-    bindkey -M vicmd 'k' history-substring-search-up
-    bindkey -M vicmd 'j' history-substring-search-down
   ## }}
 ### }}}
