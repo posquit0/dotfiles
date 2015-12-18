@@ -12,6 +12,12 @@
     stderr: true
 
 - link:
+    ~/.tools:
+      force: true
+      path: tools/
+    ~/.bin:
+      force: true
+      path: bin/
     ~/.alias: .alias
     ~/.bowerrc:
       relink: true
@@ -25,6 +31,9 @@
     ~/.gemrc:
       relink: true
       path: ruby/.gemrc
+    ~/.rbenv/plugins/ruby-build:
+      create: true
+      path: tools/ruby-build/
     ~/.gdbinit: gdb/.gdbinit
     ~/.gitconfig:
       force: true
@@ -66,12 +75,6 @@
     ~/.Xmodmap:
       relink: true
       path: X/.Xmodmap
-    ~/.tools:
-      force: true
-      path: tools/
-    ~/.bin:
-      force: true
-      path: bin/
 
 - shell:
   - tmux start-server

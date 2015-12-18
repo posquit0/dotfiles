@@ -37,3 +37,6 @@
 [submodule "tools/dotbot"]
 	path = tools/dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "tools/ruby-build"]
+	path = tools/ruby-build
+	url = https://github.com/rbenv/ruby-build
