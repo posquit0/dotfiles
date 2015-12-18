@@ -105,14 +105,9 @@ source $ZSH/oh-my-zsh.sh
 
 
 ### User Configuration {{{
-  # Java & Scala
-  export PATH="$PATH:$HOME/utils/sbt/bin"
-
-  # Cask
-  export PATH="$PATH:$HOME/.cask/bin"
-
+  # User binaries
+  export PATH="$PATH:$HOME/.bin"
   # Ruby
-  export PATH="$PATH:$HOME/.rbenv/bin"
   eval "$(rbenv init -)"
 ### }}}
 

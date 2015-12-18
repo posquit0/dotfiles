@@ -22,6 +22,9 @@
     ~/.curlrc:
       relink: true
       path: curl/.curlrc
+    ~/.gemrc:
+      relink: true
+      path: ruby/.gemrc
     ~/.gdbinit: gdb/.gdbinit
     ~/.gitconfig:
       force: true
@@ -60,6 +63,15 @@
     ~/.zshrc:
       force: true
       path: zsh/.zshrc
+    ~/.Xmodmap:
+      relink: true
+      path: X/.Xmodmap
+    ~/.tools:
+      force: true
+      path: tools/
+    ~/.bin:
+      force: true
+      path: bin/
 
 - shell:
   - tmux start-server

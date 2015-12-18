@@ -5,16 +5,16 @@
 	path = zsh/.oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh
 [submodule "emacs/.cask"]
-	path = emacs/.cask
+	path = tools/cask
 	url = https://github.com/cask/cask.git
 [submodule "ruby/.rbenv"]
-	path = ruby/.rbenv
+	path = tools/rbenv
 	url = https://github.com/sstephenson/rbenv.git
 [submodule "gdb/.gef"]
-	path = gdb/.gef
+	path = tools/gef
 	url = https://github.com/hugsy/gef.git
 [submodule "gdb/.peda"]
-	path = gdb/.peda
+	path = tools/peda
 	url = https://github.com/longld/peda.git
 [submodule "tmux/.tmux/plugins/tpm"]
 	path = tmux/.tmux/plugins/tpm
