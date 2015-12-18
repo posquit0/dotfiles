@@ -49,8 +49,12 @@
     ~/.tmux.conf:
       force: true
       path: tmux/.tmux.conf
-    ~/.weechat: weechat/.weechat/
-    ~/.weechat-plugins: weechat/.weechat-plugins/
+    ~/.weechat:
+      relink: true
+      path: weechat/.weechat/
+    ~/.weechat-plugins:
+      relink: true
+      path: weechat/.weechat-plugins/
     ~/.wgetrc:
       relink: true
       path: wget/.wgetrc
