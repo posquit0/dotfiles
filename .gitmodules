@@ -37,3 +37,6 @@
 [submodule "tools/sqlmap"]
 	path = tools/sqlmap
 	url = https://github.com/sqlmapproject/sqlmap.git
+[submodule "zsh/.oh-my-zsh-custom/plugins/resty"]
+	path = zsh/.oh-my-zsh-custom/plugins/resty
+	url = https://github.com/micha/resty

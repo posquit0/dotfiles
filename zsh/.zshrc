@@ -65,8 +65,8 @@
     # Just for fun
     nyan
     # Custom or 3rd-party
-    alias-tips zsh-syntax-highlighting
-    autosuggestions
+    alias-tips zsh-syntax-highlighting autosuggestions
+    resty
   )
 ### }}}
 
