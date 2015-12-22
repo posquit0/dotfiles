@@ -40,3 +40,6 @@
 [submodule "zsh/.oh-my-zsh-custom/plugins/resty"]
 	path = zsh/.oh-my-zsh-custom/plugins/resty
 	url = https://github.com/micha/resty
+[submodule "tools/nvm"]
+	path = tools/nvm
+	url = https://github.com/creationix/nvm.git

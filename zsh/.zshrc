@@ -110,6 +110,8 @@ source $ZSH/oh-my-zsh.sh
   export PATH="$PATH:$HOME/.bin"
   # Ruby
   eval "$(rbenv init -)"
+  # Node.JS
+  source ~/.dotfiles/tools/nvm/nvm.sh
 ### }}}
 
 
