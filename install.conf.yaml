@@ -40,7 +40,8 @@
       path: git/.gitconfig
     ~/.gitconfig.local: git/.gitconfig.local
     ~/.irssi: irssi/.irssi
-    ~/.npmrc: npm/.npmrc
+    ~/.jshintrc: node/.jshintrc
+    ~/.npmrc: node/.npmrc
     ~/.octaverc: octave/.octaverc
     ~/.screenrc: screen/.screenrc
     ~/.tmux: 
