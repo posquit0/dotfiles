@@ -166,6 +166,14 @@ call plug#begin('~/.vim/plugged')
     Plug 'sheerun/vim-polyglot'
   "" }}}
 
+  "" Plugin: EditorConfig {{{
+    " EditorConfig plugin for Vim
+    Plug 'editorconfig/editorconfig-vim'
+    " Ensure that this plugin works well with Tim Pope's fugitive
+    " Avoid loading EditorConfig for any remote files over ssh
+    let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+  "" }}}
+
   "" Plugin: Syntastic {{{
     " Syntax checking for Vim with external syntax checker
     Plug 'scrooloose/syntastic'
