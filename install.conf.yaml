@@ -59,6 +59,9 @@
     ~/.wgetrc:
       relink: true
       path: wget/.wgetrc
+    ~/.emacs.d:
+      force: true
+      path: emacs/.emacs.d/
     ~/.vim:
       force: true
       path: vim/.vim/
