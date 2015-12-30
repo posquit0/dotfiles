@@ -41,6 +41,8 @@ set scrolloff=3
 set statusline=%1*%{winnr()}\ %*%<\ %f\ %h%m%r%=%l,%c%V\ (%P)
 " Always show status line.
 set laststatus=2
+" No conceal
+set conceallevel=0
 
 """ Match and search {{{
   " Highlight searches
