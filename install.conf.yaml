@@ -44,6 +44,9 @@
     ~/.npmrc: node/.npmrc
     ~/.octaverc: octave/.octaverc
     ~/.screenrc: screen/.screenrc
+    ~/.ssh:
+      relink: true
+      path: ssh/.ssh/
     ~/.tmux: 
       force: true
       path: tmux/.tmux/
