@@ -154,7 +154,7 @@ call plug#begin('~/.vim/plugged')
 
   "" Plugin: Vim Shell {{{
     " 
-    Plug 'shougo/vimproc'
+    Plug 'Shougo/vimproc', { 'do': 'make' }
     Plug 'shougo/vimshell'
     " http://code.hootsuite.com/vimshell/
   "" }}}
