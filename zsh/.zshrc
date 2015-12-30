@@ -82,7 +82,7 @@ source $ZSH/oh-my-zsh.sh
 
   # Load alias list
   if [ -f "$HOME/.alias" ]; then
-      source "$HOME/.alias"
+    source "$HOME/.alias"
   fi
 
   # Always enable colored `grep` output
@@ -111,7 +111,15 @@ source $ZSH/oh-my-zsh.sh
   # Ruby
   eval "$(rbenv init -)"
   # Node.JS
-  source ~/.dotfiles/tools/nvm/nvm.sh
+  [ -f ~/.tools/nvm/nvm.sh ] && source ~/.tools/nvm/nvm.sh
+  # Fzf(Fuzzy Finder)
+  # Usage: Ctrl+T, Ctrl+R, Alt+C
+  if [ -f ~/.fzf.zsh  ]; then
+    source ~/.fzf.zsh
+    bindkey '^T' fzf-completion
+    bindkey '^I' $fzf_default_completion
+  fi
+
 ### }}}
 
 
@@ -140,7 +148,7 @@ source $ZSH/oh-my-zsh.sh
     zle -N zle-line-init
     # Use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
     # zsh-autosuggestions is designed to be unobtrusive)
-    bindkey '^T' autosuggest-toggle
+    # bindkey '^T' autosuggest-toggle
     # Accept suggestions without leaving insert mode
     bindkey '^f' vi-forward-blank-word
     # Complete entire suggestion with right arrow

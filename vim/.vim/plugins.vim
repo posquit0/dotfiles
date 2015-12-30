@@ -49,6 +49,10 @@ call plug#begin('~/.vim/plugged')
     Plug 'sherlock.vim'
   "" }}}
 
+  "" Plugin: Fzf {{{
+    " A general-purpose command-line fuzzy finder
+    Plug 'junegunn/fzf', { 'do': './install --all --no-update-rc' }
+  "" }}}
 """ }}}
 
 """ Interface {{{
