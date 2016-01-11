@@ -57,13 +57,14 @@
     python pip pylint pep8 virtualenv virtualenvwrapper fabric
     gem
     node npm cofee bower
-    colored-man
+    colored-man-pages
     history-substring-search
     # Useful tools  
     colorize catimg command-not-found common-aliases 
     encode64 jsontools urltools sudo gitignore themes
+    emoji-clock
     # Just for fun
-    nyan
+    nyan rand-quote
     # Custom or 3rd-party
     alias-tips zsh-syntax-highlighting autosuggestions
     resty
