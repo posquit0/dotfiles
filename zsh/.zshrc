@@ -67,7 +67,7 @@
     nyan rand-quote
     # Custom or 3rd-party
     alias-tips zsh-syntax-highlighting autosuggestions
-    resty
+    resty motd
   )
 ### }}}
 
