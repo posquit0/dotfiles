@@ -56,8 +56,10 @@
     function _prompt_git() {
       ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}["
       ZSH_THEME_GIT_PROMPT_SUFFIX="]%{$reset_color%}"
-      ZSH_THEME_GIT_PROMPT_DIRTY=" %{$fg[red]%}*%{$fg[green]%}"
-      ZSH_THEME_GIT_PROMPT_CLEAN=""
+      ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%} ✔%{$fg[green]%}"
+      ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} ✘%{$fg[green]%}"
+      ZSH_THEME_GIT_PROMPT_ADDED="%{$fg[yellow]%} ✚%{$fg[green]%}"
+      ZSH_THEME_GIT_PROMPT_MODIFIED="%{$fg[yellow]%} ✹%{$fg[green]%}"
       _prompt_colorize "" green "" "$(git_prompt_info)"
     }
   ## }}
