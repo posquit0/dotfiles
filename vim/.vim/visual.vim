@@ -9,8 +9,8 @@ syntax on
 
 " Line numbers on
 set number
-" Set relative number for line
-set relativenumber
+" Disable relative number for line(Constantly computing the relative nubmers is expensive)
+set norelativenumber
 " Show ruler
 set ruler
 " Always show tab pannel
@@ -43,6 +43,14 @@ set statusline=%1*%{winnr()}\ %*%<\ %f\ %h%m%r%=%l,%c%V\ (%P)
 set laststatus=2
 " No conceal
 set conceallevel=0
+" Use a block cursor in normal mode, i-beam cursor in insertmode
+if empty($TMUX)
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+else
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+endif
 
 """ Match and search {{{
   " Highlight searches

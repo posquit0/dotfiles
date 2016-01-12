@@ -23,11 +23,15 @@ nnoremap ; :
 " <Esc> is too annoying to type
 inoremap jkj <Esc>
 " Screen sucks, redraw everything
-nnoremap <leader>r :redraw!<CR>
+nnoremap <Leader>r :redraw!<CR>
 " Make Q meaningless (Q: Entering to Ex mode) 
 nnoremap Q <nop>
 " Switching search-highlighting off until next search
 nnoremap <silent> <Leader>/ :nohlsearch<CR>
+
+" Quickly move current line above or below
+nnoremap <C-k><C-k> :<c-u>execute 'move -1-'. v:count1<cr>
+nnoremap <C-j><C-j> :<c-u>execute 'move +'. v:count1<cr>
 
 """ Hex Editor {{{
   " Map HexEditToggle to <F9>

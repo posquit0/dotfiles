@@ -25,18 +25,28 @@ set binary
 set noeol
 " Automatically change window's cwd to file's dir
 set autochdir
-set viminfo='100,n$HOME/.vim.info
+set viminfo='100,n$HOME/.viminfo
 "" Modeline
 " Respect modeline in files
 set modeline
 set modelines=4
 
 """ Auto Commands {{{
-  " Auto reload vimrc
   if has("autocmd")
+    " Auto reload vimrc
     augroup reload_vimrc
       autocmd!
-      autocmd BufWritePost $MYVIMRC source $MYVIMRC
+      autocmd BufWritePost $MYVIMRC,*.vim 
+        \ source $MYVIMRC |
+        \ echo "Reloaded VIM Configurations"
+    augroup END
+    " Restore cursor position when opening file
+    augroup restore_cursor
+      autocmd!
+      autocmd BufReadPost *
+        \ if line("'\"") > 1 && line("'\"") <= line("$") |
+        \   exe "normal! g`\"" |
+        \ endif
     augroup END
   endif
 """ }}}

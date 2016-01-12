@@ -352,6 +352,22 @@ call plug#begin('~/.vim/plugged')
     let g:AutoPairsShortcutBackInsert="<C-b>"
   "" }}}
 
+  "" Plugin: Vim Multiple Cursors {{{
+    " Bringing Sublime Text's awesome multiple selection feature into Vim
+    Plug 'terryma/vim-multiple-cursors'
+    " Turn off the default key bindings
+    " let g:multi_cursor_use_default_mapping=0
+    " Configure custom key bindings
+    let g:multi_cursor_next_key='<C-n>'
+    let g:multi_cursor_prev_key='<C-p>'
+    let g:multi_cursor_skip_key='<C-x>'
+    let g:multi_cursor_quit_key='<Esc>'
+    " Quit and delete all existing cursor in visual mode after pressing quit key
+    let g:multi_cursor_exit_from_visual_mode=1
+    " Quit and delete all existing cursor in insert mode after pressing quit key
+    let g:multi_cursor_exit_from_insert_mode=0
+  "" }}}
+
   " Python
   "" Plugin: Jedi-Vim {{{
     " Vim binding for the autocompletion library Jedi
@@ -442,6 +458,11 @@ call plug#begin('~/.vim/plugged')
     " Display argument type hints when the cursor is left over a function
     let g:tern_show_argument_hints="on_hold"
   "" }}}
+  " Verilog
+  "" Plugin: Verilog and SystemVerilog {{{
+  " Vim Syntax Plugin for Verilog and SystemVerilog
+    Plug 'vhda/verilog_systemverilog.vim'
+  "" }}}
 """ }}}
 
 """ Themes {{{
@@ -452,6 +473,9 @@ call plug#begin('~/.vim/plugged')
     " Bring the 256 color version
     let g:rehash256=1
   "" }}}
+  "" Theme: Gruvbox {{{
+    Plug 'morhetz/gruvbox'
+  "" }}}
   "" Theme: Zenburn {{{
     Plug 'jnurmine/Zenburn'
   "" }}}
@@ -460,6 +484,9 @@ call plug#begin('~/.vim/plugged')
   "" }}}
   "" Theme: Seoul256 {{{
     Plug 'junegunn/seoul256.vim'
+  "" }}}
+  "" Theme: Base16 {{{
+    Plug 'chriskempson/base16-vim'
   "" }}}
   "" Theme: All-in-One {{{
     Plug 'flazz/vim-colorschemes'
