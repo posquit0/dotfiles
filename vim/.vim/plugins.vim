@@ -65,11 +65,13 @@ call plug#begin('~/.vim/plugged')
       let g:airline_powerline_fonts=1
     endif
     " Specify theme for airline
-    let g:airline_theme='sol'
+    let g:airline_theme='tomorrow'
     let g:airline#extensions#tabline#enabled=1
     let g:airline#extensions#tabline#left_sep=""
     let g:airline#extensions#tabline#left_alt_sep='|'
-    let g:airline_section_b="%{strftime('%H:%M:%S')}"
+    " Customize a left side of airline
+    " let g:airline_section_b="%{strftime('%H:%M:%S')}"
+    " Customize a right side of airline
     let g:airline_section_y="[%{&fileformat}/%{strlen(&fenc)?&fenc:&enc}]"
     " Use airline's showmode
     set noshowmode
@@ -475,6 +477,17 @@ call plug#begin('~/.vim/plugged')
   "" }}}
   "" Theme: Gruvbox {{{
     Plug 'morhetz/gruvbox'
+    " Uses 256 color palette
+    " Set option value to 16 to fallback
+    let g:gruvbox_termcolors=256
+    " Change darkmode contrast. Possible values are `soft`, `medium`, `hard`
+    let g:gruvbox_contrast_dark="medium"
+    " Change lightmode contrast. Possible values are `soft`, `medium`, `hard`
+    let g:gruvbox_contrast_light="hard"
+    " Change cursor background
+    let g:gruvbox_hls_cursor="green"
+    " Inverts indent guides
+    let g:gruvbox_invert_indent_guides=0
   "" }}}
   "" Theme: Zenburn {{{
     Plug 'jnurmine/Zenburn'
