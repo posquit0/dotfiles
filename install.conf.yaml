@@ -83,6 +83,9 @@
     ~/.zshrc:
       force: true
       path: zsh/.zshrc
+    ~/.xpra/xpra.conf:
+      relink: true
+      path: X/.xpra/xpra.conf
     ~/.Xmodmap:
       relink: true
       path: X/.Xmodmap
