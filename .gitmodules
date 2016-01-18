@@ -46,3 +46,6 @@
 [submodule "emacs/.emacs.d"]
 	path = emacs/.emacs.d
 	url = https://github.com/syl20bnr/spacemacs
+[submodule "X/.Xresources.d/xcolors"]
+	path = X/.Xresources.d/xcolors
+	url = https://github.com/tlatsas/xcolors.git
