@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# xstartup for VNC
+#
+# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# http://www.posquit0.com/
+
+
+### Miscellaneous {{{
+  # Print a message for an information
+  function print_info() {
+    echo -ne "\033[1;32m"
+    echo -n "$@"
+    echo -e "\033[m"
+  }
+  # Print a message for an error
+  function print_error() {
+    echo -ne "\033[1;31m"
+    echo -n "$@"
+    echo -e "\033[m"
+  }
+### }}}
+
+# Uncomment the following two lines for normal desktop:
+# unset SESSION_MANAGER
+# exec /etc/X11/xinit/xinitrc
+
+Xmodmap() {
+  if [ -f "${HOME}/.Xmodmap" -a -x "$(which xmodmap)" ]; then
+    print_info "Loading Xmodmap..."
+    xmodmap "${HOME}/.Xmodmap" || print_error "Failed to load Xmodmap."
+  else
+    print_error "Can't load Xmodmap due to missing files."
+  fi
+}
+
+Xrdb() {
+  if [ -f "${HOME}/.Xresources" -a -x "$(which xrdb)" ]; then
+    print_info 'Loading X ressources...'
+    xrdb -merge "$HOME/.Xresources" || print_error 'Failed to load X ressources'
+  fi
+}
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+
+Xrdb
+Xmodmap
+ibus-daemon --xim &
+
+xsetroot -solid darkgrey
+exec ~/.bin/dwm &
+# xsetroot -solid grey
+# vncconfig -iconic &
+# x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+# x-window-manager &

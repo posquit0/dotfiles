@@ -52,3 +52,6 @@
 [submodule "tools/fonts/powerline-fonts"]
 	path = tools/fonts/powerline-fonts
 	url = https://github.com/powerline/fonts.git
+[submodule "tools/dwm"]
+	path = tools/dwm
+	url = http://git.suckless.org/dwm

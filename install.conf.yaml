@@ -91,13 +91,22 @@
       path: X/.Xresources
     ~/.Xresources.d:
       force: true
-      path: X/.Xresources.d
+      path: X/.Xresources.d/
     ~/.xpra/xpra.conf:
       force: true
       path: X/.xpra/xpra.conf
     ~/.Xmodmap:
       force: true
       path: X/.Xmodmap
+    ~/.vnc:
+      force: true
+      path: X/.vnc/
+    ~/.dwm:
+      force: true
+      path: dwm/
+    ~/.tools/dwm/config.h:
+      force: true
+      path: ~/.dwm/config.h
 
 - shell:
   - tmux start-server
@@ -114,6 +123,11 @@
     stderr: true
   - 
     command: [~/.tools/fonts/powerline-fonts/install.sh, Installing patched fonts for Powerline]
+    stdin: true
+    stdout: true
+    stderr: true
+  - 
+    command: [make dwm --directory=~/.tools/dwm, Installing DWM(Dynamic Window Manager)]
     stdin: true
     stdout: true
     stderr: true
