@@ -55,7 +55,7 @@
   ## Show current working git repository information
     function _prompt_git() {
       ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}["
-      ZSH_THEME_GIT_PROMPT_SUFFIX="]%{$reset_color%}"
+      ZSH_THEME_GIT_PROMPT_SUFFIX="] %{$reset_color%}"
       ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%} ✔%{$fg[green]%}"
       ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} ✘%{$fg[green]%}"
       ZSH_THEME_GIT_PROMPT_ADDED="%{$fg[yellow]%} ✚%{$fg[green]%}"
@@ -84,37 +84,11 @@
   ## Time {{
   ## Show current time
     # Set prefix/suffix for time
-    ZSH_THEME_TIME_PROMPT_PREFIX=""
-    ZSH_THEME_TIME_PROMPT_POSTFIX=""
-    ZSH_THEME_TIME_PROMPT_ENABLE_EMOJI="true"
+    ZSH_THEME_TIME_PROMPT_PREFIX="["
+    ZSH_THEME_TIME_PROMPT_POSTFIX="]"
     function _prompt_time() {
-      # To make a emoji for clock
-      # Add 15 minutes to the current time and save the value as $minutes.
-      (( minutes = $(date '+%M') + 15 ))
-      (( hour = $(date '+%I') + minutes / 60 ))
-      # Make sure minutes and hours don't exceed 60 nor 12 respectively
-      (( minutes %= 60 )); (( hour %= 12 ))
-      case $hour in
-        0) emoji_clock="🕛"; [ $minutes -ge 30 ] && emoji_clock="🕧";;
-        1) emoji_clock="🕐"; [ $minutes -ge 30 ] && emoji_clock="🕜";;
-        2) emoji_clock="🕑"; [ $minutes -ge 30 ] && emoji_clock="🕝";;
-        3) emoji_clock="🕒"; [ $minutes -ge 30 ] && emoji_clock="🕞";;
-        4) emoji_clock="🕓"; [ $minutes -ge 30 ] && emoji_clock="🕟";;
-        5) emoji_clock="🕔"; [ $minutes -ge 30 ] && emoji_clock="🕠";;
-        6) emoji_clock="🕕"; [ $minutes -ge 30 ] && emoji_clock="🕡";;
-        7) emoji_clock="🕖"; [ $minutes -ge 30 ] && emoji_clock="🕢";;
-        8) emoji_clock="🕗"; [ $minutes -ge 30 ] && emoji_clock="🕣";;
-        9) emoji_clock="🕘"; [ $minutes -ge 30 ] && emoji_clock="🕤";;
-        10) emoji_clock="🕙"; [ $minutes -ge 30 ] && emoji_clock="🕥";;
-        11) emoji_clock="🕚"; [ $minutes -ge 30 ] && emoji_clock="🕦";;
-        *) emoji_clock="⌛";;
-      esac
       local current_time="%*"
-      if [ "$ZSH_THEME_TIME_PROMPT_ENABLE_EMOJI" != "true" ]; then
-        _prompt_colorize "" white "" "$ZSH_THEME_TIME_PROMPT_PREFIX$current_time$ZSH_THEME_TIME_PROMPT_POSTFIX"
-      else
-        _prompt_colorize "" white "" "$emoji_clock $ZSH_THEME_TIME_PROMPT_PREFIX$current_time$ZSH_THEME_TIME_PROMPT_POSTFIX"
-      fi
+      _prompt_colorize "" white "" "$ZSH_THEME_TIME_PROMPT_PREFIX$current_time$ZSH_THEME_TIME_PROMPT_POSTFIX"
     }
   ## }}
   ## Machine {{
@@ -145,7 +119,6 @@
       _prompt_dir
       _prompt_colorize "" white "" " "
       _prompt_git
-      _prompt_colorize "" white "" " "
       _prompt_time
     }
   ## }}
