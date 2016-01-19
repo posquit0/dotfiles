@@ -1,0 +1,150 @@
+/*
+ * X resource file for URxvt
+ * vim:ft=xdefaults:
+ *
+ * Maintained by Claud D. Park <posquit0.bj@gmail.com>
+ * http://www.posquit0.com/
+ */
+
+
+!!! General {{{
+  /* To report the TERM variable correctly with 256 colors support */
+  URxvt*termName: rxvt-unicode-256color
+  /* Lines of history to save */
+  URxvt*saveLines: 4096
+  /* Start as a login shell by prepending a - to argv[0] of the shell */
+  URxvt*loginShell: True
+  /* Turn on/off hold window after exit support. If enabled, urwvt will not immediately
+   * destory its window when the program executed within it exits.
+   * It will wait till it is being killed or closed by the user */
+  URxvt*hold: false
+!!! }}}
+
+
+!!! Fonts & Input Method {{{
+  /* A comma separated list of font names that are checked in order
+   * when trying to find glyphs for characters */
+  URxvt*font: \
+    xft:Hack:size=12:antialias=true:hinting=true, \
+    xft:NanumGothicCoding:size=12:antialias=true:hinting=true
+  URxvt*italicFont: \
+    xft:Hack:size=12:italic:antialias=true:hinting=true, \
+    xft:NanumGothicCoding:size=12:italic:antialias=true:hinting=true
+  URxvt*boldFont: \
+    xft:Hack:size=12:bold:antialias=true:hinting=true, \
+    xft:NanumGothicCoding:size=12:bold:antialias=true:hinting=true
+  URxvt*boldItalicFont: \
+    xft:Hack:size=12:bold:italic:antialias=true:hinting=true, \
+    xft:NanumGothicCoding:size=12:bold:italic:antialias=true:hinting=true
+  /* Double-buffering for xft (default enabled) */
+  URxvt*buffered: True
+  /* Letter spacing adjustment */
+  URxvt*letterSpace: 0
+  /* Specifies number of lines to insert between each row of the display */
+  URxvt*lineSpace: 0
+  /* Set a name of input method to use */
+  URxvt*inputMethod: ibus
+  /* Set a type of input(OverTheSpot, OffTheSpot, Root) */
+  URxvt*preeditType: OffTheSpot
+/* The locale to use for opening the IM */
+! URxvt*imLocale: en_US.UTF-8
+/* Specify the font-set used for XIM styles "OverTheSpot" or "OffTheSpot" */
+! URxvt*imFont: NanumGothic
+!!! }}}
+
+
+!!! Visual {{{
+  /* Set a icon file for URxvt */
+  ! URxvt*iconFile: ~/terminal.svg
+  /* Create the window with the specified X window gemoetry (default 80x24) */
+  URxvt*gemetry: 120x44
+  /* Reverse between foreground and background colors */
+  URxvt*reverseVideo: False
+  /* Fade the text by the given percentage when focus is lost */
+  URxvt*fadeing: 30
+  /* Use visual bell on receipt of a bell character */
+  URxvt*visualBell: True
+
+  /* Blink a cursor */
+  URxvt*cursorBlink: True
+
+  /* No scrollbar */
+  URxvt*scrollBar: True
+  /* Set a scrollbar's position to right */
+  URxvt*scrollBar_right: True
+  /* Set the style of the scrollbar(rxvt, plain, next, xterm) */
+  URxvt*scrollstyle: plain
+  /* Use the specified color for the scrollbar(default #B2B2B2) */
+  URxvt*scrollColor: #777777
+  /* Set the scrollbar width in pixels */
+  URxvt*thickness: 5
+  /* Scroll to bottom when a non-special key pressed */
+  URxvt*scrollTtyKeypress: True
+  /* Scroll to bottom when tty receives output */
+  URxvt*scrollTtyOutput: False
+  /* Scroll with scrollback  buffer when tty recieves new lines
+   * and scrollTtyOutput is False */
+  URxvt*scrollWithBuffer: True
+  /* For speed. When receiving lots of lines, urxvt will only scroll
+   * once in a while (around 60x/sec), resulting in fewer updates */
+  URxvt*skipScroll: True
+
+  /* The color of the border around the text area and between the scrollbar and the text */
+  URxvt*borderColor: #000000
+  /* Set MWM hints to request a borderless window */
+  URxvt*borderLess: True
+  /* Internal border of number pixels */
+  URxvt.internalBorder: 0
+  /* External border of number pixels */
+  URxvt.externalBorder: 0
+
+  /* Draw underline on URL */
+  URxvt*underlineURLs: True
+!!! }}}
+
+
+
+!!! Key Mappings {{{
+  /* Turn on/off ISO 14755 (default enabled) */
+  URxvt*iso14755: False
+  /* Trun on/off ISO 14755 5.2 mode (default enabled) */
+  URxvt*iso14755_52: False
+!!! }}}
+URxvt.perl-ext-common: default,matcher
+URxvt.urlLauncher: firefox
+URxvt.matcher.button: 1
+
+
+URxvt.background: #202020
+URxvt.foreground: #f5f5f5
+! Black
+*color0:   #303030
+*color8:   #5F5F5F
+
+! Red
+*color1:   #c03000
+*color9:   #FF3A78
+
+! Green
+*color2:   #b1d631
+*color10:  #A6CD07
+
+! Yellow
+*color3:   #fecf35
+*color11:  #B5C865
+
+! Blue
+*color4:   #426870
+*color12:  #4A7781
+
+! Magenta
+*color5:   #6D506D
+*color13:  #FF3B77
+
+! Cyan
+*color6:   #4bb5c1
+*color14:  #4bb5c1
+
+! White
+*color7:   #e2e2e5
+*color15:  #e2e2e5

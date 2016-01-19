@@ -83,11 +83,20 @@
     ~/.zshrc:
       force: true
       path: zsh/.zshrc
-    ~/.xpra/xpra.conf:
+    ~/.xinitrc:
       relink: true
+      path: X/.xinitrc
+    ~/.Xresources:
+      force: true
+      path: X/.Xresources
+    ~/.Xresources.d:
+      force: true
+      path: X/.Xresources.d
+    ~/.xpra/xpra.conf:
+      force: true
       path: X/.xpra/xpra.conf
     ~/.Xmodmap:
-      relink: true
+      force: true
       path: X/.Xmodmap
 
 - shell:
@@ -100,6 +109,11 @@
   - tmux kill-server
   - 
     command: [vim +PlugInstall +qall now, Installing Vim plugins]
+    stdin: true
+    stdout: true
+    stderr: true
+  - 
+    command: [~/.tools/fonts/powerline-fonts/install.sh, Installing patched fonts for Powerline]
     stdin: true
     stdout: true
     stderr: true

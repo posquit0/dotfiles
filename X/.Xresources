@@ -1,0 +1,41 @@
+/*
+ * .Xresources
+ * vim:ft=xdefaults:
+ *
+ * Maintained by Claud D. Park <posquit0.bj@gmail.com>
+ * http://www.posquit0.com/
+ */
+
+
+!!! General {{{
+
+!!! }}}
+
+
+!!! Font {{{
+  Xft.dpi: 96
+  Xft.antialias: True
+  Xft.hinting: True
+  Xft.hintstyle: hintslight
+!Xft.rgba: rgb
+!!! }}}
+
+
+!!! Terminals {{{
+  #include ".Xresources.d/urxvt"
+  #include ".Xresources.d/xterm"
+!!! }}}
+
+
+!!! X11 Applications {{{
+
+!!! }}}
+
+! XTerm*faceName: Bitstream Vera Serif Mono
+! xterm*faceSize: 11
+! xterm*vt100*geometry: 80x60
+! xterm*saveLines: 16384
+! xterm*loginShell: true
+! xterm*charClass: 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48
+! xterm*termName: xterm-color
+! xterm*eightBitInput: false

@@ -49,3 +49,6 @@
 [submodule "X/.Xresources.d/xcolors"]
 	path = X/.Xresources.d/xcolors
 	url = https://github.com/tlatsas/xcolors.git
+[submodule "tools/fonts/powerline-fonts"]
+	path = tools/fonts/powerline-fonts
+	url = https://github.com/powerline/fonts.git

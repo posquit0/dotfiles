@@ -1,0 +1,102 @@
+/*
+ * X resource file for XTerm
+ * vim:ft=xdefaults:
+ *
+ * Maintained by Claud D. Park <posquit0.bj@gmail.com>
+ * http://www.posquit0.com/
+ */
+
+
+!!! General {{{
+  /* To report the TERM variable correctly with 256 colors support */
+  XTerm*termName: xterm-256color
+  /* Lines of history to save */
+  XTerm*saveLines: 4096
+  /* Interpret all incoming data as UTF-8 encoded */
+  XTerm*locale: True
+  /* Start as a login shell by prepending a - to argv[0] of the shell */
+  XTerm*loginShell: True
+!!! }}}
+
+
+!!! Fonts {{{
+  /* Set a font and styles */
+  XTerm*faceName: xft:DejaVu Sans Mono:style=Book:antialias=true:size=10
+  /* Set a CJK font and styles */
+  XTerm*faceNameDoublesize: xft:NanumGothicCoding
+!!! }}}
+
+
+!!! Visual {{{
+  /* Create the window with the specified X window gemoetry (default 80x24) */
+  XTerm*gemetry: 120x44
+  /* Reverse between foreground and background colors */
+  XTerm*reverseVideo: False
+  /* Use visual bell on receipt of a bell character */
+  XTerm*visualBell: True
+
+  /* Blink a cursor */
+  XTerm*cursorBlink: True
+
+  /* No scrollbar */
+  XTerm*ScrollBar: False
+  /* Set a scrollbar's position to right */
+  XTerm*rightScrollBar: True
+  /* Scroll to bottom when tty receives output */
+  XTerm*scrollTtyOutput: False
+!!! }}}
+
+
+!!! Key Mappings {{{
+  /* Use `Alt` key for keyboard shortcuts */
+  XTerm*metaSendsEscape: True
+!!! }}}
+
+! Term.eightBitInput:            false
+/*
+#if defined(COLOR_FG) && defined(COLOR_BG)
+*/
+#ifdef COLOR_FG
+#ifdef COLOR_BG
+XTerm*background:              COLOR_BG
+XTerm*foreground:              COLOR_FG
+XTerm*cursorColor:             COLOR_FG
+XTerm*pointerColorBackground:  COLOR_BG
+XTerm*pointerColor:            COLOR_FG
+#endif
+#endif
+
+#ifdef COLOR_TERM_BLACK
+XTerm*colorBD:                 COLOR_TERM_LIGHT_YELLOW
+XTerm*colorUL:                 COLOR_TERM_LIGHT_RED
+
+XTerm*color0:                  COLOR_TERM_BLACK
+XTerm*color1:                  COLOR_TERM_DARK_RED
+XTerm*color2:                  COLOR_TERM_DARK_GREEN
+XTerm*color3:                  COLOR_TERM_DARK_YELLOW
+XTerm*color4:                  COLOR_TERM_DARK_BLUE
+XTerm*color5:                  COLOR_TERM_DARK_MAGENTA
+XTerm*color6:                  COLOR_TERM_DARK_CYAN
+XTerm*color7:                  COLOR_TERM_LIGHT_GRAY
+XTerm*color8:                  COLOR_TERM_DARK_GRAY
+XTerm*color9:                  COLOR_TERM_LIGHT_RED
+XTerm*color10:                 COLOR_TERM_LIGHT_GREEN
+XTerm*color11:                 COLOR_TERM_LIGHT_YELLOW
+XTerm*color12:                 COLOR_TERM_LIGHT_BLUE
+XTerm*color13:                 COLOR_TERM_LIGHT_MAGENTA
+XTerm*color14:                 COLOR_TERM_LIGHT_CYAN
+XTerm*color15:                 COLOR_TERM_WHITE
+#endif
+
+/*
+ * Fix ctrl-h. Needed for weird xterm/tmx compatibility with apps.
+ * For my specific case, <C-h> was passed to vim as backspace, thus preventing
+ * the key sequence from being re-bound.
+ * See: http://www.ibb.net/~anne/keyboard.html
+ */
+!*VT100.Translations: #override \
+!        <Key>BackSpace: string(0x7F)\n\
+!        <Key>Delete:    string("\033[3~")\n\
+!        <Key>Home:      string("\033[1~")\n\
+!        <Key>End:       string("\033[4~")
+!*ttyModes: erase ^?
