@@ -64,7 +64,7 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Airline {{{
     " Use statusline more effective
     Plug 'bling/vim-airline'
-    if has('gui_running')
+    if exists('$DISPLAY')
       " Automatic population of the g:airline_symbols dictionary with
       " powerline symbols
       let g:airline_powerline_fonts=1
