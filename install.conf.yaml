@@ -92,21 +92,27 @@
     ~/.Xresources.d:
       force: true
       path: X/.Xresources.d/
-    ~/.xpra/xpra.conf:
-      force: true
-      path: X/.xpra/xpra.conf
     ~/.Xmodmap:
       force: true
       path: X/.Xmodmap
-    ~/.vnc:
-      force: true
-      path: X/.vnc/
+    ~/.wallpaper:
+      relink: true
+      path: X/.wallpaper/
+    ~/.icons:
+      relink: true
+      path: X/.icons/
     ~/.dwm:
       force: true
       path: dwm/
     ~/.tools/dwm/config.h:
       force: true
       path: ~/.dwm/config.h
+    ~/.vnc:
+      force: true
+      path: X/.vnc/
+    ~/.xpra/xpra.conf:
+      force: true
+      path: X/.xpra/xpra.conf
 
 - shell:
   - tmux start-server
