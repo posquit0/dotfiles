@@ -1,0 +1,11 @@
+/*
+ * X resource file for XCursor
+ * vim:ft=xdefaults:
+ *
+ * Maintained by Claud D. Park <posquit0.bj@gmail.com>
+ * http://www.posquit0.com/
+ */
+
+
+Xcursor*theme: Breeze-Obsidian
+Xcursor.size: 16

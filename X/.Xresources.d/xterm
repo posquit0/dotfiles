@@ -52,42 +52,8 @@
   XTerm*metaSendsEscape: True
 !!! }}}
 
-! Term.eightBitInput:            false
-/*
-#if defined(COLOR_FG) && defined(COLOR_BG)
-*/
-#ifdef COLOR_FG
-#ifdef COLOR_BG
-XTerm*background:              COLOR_BG
-XTerm*foreground:              COLOR_FG
-XTerm*cursorColor:             COLOR_FG
-XTerm*pointerColorBackground:  COLOR_BG
-XTerm*pointerColor:            COLOR_FG
-#endif
-#endif
-
-#ifdef COLOR_TERM_BLACK
-XTerm*colorBD:                 COLOR_TERM_LIGHT_YELLOW
-XTerm*colorUL:                 COLOR_TERM_LIGHT_RED
-
-XTerm*color0:                  COLOR_TERM_BLACK
-XTerm*color1:                  COLOR_TERM_DARK_RED
-XTerm*color2:                  COLOR_TERM_DARK_GREEN
-XTerm*color3:                  COLOR_TERM_DARK_YELLOW
-XTerm*color4:                  COLOR_TERM_DARK_BLUE
-XTerm*color5:                  COLOR_TERM_DARK_MAGENTA
-XTerm*color6:                  COLOR_TERM_DARK_CYAN
-XTerm*color7:                  COLOR_TERM_LIGHT_GRAY
-XTerm*color8:                  COLOR_TERM_DARK_GRAY
-XTerm*color9:                  COLOR_TERM_LIGHT_RED
-XTerm*color10:                 COLOR_TERM_LIGHT_GREEN
-XTerm*color11:                 COLOR_TERM_LIGHT_YELLOW
-XTerm*color12:                 COLOR_TERM_LIGHT_BLUE
-XTerm*color13:                 COLOR_TERM_LIGHT_MAGENTA
-XTerm*color14:                 COLOR_TERM_LIGHT_CYAN
-XTerm*color15:                 COLOR_TERM_WHITE
-#endif
-
+! xterm*charClass: 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48
+! xterm*eightBitInput: false
 /*
  * Fix ctrl-h. Needed for weird xterm/tmx compatibility with apps.
  * For my specific case, <C-h> was passed to vim as backspace, thus preventing
