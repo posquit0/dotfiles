@@ -3,7 +3,14 @@
 ! Maintained by Claud D. Park <posquit0.bj@gmail.com>
 ! http://www.posquit0.com/
 
+
 ! Make capslock an additional control
-remove Lock = Caps_Lock
-keycode 0x42 = Control_L
-add Control = Control_L
+! remove Lock = Caps_Lock
+! keycode 0x42 = Control_L
+! add Control = Control_L
+
+
+remove mod1 = Alt_R
+remove control = Control_R
+keycode 105 = Hangul_Hanja
+keycode 108 = Hangul
