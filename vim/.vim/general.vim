@@ -26,6 +26,8 @@ set noeol
 " Automatically change window's cwd to file's dir
 set autochdir
 set viminfo='100,n$HOME/.viminfo
+" Set default shell to execute functions
+set shell=sh
 "" Modeline
 " Respect modeline in files
 set modeline

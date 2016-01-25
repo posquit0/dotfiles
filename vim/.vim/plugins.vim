@@ -141,6 +141,23 @@ call plug#begin('~/.vim/plugged')
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
   "" }}}
 
+  "" Plugin: NERD Tree {{{
+    " A plugin of NERDTree showing git status flags
+    Plug 'Xuyuanp/nerdtree-git-plugin'
+    " Use this variable to change symbols
+    let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "*",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ "Unknown"   : "?"
+    \ }
+  "" }}}
+
   "" Plugin: indentLine {{{
     " Displying thin vertical lines at each indentation level for code
     Plug 'Yggdroot/indentLine'
@@ -337,7 +354,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-surround'
   "" }}}
 
-  "" Plugin: Nerd Commenter {{{
+  "" Plugin: NERD Commenter {{{
     " For intensely orgasmic commenting
     Plug 'scrooloose/nerdcommenter'
     " Comment the whole lines in visual mode
