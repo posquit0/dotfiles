@@ -11,7 +11,7 @@
       ZSH_THEME_GIT_PROMPT_PREFIX=
       ZSH_THEME_GIT_PROMPT_SUFFIX=
 if [[ $SHLVL -eq 1 ]] ; then
-  echo "$fg[green]"
+  echo "$fg[white]"
   cat $(dirname -- $0)/motd
 	echo "$reset_color"
   print -P "`quote`"
