@@ -82,6 +82,39 @@ call plug#begin('~/.vim/plugged')
     set noshowmode
   "" }}}
 
+  "" Plugin: Vim DevIcons {{{
+    " Adds filetype glyphs (icons) to other plugins
+    Plug 'ryanoasis/vim-devicons'
+    " Disable loading the plugin on non-X display
+    if !exists('$DISPLAY')
+      let g:webdevicons_enable=0
+    endif
+    " Enable/disable adding the flags to NERDTree
+    let g:webdevicons_enable_nerdtree=1
+    " Enable/disable adding the custom source to unite
+    let g:webdevicons_enable_unite=0
+    " Enable/disable adding the column to vimfiler
+    let g:webdevicons_enable_vimfiler=0
+    " Enable/disable adding to vim-airline's tabline
+    let g:webdevicons_enable_airline_tabline=1
+    " Enable/disable adding to vim-airline's statusline
+    let g:webdevicons_enable_airline_statusline=1
+    " Enable/disable ctrlp MRU file mode glyphs
+    let g:webdevicons_enable_ctrlp=1
+    " Enable/disable adding to flagship's statusline
+    let g:webdevicons_enable_flagship_statusline=0
+    " Turn on/off file node glyph decorations
+    let g:WebDevIconsUnicodeDecorateFileNodes=1
+    " Whether or not font is using double-width glyphs
+    let g:WebDevIconsUnicodeGlyphDoubleWidth=1
+    " Whether or not to show the nerdtree brackets around flags
+    let g:webdevicons_conceal_nerdtree_brackets=1
+    " The amount of space to use after the glyph character
+    let g:WebDevIconsNerdTreeAfterGlyphPadding=' '
+    " Force extra padding in NERDTree so that the filetype icons line up vertically
+    let g:WebDevIconsNerdTreeGitPluginForceVAlign=1
+  "" }}}
+
   "" Plugin: Vim Startify {{{
     " A fancy start screen for Vim
     Plug 'mhinz/vim-startify'
@@ -125,7 +158,7 @@ call plug#begin('~/.vim/plugged')
     nnoremap <silent> <F10> :TagbarToggle<CR>
   "" }}}
 
-  "" Plugin: NERD Tree {{{
+  "" Plugin: NERDTree {{{
     " Explore filesystem with Vim
     Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
     " Map NERDTreeToggle to <F11>
@@ -141,7 +174,7 @@ call plug#begin('~/.vim/plugged')
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
   "" }}}
 
-  "" Plugin: NERD Tree {{{
+  "" Plugin: NERDTree Git Plugin {{{
     " A plugin of NERDTree showing git status flags
     Plug 'Xuyuanp/nerdtree-git-plugin'
     " Use this variable to change symbols
