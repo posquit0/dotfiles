@@ -4,12 +4,18 @@
 " http://www.posquit0.com/
 
 """ General Configuration (excepting visual.vim)
-source \~/.vim/general.vim
-source \~/.vim/key-mapping.vim
+if filereadable(expand("\~/.vim/general.vim"))
+  source \~/.vim/general.vim
+endif
+if filereadable(expand("\~/.vim/key-mapping.vim"))
+  source \~/.vim/key-mapping.vim
+endif
+
 
 """ Plugin Configuration
 " All the vim plugins are managed by 'vim-plug'
-" List & configuration of plugins separated to a file 'plugins.vim'
+" List & configuration of plugins separated to two file 'plugins.vim',
+" 'plugins.after.vim'.
 " It makes this vimrc could also work out-of-box even if not managed by
 " dotfiles.
 if filereadable(expand("\~/.vim/plugins.vim"))
@@ -17,15 +23,25 @@ if filereadable(expand("\~/.vim/plugins.vim"))
 endif
 
 """ General Configuration - Visual
-source \~/.vim/visual.vim
+if filereadable(expand("\~/.vim/visual.vim"))
+  source \~/.vim/visual.vim
+endif
 
+""" Plugin Configuration after loading plug
+if filereadable(expand("\~/.vim/plugins.after.vim"))
+  source \~/.vim/plugins.after.vim
+endif
 
 """ Override Configuration (because of plugins.vim)
-source \~/.vim/override.vim
+if filereadable(expand("\~/.vim/override.vim"))
+  source \~/.vim/override.vim
+endif
 
 """ GUI Specific Configuration
 if has('gui_running')
-  source \~/.vim/gvim.vim
+  if filereadable(expand("\~/.vim/gvim.vim"))
+    source \~/.vim/gvim.vim
+  endif
 endif
 
 """ Local Specific Configuration
