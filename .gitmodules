@@ -55,3 +55,6 @@
 [submodule "tools/dwm"]
 	path = tools/dwm
 	url = http://git.suckless.org/dwm
+[submodule "tools/fonts/nerd-fonts"]
+	path = tools/fonts/nerd-fonts
+	url = https://github.com/ryanoasis/nerd-fonts

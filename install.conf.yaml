@@ -133,6 +133,11 @@
     stdout: true
     stderr: true
   - 
+    command: [~/.tools/fonts/nerd-fonts/install.sh, Installing Nerd fonts]
+    stdin: true
+    stdout: true
+    stderr: true
+  - 
     command: [make dwm --directory=~/.tools/dwm, Installing DWM(Dynamic Window Manager)]
     stdin: true
     stdout: true
