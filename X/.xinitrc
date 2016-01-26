@@ -32,7 +32,7 @@
   # Modify keymaps and pointer button mappings
   Xmodmap() {
     if [ -f "${HOME}/.Xmodmap" -a -x "$(which xmodmap)" ]; then
-      print_info "Loading Xmodmap..."
+      print_info "Loading Xmodmap to modify keymaps and pointer button mappings..."
       xmodmap "${HOME}/.Xmodmap" || print_error "Failed to load Xmodmap."
     else
       print_error "Can't load Xmodmap due to missing files."
@@ -41,7 +41,7 @@
   # Bind commands to certain keys or key combinations on the keyboard
   Xbindkeys() {
     if [ -f "${HOME}/.xbindkeysrc" -a -x "$(which xbindkeys)" ]; then
-      print_info "Launching Xbindkeys..."
+      print_info "Launching Xbindkeys to bind commands to certain keys..."
       # LC_ALL=C xbindkeys || print_error "Failed to launch Xbindkeys"
     fi
   }
@@ -50,10 +50,22 @@
     if [ -x "$(which xset)" ]; then
       print_info "Launching Xset to configure personal fonts"
       # Append elements to the current font path
+      xset +fp "${HOME}/.local/share/fonts"
       xset +fp "${HOME}/.fonts"
       # Cause the server to reread the font databases in the current font path
       xset fp rehash
     fi
+  }
+  # Set an input method to support multi-languages
+  SetIM() {
+    setxkbmap -layout us
+    # Setup IM enviroment
+    export GTK_IM_MODULE=ibus
+    export QT_IM_MODULE=ibus
+    export QT4_IM_MODULE=ibus
+    export CLUTTER_IM_MODULE=ibus
+    export XMODIFIERS=@im=ibus
+    ibus-daemon --xim --daemonize
   }
 ### }}}
 
@@ -62,22 +74,22 @@
   # Run urxvt daemon
   Urxvtd() {
     if [ -x "$(which urxvtd)" ]; then
-      print_info "Launching urxvt daemon..."
-      urxvtd --quiet --opendisplay --fork || print_error "Failed to launch urxvt daemon"
+      print_info "Launching Urxvt daemon..."
+      urxvtd --quiet --opendisplay --fork || print_error "Failed to launch Urxvt daemon"
     fi
   }
   # Run urxvt client
   Urxvtc() {
     if [ -x "$(which urxvtc)" ]; then
-      print_info "Launching urxvt client..."
-      (sleep 1; urxvtc) &
+      print_info "Launching Urxvt Terminal Emulator Client..."
+      (urxvtc || print_error "Failed to launch Urxvt") &
     fi
   }
   # Run urxvt
   Urxvt() {
     if [ -x "$(which urxvt)" ]; then
-      print_info "Launching urxvt..."
-      urxvt &
+      print_info "Launching Urxvt Terminal Emulator..."
+      (urxvt || print_error "Failed to launch Urxvt") &
     fi
   }
 ### }}}
@@ -86,10 +98,10 @@
 ### Additionals {{{
   WALLPAPER_DIR="${HOME}/.wallpaper/"
   WALLPAPER_RANDOM_TIMER="15m"
-  # Set a background image
+  # Set a background image with Feh
   Feh() {
     if [ -x "$(which feh)" ]; then
-      print_info "Launching Feh to set a background image..."
+      print_info "Launching Feh as Wallpaper Manager..."
       while true; do
         (find "$WALLPAPER_DIR" -type f \( -name '*.jpg' -o -name '*.png' \) -print0 |
           shuf -n1 -z | xargs -0 feh --bg-fill) || print_error "Failed to launch Feh"
@@ -103,20 +115,17 @@
     xsetroot -xcf "${HOME}/.icons/${XCURSOR_THEME}/cursors/left_ptr" "${XCURSOR_SIZE}" &
     # xsetroot -cursor_name left_ptr &
   }
-  SetIM() {
-    setxkbmap -layout us
-    # Setup IM enviroment
-    export GTK_IM_MODULE=ibus
-    export QT_IM_MODULE=ibus
-    export QT4_IM_MODULE=ibus
-    export CLUTTER_IM_MODULE=ibus
-    export XMODIFIERS=@im=ibus
-    ibus-daemon --xim --daemonize
-  }
   Xscreensaver() {
     if [ -x "$(which xscreensaver)" ]; then
       print_info "Launching Xscreensaver..."
       # xscreensaver -nosplash || print_error "Failed to launch Xscreensaver"
+    fi
+  }
+  # Run tint2 for a system panel and taskbar
+  Tint2() {
+    if [ -x "$(which tint2)" ]; then
+      print_info "Launching Tint2 Taskbar..."
+      ( (sleep 2s && tint2) || print_error "Failed to launch Tint2") &
     fi
   }
   Pidgin() {
@@ -125,11 +134,17 @@
       # To be update || print_error "Failed to launch urxvt daemon"
     fi
   }
+  # Run Thunar File Manager as daemon
+  Thunar() {
+    if [ -x "$(which thunar)" ]; then
+      print_info "Launching Thunar File Manager as daemon..."
+      (thunar --daemon || print_error "Failed to launch Thunar") &
+    fi
+  }
 ### }}}
 
+
 [ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-
-
 Default() {
   Xrdb
   Xcursor
@@ -140,10 +155,44 @@ Default() {
 }
 
 
-Default
-# exec dwm
 # xsetroot -solid darkgrey
 # start-pulseaudio-x11 &
-Urxvtd
-exec ~/.bin/dwm &
-# exec awesome &
+session=${1:-dwm}
+
+case $session in
+  awesome)
+    Default
+    Urxvtd
+    Thunar
+    # fix cursors. for a minute :/
+    # xsetroot -cursor_name left_ptr
+    print_info "Loading Awesome Window Manager..."
+    exec awesome
+    ;;
+  dwm)
+    Default
+    Urxvtd
+    Thunar
+    print_info "Loading DWM Window Manager..."
+    exec ~/.bin/dwm
+    ;;
+  openbox)
+    Default
+    (sleep 2 && compton) &
+    Tint2
+    print_info "Loading OpenBox Window Manager..."
+    exec openbox-session
+    ;;
+  gnome)
+    print_info "Loading GNOME Window Manager..."
+    exec gnome-session
+    ;;
+  xfce4)
+    print_info "Loading XFCE4 Window Manager..."
+    exec xfce4-session
+    ;;
+  *)
+    print_error "None of the valid WM has been selected, Aborting..."
+    exit 1
+    ;;
+esac

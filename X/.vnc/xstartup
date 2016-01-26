@@ -11,7 +11,7 @@
 
 [ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
 
-. "${HOME}/.xinitrc"
+. "${HOME}/.xinitrc" "openbox"
 # vncconfig -iconic &
 # x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
 # x-window-manager &
