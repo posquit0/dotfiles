@@ -12,9 +12,9 @@
   #include ".Xresources.d/xcursor"
   /* Color themes for X */
   #include ".Xresources.d/xcolors/themes/gjm"
-  ! #include ".Xresources.d/xcolors/themes/digerati"
-  ! #include ".Xresources.d/xcolors/themes/euphrasia"
-  ! #include ".Xresources.d/xcolors/themes/gnometerm"
+! #include ".Xresources.d/xcolors/themes/digerati"
+! #include ".Xresources.d/xcolors/themes/euphrasia"
+! #include ".Xresources.d/xcolors/themes/gnometerm"
 !!! }}}
 
 

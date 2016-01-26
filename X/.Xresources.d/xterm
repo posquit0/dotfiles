@@ -21,7 +21,7 @@
 
 !!! Fonts {{{
   /* Set a font and styles */
-  XTerm*faceName: xft:DejaVu Sans Mono:style=Book:antialias=true:size=10
+  XTerm*faceName: xft:Knack:style=Book:antialias=true:size=12
   /* Set a CJK font and styles */
   XTerm*faceNameDoublesize: xft:NanumGothicCoding
 !!! }}}
