@@ -24,6 +24,7 @@
   pretty = fuller
 [color]
   ui = auto
+  interactive = auto
 [color "branch"]
   current = yellow reverse
   local = yellow
@@ -61,6 +62,7 @@
   co      = checkout
   com     = checkout master
 
+  amend   = commit --amend
   ca      = commit --amend
   cm      = commit -m
 
