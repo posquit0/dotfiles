@@ -74,6 +74,11 @@
     export XMODIFIERS=@im=ibus
     ibus-daemon --xim --daemonize
   }
+  # Configure environment variable to enalbe pulse-audio server
+  PulseAudio() {
+    print_info "Configuring PulseAudio server"
+    export PULSE_SERVER=localhost:4713
+  }
 ### }}}
 
 
@@ -189,11 +194,11 @@ Default() {
   Feh
   SetIM
   Xautolock
+  PulseAudio
 }
 
 
 # xsetroot -solid darkgrey
-# start-pulseaudio-x11 &
 session=${1:-dwm}
 
 case $session in
