@@ -27,6 +27,8 @@
     if [ -f "${HOME}/.Xresources" -a -x "$(which xrdb)" ]; then
       print_info 'Loading X ressources...'
       xrdb -merge "$HOME/.Xresources" || print_error 'Failed to load X ressources'
+    else
+      print_error "Can't find ~/.Xresources file or xrdb command."
     fi
   }
   # Modify keymaps and pointer button mappings
@@ -43,6 +45,8 @@
     if [ -f "${HOME}/.xbindkeysrc" -a -x "$(which xbindkeys)" ]; then
       print_info "Launching Xbindkeys to bind commands to certain keys..."
       # LC_ALL=C xbindkeys || print_error "Failed to launch Xbindkeys"
+    else
+      print_error "Can't find ~/.xbindkeysrc file or xbindkeys command."
     fi
   }
   # Configure personal fonts to use
@@ -54,11 +58,14 @@
       xset +fp "${HOME}/.fonts"
       # Cause the server to reread the font databases in the current font path
       xset fp rehash
+    else
+      print_error "Can't find xset command."
     fi
   }
   # Set an input method to support multi-languages
   SetIM() {
     setxkbmap -layout us
+    print_info "Launching iBus daemon for input method"
     # Setup IM enviroment
     export GTK_IM_MODULE=ibus
     export QT_IM_MODULE=ibus
@@ -76,6 +83,8 @@
     if [ -x "$(which urxvtd)" ]; then
       print_info "Launching Urxvt daemon..."
       urxvtd --quiet --opendisplay --fork || print_error "Failed to launch Urxvt daemon"
+    else
+      print_error "Can't find Urxvtd command."
     fi
   }
   # Run urxvt client
@@ -83,6 +92,8 @@
     if [ -x "$(which urxvtc)" ]; then
       print_info "Launching Urxvt Terminal Emulator Client..."
       (urxvtc || print_error "Failed to launch Urxvt") &
+    else
+      print_error "Can't find Urxvtc command."
     fi
   }
   # Run urxvt
@@ -90,6 +101,8 @@
     if [ -x "$(which urxvt)" ]; then
       print_info "Launching Urxvt Terminal Emulator..."
       (urxvt || print_error "Failed to launch Urxvt") &
+    else
+      print_error "Can't find Urxvt command."
     fi
   }
 ### }}}
@@ -107,12 +120,14 @@
           shuf -n1 -z | xargs -0 feh --bg-fill) || print_error "Failed to launch Feh"
         sleep $WALLPAPER_RANDOM_TIMER
       done &
+    else
+      print_error "Can't find feh command."
     fi
   }
   Xcursor() {
     export XCURSOR_THEME=Breeze-Obsidian
     export XCURSOR_SIZE=16
-    xsetroot -xcf "${HOME}/.icons/${XCURSOR_THEME}/cursors/left_ptr" "${XCURSOR_SIZE}" &
+    # xsetroot -xcf "${HOME}/.icons/${XCURSOR_THEME}/cursors/left_ptr" "${XCURSOR_SIZE}" &
     # xsetroot -cursor_name left_ptr &
   }
   # Run XAutoLock for managing lock screen
@@ -132,6 +147,8 @@
     if [ -x "$(which xscreensaver)" ]; then
       print_info "Launching Xscreensaver..."
       # xscreensaver -nosplash || print_error "Failed to launch Xscreensaver"
+    else
+      print_error "Can't find xscreensaver command."
     fi
   }
   # Run tint2 for a system panel and taskbar
@@ -139,12 +156,16 @@
     if [ -x "$(which tint2)" ]; then
       print_info "Launching Tint2 Taskbar..."
       ( (sleep 2s && tint2) || print_error "Failed to launch Tint2") &
+    else
+      print_error "Can't find tint2 command."
     fi
   }
   Pidgin() {
     if [ -x "$(which pidgin)" ]; then
       print_info "Launching Pidgin..."
       # To be update || print_error "Failed to launch urxvt daemon"
+    else
+      print_error "Can't find pidgin command."
     fi
   }
   # Run Thunar File Manager as daemon
@@ -152,6 +173,8 @@
     if [ -x "$(which thunar)" ]; then
       print_info "Launching Thunar File Manager as daemon..."
       (thunar --daemon || print_error "Failed to launch Thunar") &
+    else
+      print_error "Can't find thunar command."
     fi
   }
 ### }}}
