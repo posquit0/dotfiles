@@ -34,5 +34,7 @@
 
 
 !!! X11 Applications {{{
+  /* XAutoLock for Lock Screen */
+  #include ".Xresources.d/xautolock"
 
 !!! }}}

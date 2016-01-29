@@ -1,0 +1,21 @@
+/*
+ * X resource file for XAutoLock
+ * vim:ft=xdefaults:
+ *
+ * Maintained by Claud D. Park <posquit0.bj@gmail.com>
+ * http://www.posquit0.com/
+ */
+
+
+! Specifies the primary timeout interval
+Xautolock.time: 10
+! Specifies the locker to be used
+Xautolock.locker: i3lock-extra --mode blur "${HOME}/.config/i3lock/lock-photo.png"
+! Define special actions to be taken when the mouse enters one of the corners of the display
+! (The default is 0000, which means that no special action is taken)
+Xautolock.corners: -+00
+! Specifies the number of seconds to wait before reacting to the mouse entering a '+' corner (The default is 5 seconds)
+Xautolock.cornerdelay: 5
+! Specifies the number of seconds to wait before reacting again if the current locker exits while the mouse is sitting in a '+' corner
+! (The default is for altsecs to equal secs)
+Xautolock.cornerredelay: 10

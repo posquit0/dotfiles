@@ -110,6 +110,9 @@
     ~/.vnc:
       force: true
       path: X/.vnc/
+    ~/.config/i3lock:
+      force: true
+      path: X/.config/i3lock/
     ~/.xpra/xpra.conf:
       force: true
       path: X/.xpra/xpra.conf

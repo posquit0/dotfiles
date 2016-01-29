@@ -115,6 +115,19 @@
     xsetroot -xcf "${HOME}/.icons/${XCURSOR_THEME}/cursors/left_ptr" "${XCURSOR_SIZE}" &
     # xsetroot -cursor_name left_ptr &
   }
+  # Run XAutoLock for managing lock screen
+  Xautolock() {
+    if [ -x "$(which xautolock)" ]; then
+      if [ -x "$(which i3lock)" ]; then
+        print_info "Launching XAutoLock with i3lock locker..."
+        (xautolock || print_error "Failed to launch xautolock") &
+      else
+        print_error "Can't find i3lock command."
+      fi
+    else
+      print_error "Can't find xautolock command."
+    fi
+  }
   Xscreensaver() {
     if [ -x "$(which xscreensaver)" ]; then
       print_info "Launching Xscreensaver..."
@@ -152,6 +165,7 @@ Default() {
   XsetFont
   Feh
   SetIM
+  Xautolock
 }
 
 
