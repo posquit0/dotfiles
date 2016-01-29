@@ -104,18 +104,18 @@
     ~/.dwm:
       force: true
       path: dwm/
-    ~/.tools/dwm/config.h:
+    tools/dwm/config.h:
       force: true
-      path: ~/.dwm/config.h
+      path: dwm/config.h
     ~/.vnc:
       force: true
       path: X/.vnc/
     ~/.config/i3lock:
       force: true
       path: X/.config/i3lock/
-    ~/.xpra/xpra.conf:
+    ~/.xpra:
       force: true
-      path: X/.xpra/xpra.conf
+      path: X/.xpra/
 
 - shell:
   - tmux start-server
