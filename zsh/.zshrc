@@ -78,8 +78,21 @@ source $ZSH/oh-my-zsh.sh
   export MANPATH="/usr/local/man:$MANPATH"
   
   # You may need to manually set your language environment
-  export LANG=ko_KR.UTF-8
-  export LC_ALL=ko_KR.UTF-8
+  export LANG="ko_KR.UTF-8"
+  export LANGUAGE="ko_KR:ko:en_US:en"
+	export LC_CTYPE="ko_KR.UTF-8"
+	export LC_NUMERIC="ko_KR.UTF-8"
+	export LC_TIME="en_US.UTF-8"
+	export LC_COLLATE="ko_KR.UTF-8"
+	export LC_MONETARY="ko_KR.UTF-8"
+	export LC_MESSAGES="ko_KR.UTF-8"
+	export LC_PAPER="ko_KR.UTF-8"
+	export LC_NAME="ko_KR.UTF-8"
+	export LC_ADDRESS="ko_KR.UTF-8"
+	export LC_TELEPHONE="ko_KR.UTF-8"
+	export LC_MEASUREMENT="ko_KR.UTF-8"
+	export LC_IDENTIFICATION="ko_KR.UTF-8"
+	export LC_ALL=
 
   # Load alias list
   if [ -f "$HOME/.alias" ]; then
