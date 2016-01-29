@@ -85,7 +85,7 @@ source $ZSH/oh-my-zsh.sh
 	export LC_TIME="en_US.UTF-8"
 	export LC_COLLATE="ko_KR.UTF-8"
 	export LC_MONETARY="ko_KR.UTF-8"
-	export LC_MESSAGES="ko_KR.UTF-8"
+	export LC_MESSAGES="POSIX"
 	export LC_PAPER="ko_KR.UTF-8"
 	export LC_NAME="ko_KR.UTF-8"
 	export LC_ADDRESS="ko_KR.UTF-8"
