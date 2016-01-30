@@ -54,10 +54,12 @@
   history = log --graph --pretty=format:'%C(yellow)%h%Creset \
             -%C(yellow)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' \
             --abbrev-commit --date=short --date-order -n30
-  unstage = reset HEAD --
 
+  remotes = remote -v
   df      = diff
 
+  branches = branch -a
+  unstage = reset HEAD --
   discard = checkout --
   co      = checkout
   com     = checkout master
@@ -72,6 +74,7 @@
 
   sync    = !git pull && git push
   ta      = tag -a
+  tags    = tag -l
 
 # allows: git clone github:rails/rails
 [url "git@github.com:"]
