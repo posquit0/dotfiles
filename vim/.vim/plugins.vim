@@ -192,9 +192,33 @@ call plug#begin('~/.vim/plugged')
     \ }
   "" }}}
 
+  "" Plugin: Vim Indent Guides {{{
+    " Visually displaying indent levels
+    Plug 'nathanaelkane/vim-indent-guides', { 'for': ['vim', 'json', 'markdown'] }
+    " Disable automatically calculates the highlight colors
+    let g:indent_guides_auto_colors=0
+    " Customize the size of the indent guide
+    let g:indent_guides_guide_size=1
+    " Control which indent level to start showing guides from
+    let g:indent_guides_start_level=1
+    " Enable on Vim startup
+    let g:indent_guides_enable_on_vim_startup=1
+    " Specify a list of filetypes to disable the plugin for
+    let g:indent_guides_exclude_filetype=['help', 'nerdtree']
+    " Unset the default mapping '<Leader>ig'
+    let g:indent_guides_default_mapping=0
+  "" }}}
+
   "" Plugin: indentLine {{{
-    " Displying thin vertical lines at each indentation level for code
-    Plug 'Yggdroot/indentLine'
+    " Displaying thin vertical lines at each indentation level for code
+    Plug 'Yggdroot/indentLine', { 'for': [] }
+    augroup plug_indentLine
+      autocmd FileType * 
+        \ if expand('<amatch>') != 'vim' && expand('<amatch>') != 'json' && expand('<amatch>') != 'markdown' |
+        \   call plug#load('indentLine') |
+        \   execute 'autocmd! plug_indentLine' | 
+        \ endif
+    augroup END
     " Change indentLine char
     " let g:indentLine_char='┆'
     let g:indentLine_char='|'
@@ -226,6 +250,8 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Vim Polyglot {{{
     " A collection of language packs for Vim
     Plug 'sheerun/vim-polyglot'
+    " No conceal in JSON
+    let g:vim_json_syntax_conceal=0
   "" }}}
 
   "" Plugin: EditorConfig {{{
