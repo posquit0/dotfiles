@@ -73,9 +73,18 @@ set modelines=4
   " Centralize backups, swapfiles and undo history
   " set backupdir=~/.vim/backups
   " set directory=~/.vim/swaps
-  " if exists("&undodir")
-  "   set undodir=~/.vim/undo
-  " endif
+  " Maintain undo history between sessions
+  set undofile
+  " Set maximum number of changes that can be undone
+  set undolevels=100
+  " Change directory to save undo history
+  if has('persistent_undo')
+    set undodir=~/.vim/cache
+    if isdirectory(&undodir)==0
+      " Create directory
+      call system('mkdir ' . &undodir)
+    endif
+  endif
   " Don’t create backups when editing files in certain directories
   set backupskip=/tmp/*
 """ }}}

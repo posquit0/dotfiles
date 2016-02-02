@@ -7,3 +7,6 @@
 .vim/plugged
 
 .netrwhist
+
+# Cache
+cache
