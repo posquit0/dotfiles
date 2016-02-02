@@ -15,7 +15,7 @@ set wildignore=*.swp,*.swo,*.class
 " Number of things to remember in history
 set history=256
 " Use the OS clipboard by default (on versions compiled with `+clipboard`)
-set clipboard+=unnamed
+set clipboard=unnamed
 " Optimize for fast terminal connections
 set ttyfast
 " Walk directory tree upto $HOME looking for tags
