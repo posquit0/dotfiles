@@ -211,17 +211,20 @@ call plug#begin('~/.vim/plugged')
 
   "" Plugin: indentLine {{{
     " Displaying thin vertical lines at each indentation level for code
-    Plug 'Yggdroot/indentLine', { 'for': [] }
-    augroup plug_indentLine
-      autocmd FileType * 
-        \ if expand('<amatch>') != 'vim' && expand('<amatch>') != 'json' && expand('<amatch>') != 'markdown' |
-        \   call plug#load('indentLine') |
-        \   execute 'autocmd! plug_indentLine' | 
-        \ endif
-    augroup END
-    " Change indentLine char
+    Plug 'Yggdroot/indentLine'
+    " Specify a character to  be used as indent line
     " let g:indentLine_char='┆'
     let g:indentLine_char='|'
+    " Specify a character to  be used as indent line on the first level
+    let g:indentLine_first_char='¦'
+    " Specify how much indent level do you want to use for indentLine
+    let g:indentLine_indentLevel=10
+    " Specify a list of file types to disable indent line
+    let g:indentLine_fileTypeExclude=['vim', 'json', 'markdown']
+    " Whether to show leading spaces
+    let g:indentLine_leadingSpaceEnabled=1
+    " Specify a character to show for leading spaces
+    let g:indentLine_leadingSpaceChar='·'
     " Allow to see the concealed in the current cursor line when in normal & indent mode as intended
     let g:indentLine_noConcealCursor=""
   "" }}}
