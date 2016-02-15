@@ -29,12 +29,12 @@ call plug#begin('~/.vim/plugged')
     " The best Git wrapper
     Plug 'tpope/vim-fugitive'
     " Key mappings for convenience
-    nnoremap <leader>gd :Gvdiff<CR>
-    nnoremap <leader>gD :Gvdiff HEAD<CR>
-    nnoremap <leader>gs :Gstatus<CR>:20wincmd +<CR>
-    nnoremap <leader>gw :Gwrite<CR>
-    nnoremap <leader>gb :Gblame -w<CR>:vertical resize 10<CR>
-    nnoremap <leader>gci :Gcommit --verbose<CR>
+    nnoremap <Leader>gd :Gvdiff<CR>
+    nnoremap <Leader>gD :Gvdiff HEAD<CR>
+    nnoremap <Leader>gs :Gstatus<CR>:20wincmd +<CR>
+    nnoremap <Leader>gw :Gwrite<CR>
+    nnoremap <Leader>gb :Gblame -w<CR>:vertical resize 10<CR>
+    nnoremap <Leader>gci :Gcommit --verbose<CR>
   "" }}}
 
   "" Plugin: Vim Signify {{{
@@ -217,6 +217,8 @@ call plug#begin('~/.vim/plugged')
     let g:indentLine_char='|'
     " Specify a character to  be used as indent line on the first level
     let g:indentLine_first_char='¦'
+    " Whether the first indent level should be shown
+    let g:indentLine_showFirstIndentLevel=1
     " Specify how much indent level do you want to use for indentLine
     let g:indentLine_indentLevel=10
     " Specify a list of file types to disable indent line
@@ -443,7 +445,7 @@ call plug#begin('~/.vim/plugged')
     " Bringing Sublime Text's awesome multiple selection feature into Vim
     Plug 'terryma/vim-multiple-cursors'
     " Turn off the default key bindings
-    " let g:multi_cursor_use_default_mapping=0
+    let g:multi_cursor_use_default_mapping=0
     " Configure custom key bindings
     let g:multi_cursor_next_key='<C-n>'
     let g:multi_cursor_prev_key='<C-p>'
@@ -476,12 +478,12 @@ call plug#begin('~/.vim/plugged')
     " Don't want the docstring window to popup during compeletion
     autocmd FileType python setlocal completeopt-=preview
     " Key Bindings for Jedi-Vim
-    let g:jedi#goto_assignments_command="<leader>g"
-    let g:jedi#goto_definitions_command="<leader>d"
+    let g:jedi#goto_assignments_command="<Leader>g"
+    let g:jedi#goto_definitions_command="<Leader>d"
     let g:jedi#documentation_command="K"
-    let g:jedi#usages_command="<leader>n"
+    let g:jedi#usages_command="<Leader>n"
     let g:jedi#completions_command="<C-Space>"
-    let g:jedi#rename_command="<leader>r"
+    let g:jedi#rename_command="<Leader>r"
   "" }}}
 
   "" Plugin: Vim Virtualenv {{{
@@ -544,6 +546,8 @@ call plug#begin('~/.vim/plugged')
     Plug 'marijnh/tern_for_vim', { 'for': ['javascript'], 'do': function('BuildTern') }
     " Display argument type hints when the cursor is left over a function
     let g:tern_show_argument_hints="on_hold"
+    " Display function signature in the completion menu
+    let g:tern_show_signature_in_pum=1
   "" }}}
   " Verilog
   "" Plugin: Verilog and SystemVerilog {{{
