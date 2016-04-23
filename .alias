@@ -13,3 +13,6 @@ alias ohmyzsh="editor ~/.oh-my-zsh"
 alias tmux="tmux -2"
 # Set weechat to use curses mode as default
 alias weechat="weechat-curses"
+
+# Convert JSON to pretty-print JSON
+alias prettyjson="python -m json.tool"
