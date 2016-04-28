@@ -52,9 +52,15 @@
   # Configure personal fonts to use
   XsetFont() {
     if [ -x "$(which xset)" ]; then
+      if [ -x "$(which mkfontdir)" -a -x "$(which mkfontscale)" ]; then
+        print_info "Indexing personal fonts"
+        mkfontscale "${HOME}/.fonts" 2>/dev/null
+        mkfontdir "${HOME}/.fonts"
+      else
+        print_error "Can't find mkfontdir or mkfontscale command."
+      fi
       print_info "Launching Xset to configure personal fonts"
       # Append elements to the current font path
-      xset +fp "${HOME}/.local/share/fonts"
       xset +fp "${HOME}/.fonts"
       # Cause the server to reread the font databases in the current font path
       xset fp rehash
@@ -62,22 +68,43 @@
       print_error "Can't find xset command."
     fi
   }
+  # Set X Keyboard Map layout
+  SetXKeyboardMap() {
+    # setxkbmap -layout us
+    setxkbmap -layout kr -option ctrl:nocaps
+  }
   # Set an input method to support multi-languages
   SetIM() {
-    setxkbmap -layout us
-    print_info "Launching iBus daemon for input method"
-    # Setup IM enviroment
-    export GTK_IM_MODULE=ibus
-    export QT_IM_MODULE=ibus
-    export QT4_IM_MODULE=ibus
-    export CLUTTER_IM_MODULE=ibus
-    export XMODIFIERS=@im=ibus
-    ibus-daemon --xim --daemonize
+    if [ -x "$(which ibus-daemon)" ]; then
+      # Setup IM enviroment
+      print_info "Launching iBus daemon for input method"
+      export GTK_IM_MODULE=ibus
+      export QT_IM_MODULE=ibus
+      export QT4_IM_MODULE=ibus
+      export CLUTTER_IM_MODULE=ibus
+      export XMODIFIERS=@im=ibus
+      ibus-daemon --xim --daemonize || print_error "Failed to launch iBus."
+    else
+      print_error "There is no iBus IM in the system."
+    fi
   }
   # Configure environment variable to enalbe pulse-audio server
   PulseAudio() {
-    print_info "Configuring PulseAudio server"
-    export PULSE_SERVER=localhost:4713
+    if [[ $(netstat -lnp | grep ':4713') = *LISTEN* ]]; then
+      print_info "Configuring PulseAudio server"
+      export PULSE_SERVER=localhost:4713
+    else
+      print_error "There is no PulseAudio in the system."
+    fi
+  }
+  # Launch composite manager to enable more effective window managements
+  Compton() {
+    if [ -f "${HOME}/.compton.conf" -a -x "$(which compton)" ]; then
+      print_info "Launching Compton Composite Manager"
+      (sleep 2 && compton --config "${HOME}/.compton.conf" -CGb) || print_error "Failed to launch Compton."
+    else
+      print_error "Can't find ~/.compton.conf file or compton command."
+    fi
   }
 ### }}}
 
@@ -129,7 +156,9 @@
       print_error "Can't find feh command."
     fi
   }
+  # Change XCursor theme and size
   Xcursor() {
+    print_info "Configuring XCursor Theme and Size..."
     export XCURSOR_THEME=Breeze-Obsidian
     export XCURSOR_SIZE=16
     # xsetroot -xcf "${HOME}/.icons/${XCURSOR_THEME}/cursors/left_ptr" "${XCURSOR_SIZE}" &
@@ -154,6 +183,15 @@
       # xscreensaver -nosplash || print_error "Failed to launch Xscreensaver"
     else
       print_error "Can't find xscreensaver command."
+    fi
+  }
+  # Run Albert for desktop launcher
+  Albert() {
+    if [ -x "$(which albert)" ]; then
+      print_info "Launching Albert desktop launcher..."
+      ( albert || print_error "Failed to launch Albert") &
+    else
+      print_error "Can't find albert command."
     fi
   }
   # Run tint2 for a system panel and taskbar
@@ -189,7 +227,8 @@
 Default() {
   Xrdb
   Xcursor
-  Xmodmap
+  SetXKeyboardMap
+  # Xmodmap
   XsetFont
   Feh
   SetIM
@@ -214,7 +253,9 @@ case $session in
   dwm)
     Default
     Urxvtd
-    Thunar
+    Compton
+    Albert
+    # Thunar
     print_info "Loading DWM Window Manager..."
     exec ~/.bin/dwm
     ;;
