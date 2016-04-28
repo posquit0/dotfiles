@@ -558,6 +558,7 @@ call plug#begin('~/.vim/plugged')
     " Display function signature in the completion menu
     let g:tern_show_signature_in_pum=1
   "" }}}
+
   " Verilog
   "" Plugin: Verilog and SystemVerilog {{{
   " Vim Syntax Plugin for Verilog and SystemVerilog
