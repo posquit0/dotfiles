@@ -73,12 +73,12 @@ call plug#begin('~/.vim/plugged')
     " Specify theme for airline
     let g:airline_theme='tomorrow'
     let g:airline#extensions#tabline#enabled=1
-    let g:airline#extensions#tabline#left_sep=""
+    let g:airline#extensions#tabline#left_sep=''
     let g:airline#extensions#tabline#left_alt_sep='|'
     " Customize a left side of airline
-    " let g:airline_section_b="%{strftime('%H:%M:%S')}"
+    " let g:airline_section_b='%{strftime('%H:%M:%S')}'
     " Customize a right side of airline
-    let g:airline_section_y="[%{&fileformat}/%{strlen(&fenc)?&fenc:&enc}]"
+    let g:airline_section_y='[%{&fileformat}/%{strlen(&fenc)?&fenc:&enc}]'
     " Use airline's showmode
     set noshowmode
   "" }}}
@@ -170,9 +170,9 @@ call plug#begin('~/.vim/plugged')
     let NERDTreeShowHidden=1
     " Automatically open NERDTree when vim start up with no files
     " autocmd StdinReadPre * let s:std_in=1
-    " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    " autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
     " Close vim if the only window left open is a NERDTree
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+    autocmd bufenter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
   "" }}}
 
   "" Plugin: NERDTree Git Plugin {{{
@@ -180,15 +180,15 @@ call plug#begin('~/.vim/plugged')
     Plug 'Xuyuanp/nerdtree-git-plugin'
     " Use this variable to change symbols
     let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "*",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ "Unknown"   : "?"
+    \ 'Modified'  : '*',
+    \ 'Staged'    : '✚',
+    \ 'Untracked' : '✭',
+    \ 'Renamed'   : '➜',
+    \ 'Unmerged'  : '═',
+    \ 'Deleted'   : '✖',
+    \ 'Dirty'     : '✗',
+    \ 'Clean'     : '✔︎',
+    \ 'Unknown'   : '?'
     \ }
   "" }}}
 
@@ -228,7 +228,7 @@ call plug#begin('~/.vim/plugged')
     " Specify a character to show for leading spaces
     let g:indentLine_leadingSpaceChar='·'
     " Allow to see the concealed in the current cursor line when in normal & indent mode as intended
-    let g:indentLine_noConcealCursor=""
+    let g:indentLine_noConcealCursor=''
   "" }}}
 
   "" Plugin: CtrlP {{{
@@ -237,14 +237,14 @@ call plug#begin('~/.vim/plugged')
     let g:ctrlp_map='<c-p>'
     let g:ctrlp_cmd='CtrlP'
   "" }}}
-  
+
   "" Plugin: Easymotion {{{
     " Provides a much simpler way to use motions in Vim
     Plug 'Lokaltog/vim-easymotion'
   "" }}}
 
   "" Plugin: Vim Shell {{{
-    " 
+    "
     Plug 'Shougo/vimproc', { 'do': 'make' }
     Plug 'shougo/vimshell'
     " http://code.hootsuite.com/vimshell/
@@ -307,9 +307,9 @@ call plug#begin('~/.vim/plugged')
       endif
     endfunction
     Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-    " Specifies a fallback path to a config file which is used 
+    " Specifies a fallback path to a config file which is used
     " if no '.ycm_extra_conf.py' is found
-    let g:ycm_global_ycm_extra_conf="~/.vim/ycm_extra_conf.py"
+    let g:ycm_global_ycm_extra_conf='~/.vim/ycm_extra_conf.py'
     " Auto trigger for identifier completer and semantic completer
     let g:ycm_auto_trigger=1
     " Show the completion menu even when typing inside comments
@@ -369,31 +369,31 @@ call plug#begin('~/.vim/plugged')
     " Tested with PHP, Python, Ruby, Perl, TCL and NodeJS
     Plug 'joonty/vdebug', { 'for': ['php', 'python', 'ruby', 'perl', 'javascript'] }
     let g:vdebug_keymap={
-    \ "run": "<F5>",
-    \ "run_to_cursor": "<F6>",
-    \ "step_over": "<F2>",
-    \ "step_into": "<F3>",
-    \ "step_out": "<F4>",
-    \ "close": "<F7>",
-    \ "detach": "<F8>",
-    \ "set_breakpoint": "<Leader>b",
-    \ "eval_visual": "<Leader>e"
+    \ 'run': '<F5>',
+    \ 'run_to_cursor': '<F6>',
+    \ 'step_over': '<F2>',
+    \ 'step_into': '<F3>',
+    \ 'step_out': '<F4>',
+    \ 'close': '<F7>',
+    \ 'detach': '<F8>',
+    \ 'set_breakpoint': '<Leader>b',
+    \ 'eval_visual': '<Leader>e'
     \}
     let g:vdebug_options={
-    \ "port": 9000,
-    \ "server": 'localhost',
-    \ "timeout": 20,
-    \ "on_close": 'detach',
-    \ "break_on_open": 0,
-    \ "ide_key": '',
-    \ "path_maps": {},
-    \ "debug_window_level": 0,
-    \ "debug_file_level": 1,
-    \ "debug_file": "/tmp/vdebug.log",
-    \ "watch_window_style": 'expanded',
-    \ "marker_default": '*',
-    \ "marker_closed_tree": '▸',
-    \ "marker_open_tree": '▾'
+    \ 'port': 9000,
+    \ 'server': 'localhost',
+    \ 'timeout': 20,
+    \ 'on_close': 'detach',
+    \ 'break_on_open': 0,
+    \ 'ide_key': '',
+    \ 'path_maps': {},
+    \ 'debug_window_level': 0,
+    \ 'debug_file_level': 1,
+    \ 'debug_file': '/tmp/vdebug.log',
+    \ 'watch_window_style': 'expanded',
+    \ 'marker_default': '*',
+    \ 'marker_closed_tree': '▸',
+    \ 'marker_open_tree': '▾'
     \}
   "" }}}
 
@@ -401,12 +401,12 @@ call plug#begin('~/.vim/plugged')
     " Snippet engine for Vim
     Plug 'SirVer/ultisnips'
     " Configure keys trigerring UltiSnips
-    let g:UltiSnipsExpandTrigger="<Tab>"
-    let g:UltiSnipsJumpForwardTrigger="<Tab>"
-    let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-    let g:UltiSnipsListSnippets="<Tab>l"
+    let g:UltiSnipsExpandTrigger='<Tab>'
+    let g:UltiSnipsJumpForwardTrigger='<Tab>'
+    let g:UltiSnipsJumpBackwardTrigger='<S-Tab>'
+    let g:UltiSnipsListSnippets='<Tab>l'
     " If you want :UltiSnipsEdit to split your window.
-    let g:UltiSnipsEditSplit="vertical"
+    let g:UltiSnipsEditSplit='vertical'
   "" }}}
 
   "" Plugin: Vim Snippets {{{
@@ -434,11 +434,20 @@ call plug#begin('~/.vim/plugged')
     " For intensely orgasmic commenting
     Plug 'jiangmiao/auto-pairs'
     " Shortcut for fast wrapping the word
-    let g:AutoPairsShortcutFastWrap="<C-e>"
+    let g:AutoPairsShortcutFastWrap='<C-e>'
     " Enable FlyMode
     let g:AutoPairsFlyMode=1
     " Insert the key at the Fly Mode jumped postion
-    let g:AutoPairsShortcutBackInsert="<C-b>"
+    let g:AutoPairsShortcutBackInsert='<C-b>'
+  "" }}}
+
+  "" Plugin: Vim Better Whitespace {{{
+    " All trailing whitespace characters to be highlighted
+    Plug 'ntpeters/vim-better-whitespace'
+    " Strip all trailing whitespace everytime save the file
+    autocmd BufWritePre * StripWhitespace
+    " Disable this plugin for specific file types
+    let g:better_whitespace_filetypes_blacklist+=['nerdtree']
   "" }}}
 
   "" Plugin: Vim Multiple Cursors {{{
@@ -478,12 +487,12 @@ call plug#begin('~/.vim/plugged')
     " Don't want the docstring window to popup during compeletion
     autocmd FileType python setlocal completeopt-=preview
     " Key Bindings for Jedi-Vim
-    let g:jedi#goto_assignments_command="<Leader>g"
-    let g:jedi#goto_definitions_command="<Leader>d"
-    let g:jedi#documentation_command="K"
-    let g:jedi#usages_command="<Leader>n"
-    let g:jedi#completions_command="<C-Space>"
-    let g:jedi#rename_command="<Leader>r"
+    let g:jedi#goto_assignments_command='<Leader>g'
+    let g:jedi#goto_definitions_command='<Leader>d'
+    let g:jedi#documentation_command='K'
+    let g:jedi#usages_command='<Leader>n'
+    let g:jedi#completions_command='<C-Space>'
+    let g:jedi#rename_command='<Leader>r'
   "" }}}
 
   "" Plugin: Vim Virtualenv {{{
@@ -494,7 +503,7 @@ call plug#begin('~/.vim/plugged')
   " HTML & CSS
   "" Plugin: Emmet {{{
     " Provide Zen-coding for Vim
-    Plug 'mattn/emmet-vim', { 
+    Plug 'mattn/emmet-vim', {
     \ 'for': [
     \   'html', 'haml', 'jinja', 'hbs', 'html.handlebars', 'xml',
     \   'css', 'less', 'sass'
@@ -545,7 +554,7 @@ call plug#begin('~/.vim/plugged')
     endfunction
     Plug 'marijnh/tern_for_vim', { 'for': ['javascript'], 'do': function('BuildTern') }
     " Display argument type hints when the cursor is left over a function
-    let g:tern_show_argument_hints="on_hold"
+    let g:tern_show_argument_hints='on_hold'
     " Display function signature in the completion menu
     let g:tern_show_signature_in_pum=1
   "" }}}
@@ -570,11 +579,11 @@ call plug#begin('~/.vim/plugged')
     " Set option value to 16 to fallback
     let g:gruvbox_termcolors=256
     " Change darkmode contrast. Possible values are `soft`, `medium`, `hard`
-    let g:gruvbox_contrast_dark="medium"
+    let g:gruvbox_contrast_dark='medium'
     " Change lightmode contrast. Possible values are `soft`, `medium`, `hard`
-    let g:gruvbox_contrast_light="hard"
+    let g:gruvbox_contrast_light='hard'
     " Change cursor background
-    let g:gruvbox_hls_cursor="green"
+    let g:gruvbox_hls_cursor='green'
     " Inverts indent guides
     let g:gruvbox_invert_indent_guides=0
   "" }}}
