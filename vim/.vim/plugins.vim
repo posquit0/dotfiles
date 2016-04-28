@@ -444,10 +444,10 @@ call plug#begin('~/.vim/plugged')
   "" Plugin: Vim Better Whitespace {{{
     " All trailing whitespace characters to be highlighted
     Plug 'ntpeters/vim-better-whitespace'
+    " Disable this plugin for specific file types
+    let g:better_whitespace_filetypes_blacklist=['diff', 'gitcommit', 'unite', 'qf', 'help', 'nerdtree']
     " Strip all trailing whitespace everytime save the file
     autocmd BufWritePre * StripWhitespace
-    " Disable this plugin for specific file types
-    let g:better_whitespace_filetypes_blacklist+=['nerdtree']
   "" }}}
 
   "" Plugin: Vim Multiple Cursors {{{
