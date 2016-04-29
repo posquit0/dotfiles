@@ -286,9 +286,12 @@ call plug#begin('~/.vim/plugged')
     " For Scala & Java
     " let g:syntastic_scala_checkers=['fsc', 'scalac']
     " For Javascript & Node.JS
-    let g:syntastic_javascript_checkers = ['jshint']
+    let g:syntastic_javascript_checkers=['eslint']
+    let s:eslint_path=system('PATH=$(npm bin):$PATH && which eslint')
+    let b:syntastic_javascript_eslint_exec=substitute(s:eslint_path, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
+    " let g:syntastic_javascript_checkers = ['jshint']
     " For Shell Script(sh, bash)
-    let g:syntastic_sh_checkers = ['shellcheck']
+    let g:syntastic_sh_checkers=['shellcheck']
   "" }}}
 
   "" Plugin: YouCompleteMe {{{
@@ -557,6 +560,17 @@ call plug#begin('~/.vim/plugged')
     let g:tern_show_argument_hints='on_hold'
     " Display function signature in the completion menu
     let g:tern_show_signature_in_pum=1
+  "" }}}
+
+  " Markdown
+  "" Plugin: Vim Instant Markdown {{{
+  " Instant markdown Previews from Vim
+    Plug 'suan/vim-instant-markdown'
+    " Only refresh on specific events
+    let g:instant_markdown_slow=1
+    " Manually control to launch the preview window
+    " Command(:InstantMarkdownPreview)
+    let g:instant_markdown_autostart=0
   "" }}}
 
   " Verilog
