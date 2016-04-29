@@ -238,6 +238,30 @@ call plug#begin('~/.vim/plugged')
     let g:ctrlp_cmd='CtrlP'
   "" }}}
 
+  "" Plugin: Vim Signature {{{
+    " To place, toggle, display and navigate marks
+    " Keymap:
+    " mx        Toggle mark 'x' where x is a-zA-Z
+    " dmx       Remove mark 'x' where x is a-zA-Z
+    " m,        Place the next available mark
+    " m.        If no mark on line, place the next available mark
+    " m-        Delete all marks from the current line
+    " m/        Open location list and display marks
+    " m<Space>  Delete all marks from the current buffer
+    " m[0-9]    Toggle the corresponding marker !@#$%^&*()
+    " m<S-[0-9]>Remove all markers of the same type
+    " m?        Open location list and display markers
+    " m<BS>     Remove all markers
+    " ]`        Jump to next mark
+    " [`        Jump to prev mark
+    " ]'        Jump to start of next line containg a mark
+    " ['        Jump to start of prev line containg a mark
+    Plug 'kshenoy/vim-signature'
+    " Highlight signs of marks dynamically based upon state
+    " indicated by vim-signify
+    let g:SignatureMarkTextHLDynamic=1
+  "" }}}
+
   "" Plugin: Easymotion {{{
     " Provides a much simpler way to use motions in Vim
     Plug 'Lokaltog/vim-easymotion'
@@ -544,8 +568,8 @@ call plug#begin('~/.vim/plugged')
 
   " Javascript & Node
   "" Plugin: Tern for Vim {{{
-  " Tern-based Javascript editing support
-  " Hook into omni completion to handle autocompletion and provide more
+    " Tern-based Javascript editing support
+    " Hook into omni completion to handle autocompletion and provide more
     function! BuildTern(info)
       " info is a dictionary with 3 fields
       " - name:   name of the plugin
@@ -564,7 +588,7 @@ call plug#begin('~/.vim/plugged')
 
   " Markdown
   "" Plugin: Vim Instant Markdown {{{
-  " Instant markdown Previews from Vim
+    " Instant markdown Previews from Vim
     Plug 'suan/vim-instant-markdown'
     " Only refresh on specific events
     let g:instant_markdown_slow=1
@@ -575,7 +599,7 @@ call plug#begin('~/.vim/plugged')
 
   " Verilog
   "" Plugin: Verilog and SystemVerilog {{{
-  " Vim Syntax Plugin for Verilog and SystemVerilog
+    " Vim Syntax Plugin for Verilog and SystemVerilog
     Plug 'vhda/verilog_systemverilog.vim'
   "" }}}
 """ }}}
