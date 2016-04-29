@@ -36,12 +36,12 @@ set modelines=4
 """ Auto Commands {{{
   if has("autocmd")
     " Auto reload vimrc
-    augroup reload_vimrc
-      autocmd!
-      autocmd BufWritePost $MYVIMRC,*.vim 
-        \ source $MYVIMRC |
-        \ echo "Reloaded VIM Configurations"
-    augroup END
+    " augroup reload_vimrc
+    "   autocmd!
+    "   autocmd BufWritePost $MYVIMRC,*.vim
+    "     \ source $MYVIMRC |
+    "     \ echo "Reloaded VIM Configurations"
+    " augroup END
     " Restore cursor position when opening file
     augroup restore_cursor
       autocmd!
