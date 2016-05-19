@@ -2,7 +2,7 @@
 
 cfg_tmpdir="/run/user/$UID/i3lock-extra"
 cfg_lockfile="$cfg_tmpdir/locked"
-cfg_pixelize_scale='10'
+cfg_pixelize_scale='4'
 cfg_text='Type password to unlock'
 
 err() { echo "$*" >&2; }
@@ -40,7 +40,7 @@ deskshot() {
 	declare dist_mode=$1; shift
 
 	case "$dist_mode" in
-		blur) scrot -e "convert -adaptive-blur 4x4 \$f ${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png";;
+		blur) scrot -e "convert -blur 4x4 \$f ${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png";;
 		pixelize)
 			scale_down=$(( 100/cfg_pixelize_scale ))
 			scale_up=$(( ( 100/cfg_pixelize_scale ) * cfg_pixelize_scale * cfg_pixelize_scale ))
@@ -53,7 +53,7 @@ deskshot() {
 		convert -gravity center -composite -matte "${cfg_tmpdir}/lockbg.png" "$1" "${cfg_tmpdir}/lockbg.png"
 	fi
   convert -family "Ubuntu Mono" -gravity center -fill white -pointsize 24 -draw "text 0,180 '$cfg_text'" "${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png"
-	
+
 	image="${cfg_tmpdir}/lockbg.png"
 	printf '%s' "$image"
 }
@@ -113,7 +113,7 @@ main() {
 	esac
 
 	trap cleanup INT TERM EXIT
-	
+
 	until lock; do
 		true
 	done
