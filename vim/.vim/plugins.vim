@@ -91,7 +91,7 @@ call plug#begin('~/.vim/plugged')
       let g:webdevicons_enable=0
     endif
     " Enable/disable adding the flags to NERDTree
-    let g:webdevicons_enable_nerdtree=1
+    let g:webdevicons_enable_nerdtree=0
     " Enable/disable adding the custom source to unite
     let g:webdevicons_enable_unite=0
     " Enable/disable adding the column to vimfiler
@@ -330,7 +330,7 @@ call plug#begin('~/.vim/plugged')
       " - status: 'installed', 'updated', or 'unchanged'
       " - force:  set on PlugInstall! or PlugUpdate!
       if a:info.status == 'installed' || a:info.force
-        !./install.sh --clang-completer
+        !./install.py --clang-completer --tern-completer
       endif
     endfunction
     Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
@@ -579,11 +579,13 @@ call plug#begin('~/.vim/plugged')
         !npm install
       endif
     endfunction
-    Plug 'marijnh/tern_for_vim', { 'for': ['javascript'], 'do': function('BuildTern') }
+    " Plug 'marijnh/tern_for_vim', { 'for': ['javascript'], 'do': function('BuildTern') }
     " Display argument type hints when the cursor is left over a function
-    let g:tern_show_argument_hints='on_hold'
+    " let g:tern_show_argument_hints='on_hold'
     " Display function signature in the completion menu
-    let g:tern_show_signature_in_pum=1
+    " let g:tern_show_signature_in_pum=1
+    " Enable Shortcuts
+    " let g:tern_map_keys=1
   "" }}}
 
   " Markdown
@@ -594,7 +596,7 @@ call plug#begin('~/.vim/plugged')
     let g:instant_markdown_slow=1
     " Manually control to launch the preview window
     " Command(:InstantMarkdownPreview)
-    let g:instant_markdown_autostart=0
+    " let g:instant_markdown_autostart=1
   "" }}}
 
   " Verilog
