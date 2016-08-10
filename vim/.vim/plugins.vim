@@ -281,6 +281,8 @@ call plug#begin('~/.vim/plugged')
     Plug 'sheerun/vim-polyglot'
     " No conceal in JSON
     let g:vim_json_syntax_conceal=0
+    " Enable syntax highlighting for JSDocs
+    let g:javascript_plugin_jsdoc=1
   "" }}}
 
   "" Plugin: EditorConfig {{{
@@ -586,6 +588,10 @@ call plug#begin('~/.vim/plugged')
     " let g:tern_show_signature_in_pum=1
     " Enable Shortcuts
     " let g:tern_map_keys=1
+  "" }}}
+  "" Plugin: Vim Node {{{
+    " Tools and environment to make Vim superb for developing with Node.js
+    Plug 'moll/vim-node', { 'for': 'javascript' }
   "" }}}
 
   " Markdown
