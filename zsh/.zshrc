@@ -14,7 +14,7 @@
   export UPDATE_ZSH_DAYS=3
   # Uncomment the following line to disable bi-weekly auto-update checks.
   # DISABLE_AUTO_UPDATE="true"
-  
+
   # Uncomment the following line to disable auto-setting terminal title.
   DISABLE_AUTO_TITLE="true"
   # Uncomment the following line to use case-sensitive completion.
@@ -28,7 +28,7 @@
   # under VCS as dirty. This makes repository status check for large repositories
   # much, much faster.
   DISABLE_UNTRACKED_FILES_DIRTY="true"
-  
+
   # Uncomment the following line if you want to change the command execution time
   # stamp shown in the history command output.
   # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
@@ -36,7 +36,7 @@
 
   # Uncomment the following line to disable colors in ls.
   # DISABLE_LS_COLORS="true"
-  
+
   # Set name of the theme to load.
   # Look in ~/.oh-my-zsh/themes/
   # Optionally, if you set this to "random", it'll load a random theme each
@@ -51,16 +51,16 @@
   # Add wisely, as too many plugins slow down shell startup.
   plugins=(
     # Autocompletion or alias
-    screen supervisor 
-    git git-flow mercurial docker
+    screen supervisor
+    git git-flow mercurial docker docker-compose aws
     mvn scala sbt
     python pip pylint pep8 virtualenv virtualenvwrapper fabric
     gem
-    node npm cofee bower
+    node npm cofee bower gulp
     colored-man-pages
     history-substring-search
-    # Useful tools  
-    colorize catimg command-not-found common-aliases 
+    # Useful tools
+    colorize catimg command-not-found common-aliases
     encode64 jsontools urltools sudo gitignore themes
     emoji-clock
     # Just for fun
@@ -76,7 +76,7 @@ source $ZSH/oh-my-zsh.sh
 ### General {{{
   export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
   export MANPATH="/usr/local/man:$MANPATH"
-  
+
   # You may need to manually set your language environment
   export LANG="ko_KR.UTF-8"
   export LANGUAGE="ko_KR:ko:en_US:en"
