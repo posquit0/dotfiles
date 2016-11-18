@@ -19,9 +19,6 @@
       force: true
       path: bin/
     ~/.alias: .alias
-    ~/.bowerrc:
-      relink: true
-      path: bower/.bowerrc
     ~/.ctags:
       force: true
       path: ctags/.ctags
