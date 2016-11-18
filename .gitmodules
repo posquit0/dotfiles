@@ -43,3 +43,6 @@
 [submodule "tools/fonts/nerd-fonts"]
 	path = tools/fonts/nerd-fonts
 	url = https://github.com/ryanoasis/nerd-fonts
+[submodule "zsh"]
+	path = zsh
+	url = https://github.com/posquit0/zshrc

@@ -71,18 +71,15 @@
     ~/.vimrc:
       force: true
       path: vim/.vimrc
-    ~/.oh-my-zsh:
+    ~/.zsh:
       force: true
-      path: zsh/.oh-my-zsh/
-    ~/.oh-my-zsh-custom:
-      force: true
-      path: zsh/.oh-my-zsh-custom/
+      path: zsh
     ~/.zshenv:
       force: true
-      path: zsh/.zshenv
+      path: zsh/zshenv
     ~/.zshrc:
       force: true
-      path: zsh/.zshrc
+      path: zsh/zshrc
     ~/.xinitrc:
       relink: true
       path: X/.xinitrc
