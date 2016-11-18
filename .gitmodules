@@ -1,18 +1,6 @@
-[submodule "zsh/.oh-my-zsh"]
-	path = zsh/.oh-my-zsh
-	url = https://github.com/robbyrussell/oh-my-zsh
 [submodule "tmux/.tmux/plugins/tpm"]
 	path = tmux/.tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
-[submodule "zsh/.oh-my-zsh-custom/plugins/zsh-syntax-highlighting"]
-	path = zsh/.oh-my-zsh-custom/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting
-[submodule "zsh/.oh-my-zsh-custom/plugins/autosuggestions"]
-	path = zsh/.oh-my-zsh-custom/plugins/autosuggestions
-	url = https://github.com/tarruda/zsh-autosuggestions
-[submodule "zsh/.oh-my-zsh-custom/plugins/alias-tips"]
-	path = zsh/.oh-my-zsh-custom/plugins/alias-tips
-	url = https://github.com/djui/alias-tips
 [submodule "weechat/.weechat-plugins/wee-slack"]
 	path = weechat/.weechat-plugins/wee-slack
 	url = https://github.com/rawdigits/wee-slack.git
@@ -37,9 +25,6 @@
 [submodule "tools/sqlmap"]
 	path = tools/sqlmap
 	url = https://github.com/sqlmapproject/sqlmap.git
-[submodule "zsh/.oh-my-zsh-custom/plugins/resty"]
-	path = zsh/.oh-my-zsh-custom/plugins/resty
-	url = https://github.com/micha/resty
 [submodule "tools/nvm"]
 	path = tools/nvm
 	url = https://github.com/creationix/nvm.git
