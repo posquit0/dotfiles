@@ -49,10 +49,10 @@
       path: ssh/.ssh/
     ~/.tmux: 
       force: true
-      path: tmux/.tmux/
+      path: tmux
     ~/.tmux.conf:
       force: true
-      path: tmux/.tmux.conf
+      path: tmux/tmux.conf
     ~/.weechat:
       relink: true
       path: weechat/.weechat/

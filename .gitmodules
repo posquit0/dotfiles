@@ -43,3 +43,6 @@
 [submodule "zsh"]
 	path = zsh
 	url = https://github.com/posquit0/zshrc
+[submodule "tmux"]
+	path = tmux
+	url = https://github.com/posquit0/tmux-conf
