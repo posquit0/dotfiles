@@ -1,6 +1,3 @@
-[submodule "tmux/.tmux/plugins/tpm"]
-	path = tmux/.tmux/plugins/tpm
-	url = https://github.com/tmux-plugins/tpm
 [submodule "weechat/.weechat-plugins/wee-slack"]
 	path = weechat/.weechat-plugins/wee-slack
 	url = https://github.com/rawdigits/wee-slack.git
