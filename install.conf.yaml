@@ -2,11 +2,11 @@
 
 - shell:
   - [sleep 0, Installing Posquit0's dotfiles]
-  - 
+  -
     command: [git pull, Updating dotfiles]
     stdout: true
     stderr: true
-  - 
+  -
     command: [git submodule update --init --recursive --quiet, Installing submodules]
     stdout: true
     stderr: true
@@ -44,7 +44,7 @@
     ~/.ssh:
       relink: true
       path: ssh/.ssh/
-    ~/.tmux: 
+    ~/.tmux:
       force: true
       path: tmux
     ~/.tmux.conf:
@@ -59,9 +59,6 @@
     ~/.wgetrc:
       relink: true
       path: wget/.wgetrc
-    ~/.emacs.d:
-      force: true
-      path: emacs/.emacs.d/
     ~/.vim:
       force: true
       path: vim/.vim/
@@ -114,22 +111,22 @@
 - shell:
   - tmux start-server
   - tmux new-session -d
-  - 
+  -
     command: [~/.tmux/plugins/tpm/scripts/install_plugins.sh, Installing TMUX plugins]
     stdout: true
     stderr: true
   - tmux kill-server
-  - 
+  -
     command: [vim +PlugInstall +qall now, Installing Vim plugins]
     stdin: true
     stdout: true
     stderr: true
-  - 
+  -
     command: [~/.tools/fonts/install.sh, Installing fonts(Powerline, Nerd and more)]
     stdin: true
     stdout: true
     stderr: true
-  - 
+  -
     command: [make dwm --directory=~/.tools/dwm, Installing DWM(Dynamic Window Manager)]
     stdin: true
     stdout: true
