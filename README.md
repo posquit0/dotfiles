@@ -24,7 +24,7 @@
 **This dotfiles** contains awesome configurations for CLI commands and X environments, along with powerfully customized Vim, Zsh and Tmux environments for nerds.
 
 <div align="center">
-  <img alt="screenshot" src="https://raw.githubusercontent.com/posquit0/i/master/dotfiles/screenshot.png" width="90%" />
+  <img alt="screenshot" src="https://raw.githubusercontent.com/posquit0/i/master/dotfiles/screenshot.png" width="85%" />
 </div>
 
 <br />
