@@ -27,6 +27,12 @@
   <img alt="screenshot" src="https://raw.githubusercontent.com/posquit0/i/master/dotfiles/screenshot.png" />
 </div>
 
+As the size of dotfiles is bigger, I decided to manage the dotfiles of **Vim, Zsh and TMUX** as submodules. You can check below links if you only want those configurations.
+
+- [posquit0's vimrc](https://github.com/posquit0/vimrc)
+- [posquit0's zshrc](https://github.com/posquit0/zshrc)
+- [posquit0's tmux-conf](https://github.com/posquit0/tmux-conf)
+
 
 ## Usage
 
