@@ -1,17 +1,34 @@
-<img src="https://raw.githubusercontent.com/posquit0/dotfiles/master/icon.png?v=3&s=200" align="left" width="128px" height="128px"/>
+<div align="center">
+  <a href="https://github.com/posquit0/dotfiles" title="Identif.js">
+    <img alt="posquit0's dotfiles" src="https://raw.githubusercontent.com/posquit0/dotfiles/master/icon.png" width="128px" />
+  </a>
+  <br />
+  <h1>posquit0's dotfiles</h1>
+</div>
 
-### **dotfiles by posquit0**
-> *.dotfiles for super nerds written by posquit0*
+<p align="center">
+  dotfiles for super nerds written by posquit0
+</p>
 
-[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
-[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badge/)
+<div align="center">
+  <a href="https://opensource.org/licenses/mit-license.php">
+    <img alt="MIT Licence" src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" />
+  </a>
+  <a href="https://github.com/ellerbrock/open-source-badge/">
+    <img alt="Open Source Love" src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" />
+  </a>
+</div>
 
 <br />
 
-[**This dotfiles**](https://github.com/posquit0/dotfiles) is written by [posquit0](https://github.com/posquit0/) to improve the environment for software development.
+**This dotfiles** contains awesome configurations for CLI commands and X environments, along with powerfully customized Vim, Zsh and Tmux environments for nerds.
+
+<div align="center">
+  <img alt="screenshot" src="https://raw.githubusercontent.com/posquit0/i/master/dotfiles/screenshot.png" />
+</div>
 
 
-## <a name="usage">Usage
+## Usage
 
 ```bash
 $ git clone https://github.com/posquit0/dotfiles.git ~/.dotfiles
@@ -19,7 +36,12 @@ $ cd ~/.dotfiles
 $ ./install
 ```
 
-## <a name="contact">Contact
+### Dependencies
+
+- [**Git**](https://git-scm.com/): my dotfiles is managed using `git`
+
+
+## Contact
 
 You are free to take my dotfiles and modify it to create your own.
 
@@ -28,7 +50,6 @@ If you have any questions, feel free to join me at [`#posquit0` on Freenode](irc
 Good luck!
 
 
-## <a name="license">License
+## License
 
-- Claud D. Park <posquit0.bj@gmail.com>
-- [MIT Liense](https://github.com/posquit0/node-iamporter/blob/master/LICENSE)
+[MIT](https://github.com/posquit0/dofiles/blob/master/LICENSE) © [Byungjin Park](http://www.posquit0.com)
