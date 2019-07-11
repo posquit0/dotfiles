@@ -29,9 +29,9 @@ set viminfo='100,n$HOME/.viminfo
 " Set default shell to execute functions
 set shell=sh
 "" Modeline
-" Respect modeline in files
-set modeline
-set modelines=4
+" Disable modeline as security precaution
+set modelines=0
+set nomodeline
 
 """ Auto Commands {{{
   if has("autocmd")
