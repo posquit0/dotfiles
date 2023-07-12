@@ -1,0 +1,3 @@
+[submodule "dot_git"]
+	path = dot_git
+	url = git@github.com:posquit0/gitconfig.git
