@@ -1,3 +1,12 @@
 [submodule "dot_git"]
 	path = dot_git
 	url = git@github.com:posquit0/gitconfig.git
+[submodule "dot_zsh"]
+	path = dot_zsh
+	url = git@github.com:posquit0/zshrc.git
+[submodule "dot_brew"]
+	path = dot_brew
+	url = git@github.com:posquit0/brewfile.git
+[submodule "dot_tmux"]
+	path = dot_tmux
+	url = git@github.com:posquit0/tmux-conf.git
