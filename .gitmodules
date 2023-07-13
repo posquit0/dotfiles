@@ -7,6 +7,6 @@
 [submodule "external_dot_brew"]
 	path = external_dot_brew
 	url = git@github.com:posquit0/brewfile.git
-[submodule "external_dot_git"]
-	path = external_dot_git
+[submodule "external_dot_gitconfig.d"]
+	path = external_dot_gitconfig.d
 	url = git@github.com:posquit0/gitconfig.git
