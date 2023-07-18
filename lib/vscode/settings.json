@@ -1,0 +1,6 @@
+{
+    "workbench.colorTheme": "Default Dark Modern",
+    "editor.inlineSuggest.enabled": true,
+    "terminal.external.osxExec": "Warp.app",
+    "files.autoSave": "onWindowChange"
+}
