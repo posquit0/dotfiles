@@ -1,0 +1,70 @@
+plugin:
+  debugNode:
+    shortCut: Shift-D
+    confirm: false
+    description: Debug Nodes
+    scopes:
+    - nodes
+    command: kubectl
+    background: false
+    args:
+    - debug
+    - -it
+    - node/$NAME
+    - --image
+    - nicolaka/netshoot:v0.11
+
+  debugPod:
+    shortCut: Shift-D
+    confirm: false
+    description: Debug Pod
+    scopes:
+    - pods
+    command: kubectl
+    background: false
+    args:
+    - debug
+    - -it
+    - -n
+    - $NAMESPACE
+    - $NAME
+    - --image
+    - nicolaka/netshoot:v0.11
+
+  debugPodContainers:
+    shortCut: Shift-D
+    confirm: false
+    description: Debug Pod Containers
+    scopes:
+    - containers
+    command: kubectl
+    background: false
+    args:
+    - debug
+    - -it
+    - -n
+    - $NAMESPACE
+    - $POD
+    - --target
+    - $NAME
+    - --image
+    - nicolaka/netshoot:v0.11
+    - --share-processes
+
+  # Leverage stern (https://github.com/stern/stern) to output logs.
+  stern:
+    shortCut: Ctrl-L
+    confirm: false
+    description: "Get Pod Logs Using Stern"
+    scopes:
+    - pods
+    command: stern
+    background: false
+    args:
+    - --tail
+    - 50
+    - $FILTER
+    - -n
+    - $NAMESPACE
+    - --context
+    - $CONTEXT
