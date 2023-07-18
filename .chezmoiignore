@@ -4,13 +4,16 @@ LICENSE
 
 
 {{ if ne .chezmoi.os "darwin" }}
+.chezmoiscripts/darwin/
 Library/Application Support/
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}
+.chezmoiscripts/linux/
 # VisualStudio Code
 .config/Code
 {{ end }}
 
 {{ if ne .chezmoi.os "windows" }}
+.chezmoiscripts/windows/
 {{ end }}
