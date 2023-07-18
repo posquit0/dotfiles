@@ -8,6 +8,7 @@ Library/Application Support/
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}
+# VisualStudio Code
 .config/Code
 {{ end }}
 
