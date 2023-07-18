@@ -1,3 +1,15 @@
 lib/
 README.md
 LICENSE
+
+
+{{ if ne .chezmoi.os "darwin" }}
+Library/Application Support/
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+.config/Code
+{{ end }}
+
+{{ if ne .chezmoi.os "windows" }}
+{{ end }}
