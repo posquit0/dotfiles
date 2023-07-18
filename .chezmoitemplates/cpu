@@ -1,0 +1,16 @@
+{{- $cpuCores := 1 }}
+{{- $cpuThreads := 1 }}
+{{- if eq .chezmoi.os "darwin" }}
+{{-   $cpuCores = (output "sysctl" "-n" "hw.physicalcpu_max") | trim | atoi }}
+{{-   $cpuThreads = (output "sysctl" "-n" "hw.logicalcpu_max") | trim | atoi }}
+{{- else if eq .chezmoi.os "linux" }}
+{{-   $cpuCores = (output "sh" "-c" "lscpu --online --parse | grep --invert-match '^#' | sort --field-separator=',' --key='2,4' --unique | wc --lines") | trim | atoi }}
+{{-   $cpuThreads = (output "sh" "-c" "lscpu --online --parse | grep --invert-match '^#' | wc --lines") | trim | atoi }}
+{{- else if eq .chezmoi.os "windows" }}
+{{-   $cpuCores = (output "powershell.exe" "-NoProfile" "-NonInteractive" "-Command" "(Get-CimInstance -ClassName 'Win32_Processor').NumberOfCores") | trim | atoi }}
+{{-   $cpuThreads = (output "powershell.exe" "-NoProfile" "-NonInteractive" "-Command" "(Get-CimInstance -ClassName 'Win32_Processor').NumberOfLogicalProcessors") | trim | atoi }}
+{{- end }}
+
+[data.cpu]
+  cores = {{ $cpuCores }}
+  threads = {{ $cpuThreads }}
