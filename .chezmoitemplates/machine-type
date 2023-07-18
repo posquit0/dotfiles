@@ -1,4 +1,5 @@
 {{- $machineType := "desktop" }}
+{{- $is_codespaces:= env "CODESPACES" | not | not -}}
 {{- if eq .chezmoi.os "darwin" }}
 {{-   if contains "MacBook" (output "sysctl" "-n" "hw.model") }}
 {{-     $machineType = "laptop" }}
@@ -6,7 +7,11 @@
 {{-     $machineType = "desktop" }}
 {{-   end }}
 {{- else if eq .chezmoi.os "linux" }}
-{{-   $machineType = (output "hostnamectl" "--json=short" | mustFromJson).Chassis }}
+{{-   if $is_codespaces }}
+{{-     $machineType = "virtual" }}
+{{-   else }}
+{{-     $machineType = (output "hostnamectl" "--json=short" | mustFromJson).Chassis }}
+{{-   end }}
 {{- else if eq .chezmoi.os "windows" }}
 {{-   $machineType = (output "powershell.exe" "-NoProfile" "-NonInteractive" "-Command" "if ((Get-CimInstance -Class Win32_Battery | Measure-Object).Count -gt 0) { Write-Output 'laptop' } else { Write-Output 'desktop' }") | trim }}
 {{- end }}
