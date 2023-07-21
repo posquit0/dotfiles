@@ -1,4 +1,4 @@
-{{- $is_codespaces:= env "CODESPACES" | not | not -}}
+{{- $is_codespaces:= env "CODESPACES" | not | not }}
 
 [data.github]
   is_codespaces = {{ $is_codespaces }}
