@@ -22,5 +22,5 @@ Library/Application Support/
 
 ## GitHub Codespaces
 {{ if .github.is_codespaces }}
-*.asc
+.kaf/
 {{ end }}
