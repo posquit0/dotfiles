@@ -18,3 +18,9 @@ Library/Application Support/
 {{ if ne .chezmoi.os "windows" }}
 .chezmoiscripts/windows/
 {{ end }}
+
+
+## GitHub Codespaces
+{{ if .github.is_codespaces }}
+*.asc
+{{ end }}
