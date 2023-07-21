@@ -4,7 +4,7 @@
 ## Getting Started
 
 ```sh
-$ chezmoi init --apply git@github.com:posquit0/dotfiles.git
+$ chezmoi init --apply https://github.com/posquit0/dotfiles.git
 ```
 
 
