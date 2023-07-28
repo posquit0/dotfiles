@@ -5,6 +5,7 @@ install.sh
 
 
 {{ if ne .chezmoi.os "darwin" }}
+.1password/agent.sock
 .chezmoiscripts/darwin/
 Library/
 {{ end }}
