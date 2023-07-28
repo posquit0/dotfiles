@@ -1,3 +1,10 @@
 {{- if eq .chezmoi.os "darwin" -}}
-pinentry-program /opt/homebrew/bin/pinentry-mac
+{{-   if eq .machine.type "laptop" -}}
+pinentry-program {{ output "which" "pinentry-touchid" | trim }}
+{{-   else if eq .machine.type "desktop" -}}
+pinentry-program {{ output "which" "pinentry-mac" | trim }}
+{{-   end }}
 {{- end }}
+
+default-cache-ttl 600
+max-cache-ttl 7200
