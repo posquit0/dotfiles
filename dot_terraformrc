@@ -1,5 +1,10 @@
+# Enable plugin caching and specify the location of the plugin cache directory.
 plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"
 
+# Disable upgrade and security bulletin checks that require reaching out to HashiCorp-provided network services.
+disable_checkpoint = true
+
+# Use `terracreds` as credentials helper.
 credentials_helper "terracreds" {
   args = []
 }
