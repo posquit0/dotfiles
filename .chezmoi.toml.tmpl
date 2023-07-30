@@ -7,6 +7,7 @@
 
 {{- includeTemplate "github-codespaces" . }}
 
+
 ################################################
 # Version Management
 ################################################
@@ -22,16 +23,23 @@
 
 encryption = "gpg"
 [gpg]
-  recipient = "74F3F6BE2D0EC4E8D00AFD490E44F71854180758"
   args = [
     # Mute some info messages to stderr instead of stdout
     "--quiet",
   ]
+  recipient = "74F3F6BE2D0EC4E8D00AFD490E44F71854180758"
+  # Suffix appended to GPG-encrypted files
+  suffix = ".asc"
 
 
 ################################################
 # Operation
 ################################################
+
+# Format for data output, either `json` or `yaml`
+format = "json"
+# Mode in target dir, either `file` or `symlink`
+mode = "file"
 
 [diff]
   pager = "delta --side-by-side"
@@ -44,3 +52,7 @@ encryption = "gpg"
     "{{ "{{" }} .Source {{ "}}" }}",
     "{{ "{{" }} .Target {{ "}}" }}",
   ]
+
+[update]
+  # Update submodules recursively
+  recurseSubmodules = true
