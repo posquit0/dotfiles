@@ -10,3 +10,6 @@
 [submodule "external_dot_gitconfig.d"]
 	path = external_dot_gitconfig.d
 	url = https://github.com/posquit0/gitconfig.git
+[submodule "external_dot_vim"]
+	path = external_dot_vim
+	url = https://github.com/posquit0/vimrc.git
