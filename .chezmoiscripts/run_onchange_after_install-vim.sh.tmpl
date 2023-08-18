@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# Modified Date: {{ (stat (joinPath .chezmoi.homeDir ".vim")).modTime }}
+vi +PlugInstall +qall now
