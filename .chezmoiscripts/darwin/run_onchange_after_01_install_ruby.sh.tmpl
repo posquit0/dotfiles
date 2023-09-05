@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+
+{{- $rubyVersion := "3.2.2" }}
+if which rbenv > /dev/null; then
+  echo "[!] The version manager for Ruby 'rbenv' - Found!"
+  rbenv install {{ $rubyVersion }}
+  rbenv global {{ $rubyVersion }}
+  echo "[+] Successfully installed 'ruby' {{ $rubyVersion }}."
+else
+  echo "[!] The version manager for Ruby 'rbenv' - Not Found!"
+fi

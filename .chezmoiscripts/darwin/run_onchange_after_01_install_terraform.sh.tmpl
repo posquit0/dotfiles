@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+
+if which tfswitch > /dev/null; then
+  echo "[!] The version manager for Terraform 'tfswitch' - Found!"
+  tfswitch -u
+  echo "[+] Successfully installed 'terraform' {{ output "tfswitch" "-U" | trim }}."
+else
+  echo "[!] The version manager for Terraform 'tfswitch' - Not Found!"
+fi

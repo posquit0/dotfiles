@@ -2,7 +2,6 @@
 
 set -eufo pipefail
 
-###############################################################################
 
 # Install gpg dependency
 if which gpg > /dev/null; then
