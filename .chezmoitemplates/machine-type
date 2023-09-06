@@ -1,7 +1,7 @@
 {{- $machineType := "desktop" }}
 {{- $is_codespaces:= env "CODESPACES" | not | not -}}
 {{- if eq .chezmoi.os "darwin" }}
-{{-   if contains "MacBook" (output "sysctl" "-n" "hw.model") }}
+{{-   if contains "MacBook" (output "/usr/sbin/system_profiler" "SPHardwareDataType") }}
 {{-     $machineType = "laptop" }}
 {{-   else }}
 {{-     $machineType = "desktop" }}
