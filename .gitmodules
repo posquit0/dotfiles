@@ -13,6 +13,6 @@
 [submodule "external_dot_vim"]
 	path = external_dot_vim
 	url = https://github.com/posquit0/vimrc.git
-[submodule "private_dot_config/external_dot_nvim"]
-	path = private_dot_config/external_dot_nvim
+[submodule "private_dot_config/external_nvim"]
+	path = private_dot_config/external_nvim
 	url = https://github.com/posquit0/nvim-config.git
