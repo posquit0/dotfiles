@@ -2,5 +2,5 @@
 
 set -eufo pipefail
 
-# Modified Date: {{ (stat (joinPath .chezmoi.homeDir ".vim")).modTime }}
+# Modified Date: {{ (stat (joinPath .chezmoi.homeDir ".config/nvim")).modTime }}
 nvim --headless "+Lazy! sync" +qa
