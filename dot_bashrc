@@ -1,0 +1,10 @@
+# vi: filetype=bash
+# .bashrc
+#
+# Maintained by Byungjin Park <posquit0.bj@gmail.com>
+# https://www.posquit0.com/
+
+
+# Enable `direnv` hook
+which direnv > /dev/null \
+  && eval "$(direnv hook bash)"
