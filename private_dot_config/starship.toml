@@ -59,7 +59,7 @@ repo_root_style = ""
 # The format of a git repo when `before_repo_root_style` and `repo_root_style` is defined
 repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 read_only = " 󰌾"
-read_only_styl = "red"
+read_only_style = "red"
 style = "bold cyan"
 format = "[$path]($style)[$read_only]($read_only_style) "
 
