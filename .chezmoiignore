@@ -3,8 +3,8 @@ README.md
 LICENSE
 install.sh
 
-*/.git
-*/.gitmodules
+**/.git
+**/.gitmodules
 
 {{ if ne .chezmoi.os "darwin" }}
 .1password/agent.sock
