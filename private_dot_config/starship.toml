@@ -1,0 +1,223 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+
+###################################################
+# General
+###################################################
+
+# Inserts a blank line between shell prompts
+add_newline = true
+# Timeout for starship to scan files (in milliseconds)
+scan_timeout = 30
+# Timeout for commands executed by starship (in milliseconds)
+command_timeout = 500
+
+
+###################################################
+# UI
+###################################################
+
+format = "$all$username$character"
+right_format = ""
+# A continuation prompt that displays two filled in arrows
+continuation_prompt = "[∙](bright-black) "
+
+
+###################################################
+# Modules: Basic
+###################################################
+
+[character]
+success_symbol = "[❯](bold green)"
+
+[username]
+disabled = false
+show_always = true
+style_user = "white bold"
+style_root = "red bold"
+format = "[$user]($style) "
+
+[directory]
+disabled = false
+# Use the OS specific path separator instead of always using / (e.g. \ on Windows)
+use_os_path_sep = true
+# The number of characters to use when applying fish shell pwd path logic
+fish_style_pwd_dir_length = 1
+# The symbol indicating home directory.
+home_symbol = "~"
+# The symbol to prefix to truncated paths. eg: '…/'
+truncation_symbol = ".../"
+# The number of parent folders that the current directory should be truncated to
+truncation_length = 2
+# Whether or not to truncate to the root of the git repo that you're currently in
+truncate_to_repo = false
+# The style for the path segment above the root of the git repo. The default value is equivalent to `style`
+before_repo_root_style = ""
+# The style for the root of the git repo. The default value is equivalent to `style`
+repo_root_style = ""
+# The format of a git repo when `before_repo_root_style` and `repo_root_style` is defined
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+read_only = " 󰌾"
+read_only_styl = "red"
+style = "bold cyan"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[hostname]
+ssh_symbol = " "
+
+
+###################################################
+# Modules: VCS
+###################################################
+
+[git_branch]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+
+###################################################
+# Modules: Main Tools
+###################################################
+
+[aws]
+symbol = "  "
+
+[docker_context]
+symbol = " "
+
+
+###################################################
+# Modules: Main Languages
+###################################################
+
+[golang]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[python]
+symbol = " "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = " "
+
+[java]
+symbol = " "
+
+[scala]
+symbol = " "
+
+
+
+###################################################
+# Modules: MISC
+###################################################
+
+[battery]
+disabled = true
+
+[buf]
+disabled = true
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+
+[package]
+symbol = "󰏗 "
+
+[pijul_channel]
+symbol = " "
+
+[rlang]
+symbol = "󰟔 "
