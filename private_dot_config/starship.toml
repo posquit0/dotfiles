@@ -19,7 +19,7 @@ command_timeout = 500
 ###################################################
 
 format = "$all$username$character"
-right_format = ""
+right_format = "$aws"
 # A continuation prompt that displays two filled in arrows
 continuation_prompt = "[∙](bright-black) "
 
@@ -30,13 +30,6 @@ continuation_prompt = "[∙](bright-black) "
 
 [character]
 success_symbol = "[❯](bold green)"
-
-[username]
-disabled = false
-show_always = true
-style_user = "bold white"
-style_root = "bold underline red"
-format = "[$user]($style) "
 
 [directory]
 disabled = false
@@ -66,6 +59,16 @@ format = "[$path]($style)[$read_only]($read_only_style) "
 [hostname]
 ssh_symbol = " "
 
+[sudo]
+disabled = true
+
+[username]
+disabled = false
+show_always = true
+style_user = "bold white"
+style_root = "bold underline red"
+format = "[$user]($style) "
+
 
 ###################################################
 # Modules: VCS
@@ -83,10 +86,46 @@ symbol = " "
 ###################################################
 
 [aws]
-symbol = "  "
+disabled = false
+symbol = " "
+style = "bold 208"
+format = '[$symbol($profile )(\($region\))]($style)'
+
+[aws.region_aliases]
+us-east-1 = "use1"
+us-east-2 = "use2"
+us-west-1 = "usw1"
+us-west-2 = "usw2"
+af-south-1 = "afs1"
+ap-east-1 = "ape1"
+ap-northeast-1 = "apne1"
+ap-northeast-2 = "apne2"
+ap-northeast-3 = "apne3"
+ap-southeast-1 = "apse1"
+ap-southeast-2 = "apse2"
+ap-southeast-3 = "apse3"
+ap-south-1 = "aps1"
+ca-central-1 = "cac1"
+eu-central-1 = "euc1"
+eu-west-1 = "euw1"
+eu-west-2 = "euw2"
+eu-west-3 = "euw3"
+eu-north-1 = "eun1"
+eu-south-1 = "eus1"
+me-south-1 = "mes1"
+sa-east-1 = "sae1"
+cn-north-1 = "cn1"
+us-gov-west-1 = "usgw1"
+us-gov-east-1 = "usge1"
+
+# [aws.profile_aliases]
+# CompanyGroupFrobozzOnCallAccess = 'Frobozz'
 
 [docker_context]
 symbol = " "
+
+[terraform]
+disabled = false
 
 
 ###################################################
@@ -94,30 +133,67 @@ symbol = " "
 ###################################################
 
 [golang]
+disabled = false
 symbol = " "
 
 [nodejs]
+disabled = false
 symbol = " "
 
+[php]
+disabled = false
+
 [python]
+disabled = false
 symbol = " "
 
 [ruby]
+disabled = false
 symbol = " "
 
 [rust]
+disabled = false
 symbol = " "
 
 [java]
+disabled = false
 symbol = " "
 
 [scala]
+disabled = false
 symbol = " "
+
+[swift]
+disabled = true
 
 
 
 ###################################################
 # Modules: MISC
+###################################################
+
+[package]
+disabled = false
+symbol = "󰏗 "
+
+[shell]
+disabled = true
+
+[shlvl]
+disabled = true
+
+[status]
+disabled = true
+
+[time]
+disabled = true
+
+[vagrant]
+disabled = false
+
+
+###################################################
+# Modules: Disabled
 ###################################################
 
 [battery]
@@ -213,11 +289,38 @@ Ubuntu = " "
 Unknown = " "
 Windows = "󰍲 "
 
-[package]
-symbol = "󰏗 "
+[perl]
+disabled = true
 
 [pijul_channel]
 symbol = " "
 
+[purescript]
+disabled = true
+
 [rlang]
-symbol = "󰟔 "
+disabled = true
+
+[raku]
+disabled = true
+
+[red]
+disabled = true
+
+[singularity]
+disabled = true
+
+[solidity]
+disabled = true
+
+[spack]
+disabled = true
+
+[v]
+disabled = true
+
+[vcsh]
+disabled = true
+
+[zig]
+disabled = true
