@@ -19,7 +19,9 @@ command_timeout = 500
 ###################################################
 
 format = "$all$username$character"
-right_format = "$aws"
+right_format = """
+$aws\
+$kubernetes"""
 # A continuation prompt that displays two filled in arrows
 continuation_prompt = "[∙](bright-black) "
 
@@ -89,7 +91,7 @@ symbol = " "
 disabled = false
 symbol = " "
 style = "bold 208"
-format = '[$symbol($profile )(\($region\))]($style)'
+format = ' [$symbol($profile )(\($region\))]($style)'
 
 [aws.region_aliases]
 us-east-1 = "use1"
@@ -123,6 +125,14 @@ us-gov-east-1 = "usge1"
 
 [docker_context]
 symbol = " "
+
+[kubernetes]
+disabled = false
+detect_files = ["kustomization.yaml", "kustomization.yml", "values.yaml", "values.yml"]
+detect_folders = ["k8s", ".k8s", "kubernetes"]
+symbol = "󱃾 "
+style = "bold 63"
+format = ' [$symbol$context]($style)'
 
 [terraform]
 disabled = false
