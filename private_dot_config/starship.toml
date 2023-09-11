@@ -34,8 +34,8 @@ success_symbol = "[❯](bold green)"
 [username]
 disabled = false
 show_always = true
-style_user = "white bold"
-style_root = "red bold"
+style_user = "bold white"
+style_root = "bold underline red"
 format = "[$user]($style) "
 
 [directory]
@@ -53,14 +53,14 @@ truncation_length = 2
 # Whether or not to truncate to the root of the git repo that you're currently in
 truncate_to_repo = false
 # The style for the path segment above the root of the git repo. The default value is equivalent to `style`
-before_repo_root_style = ""
+before_repo_root_style = "bold italic 245"
 # The style for the root of the git repo. The default value is equivalent to `style`
-repo_root_style = ""
+repo_root_style = "bold underline 34"
 # The format of a git repo when `before_repo_root_style` and `repo_root_style` is defined
 repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 read_only = " 󰌾"
 read_only_style = "red"
-style = "bold cyan"
+style = "bold 34"
 format = "[$path]($style)[$read_only]($read_only_style) "
 
 [hostname]
