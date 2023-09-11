@@ -136,6 +136,13 @@ format = ' [$symbol$context]($style)'
 
 [terraform]
 disabled = false
+detect_extensions = ["tf", "tfplan", "tfstate"]
+detect_files = ["terraform.tfstate", ".terraform-version"]
+detect_folders = [".terraform"]
+symbol = "󱁢 "
+style = "bold 105"
+version_format = 'v${raw}'
+format = 'via [$symbol$workspace]($style) '
 
 
 ###################################################
