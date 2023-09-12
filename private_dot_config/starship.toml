@@ -333,7 +333,7 @@ disabled = true
 [spack]
 disabled = true
 
-[v]
+[vlang]
 disabled = true
 
 [vcsh]
