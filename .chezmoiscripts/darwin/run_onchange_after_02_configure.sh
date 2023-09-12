@@ -3,6 +3,21 @@
 set -eufo pipefail
 
 ###############################################################################
+# General
+###############################################################################
+
+# Disable auto-correct
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+# Disable automatic capitalization as it’s annoying when typing code
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+# Disable smart quotes as they’re annoying when typing code
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+# Disable automatic period substitution as it’s annoying when typing code
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+# Disable smart dashes as they’re annoying when typing code
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+
+###############################################################################
 # Finder
 ###############################################################################
 
@@ -22,9 +37,6 @@ defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 # Remove items in the bin after 30 days
 defaults write com.apple.finder FXRemoveOldTrashItems -bool true
-
-# Restart Finder
-killall Finder
 
 ###############################################################################
 # Desktop & Dock
@@ -50,9 +62,6 @@ defaults write com.apple.dock minimize-to-application -bool true
 # Change the Dock minimize animation
 defaults write com.apple.dock mineffect -string suck
 
-# Restart Dock
-killall Dock
-
 ###############################################################################
 # Menu Bar
 ###############################################################################
@@ -61,9 +70,6 @@ killall Dock
 defaults write com.apple.menuextra.clock DateFormat -string "\"EEE d MMM HH:mm:ss\""
 # The clock indicator (which by default is the colon) will flash on and off each second
 defaults write com.apple.menuextra.clock FlashDateSeparators -bool true
-
-# Restart Menu Bar
-killall SystemUIServer
 
 ###############################################################################
 # Mac App Store                                                               #
@@ -80,3 +86,15 @@ defaults write com.apple.appstore ShowDebugMenu -bool true
 
 # Show the main window when launching Activity Monitor
 defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
+
+###############################################################################
+# Kill affected applications                                                  #
+###############################################################################
+
+for app in "Activity Monitor" \
+	"Dock" \
+	"Finder" \
+	"SystemUIServer"; do
+	killall "${app}" &>/dev/null
+done
+echo "Done. Note that some of these changes require a logout/restart to take effect."
