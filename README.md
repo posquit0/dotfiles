@@ -32,6 +32,11 @@ And if you're feeling especially charitable, follow [posquit0](https://www.posqu
 - [zsh](https://github.com/posquit0/zshrc) - Zsh Configuration for nerds with zplug.
 
 
+## References
+
+- [macOS defaults](https://macos-defaults.com/) - Uncomplete list of macOS `defaults` commands with demos.
+
+
 ## License
 
 Provided under the terms of the [MIT License](https://github.com/posquit0/dotfiles/blob/main/LICENSE).
