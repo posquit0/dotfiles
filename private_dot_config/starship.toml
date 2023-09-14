@@ -126,6 +126,16 @@ us-gov-east-1 = "usge1"
 [docker_context]
 symbol = " "
 
+[helm]
+disabled = false
+detect_extensions = []
+detect_files = ["helmfile.yaml", "Chart.yaml"]
+detect_folders = []
+version_format = 'v${raw}'
+symbol = "⎈ "
+style = "bold white"
+format = 'via [$symbol($version )]($style)'
+
 [kubernetes]
 disabled = false
 detect_files = ["kustomization.yaml", "kustomization.yml", "values.yaml", "values.yml"]
