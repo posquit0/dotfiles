@@ -18,6 +18,19 @@ defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
 ###############################################################################
+# Mission Control
+###############################################################################
+
+# Keep the Spaces arrangement
+defaults write com.apple.dock mru-spaces -bool false
+# Do not group windows by application
+defaults write com.apple.dock expose-group-apps -bool false
+# When switching to an app, switch to a space with open windows for this app
+defaults write NSGlobalDomain AppleSpacesSwitchOnActivate -bool true
+# Set up separate spaces for each display (if you use Spaces and have multiple displays)
+defaults write com.apple.spaces spans-displays -bool true
+
+###############################################################################
 # Finder
 ###############################################################################
 
