@@ -1,5 +1,5 @@
 plugins:
-  debugNode:
+  debug-node:
     shortCut: Shift-D
     confirm: false
     description: Debug Nodes
@@ -16,7 +16,7 @@ plugins:
     - --image
     - nicolaka/netshoot:v0.11
 
-  debugPod:
+  debug-pod:
     shortCut: Shift-D
     confirm: false
     description: Debug Pod
@@ -35,10 +35,10 @@ plugins:
     - --image
     - nicolaka/netshoot:v0.11
 
-  debugPodContainers:
+  debug-pod-container:
     shortCut: Shift-D
     confirm: false
-    description: Debug Pod Containers
+    description: Debug Pod Container
     scopes:
     - containers
     command: kubectl
@@ -56,6 +56,18 @@ plugins:
     - --image
     - nicolaka/netshoot:v0.11
     - --share-processes
+
+  watch-events:
+    shortCut: Shift-E
+    confirm: false
+    description: Get Events
+    scopes:
+    - all
+    command: sh
+    background: false
+    args:
+    - -c
+    - "watch -n 5 kubectl get events --context $CONTEXT --namespace $NAMESPACE --field-selector involvedObject.name=$NAME"
 
   # Leverage stern (https://github.com/stern/stern) to output logs.
   stern:
