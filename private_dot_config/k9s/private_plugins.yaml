@@ -1,4 +1,4 @@
-plugin:
+plugins:
   debugNode:
     shortCut: Shift-D
     confirm: false
@@ -11,6 +11,8 @@ plugin:
     - debug
     - -it
     - node/$NAME
+    # - --profile
+    # - netadmin
     - --image
     - nicolaka/netshoot:v0.11
 
@@ -28,6 +30,8 @@ plugin:
     - -n
     - $NAMESPACE
     - $NAME
+    # - --profile
+    # - netadmin
     - --image
     - nicolaka/netshoot:v0.11
 
@@ -47,6 +51,8 @@ plugin:
     - $POD
     - --target
     - $NAME
+    - --profile
+    - netadmin
     - --image
     - nicolaka/netshoot:v0.11
     - --share-processes
