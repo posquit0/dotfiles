@@ -1,0 +1,38 @@
+k9s:
+  liveViewAutoRefresh: true
+  refreshRate: 2
+  maxConnRetry: 5
+  readOnly: false
+  noExitOnCtrlC: false
+  ui:
+    enableMouse: true
+    headless: true
+    logoless: true
+    crumbsless: false
+    noIcons: false
+    reactive: true
+  shellPod:
+    image: nicolaka/netshoot:v0.11
+    namespace: default
+    limits:
+      cpu: 100m
+      memory: 100Mi
+  skipLatestRevCheck: false
+  logger:
+    tail: 100
+    buffer: 5000
+    sinceSeconds: -1
+    fullScreen: false
+    textWrap: false
+    showTime: false
+  imageScans:
+    enable: false
+  thresholds:
+    cpu:
+      critical: 90
+      warn: 70
+    memory:
+      critical: 90
+      warn: 70
+  screenDumpDir: /tmp/k9s-screens
+  disablePodCounting: false
