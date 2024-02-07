@@ -138,8 +138,8 @@ format = 'via [$symbol($version )]($style)'
 
 [kubernetes]
 disabled = false
-detect_files = ["kustomization.yaml", "kustomization.yml", "values.yaml", "values.yml"]
-detect_folders = ["k8s", ".k8s", "kubernetes"]
+# detect_files = ["kustomization.yaml", "kustomization.yml", "values.yaml", "values.yml"]
+# detect_folders = ["k8s", ".k8s", "kubernetes"]
 symbol = "󱃾 "
 style = "bold 63"
 format = ' [$symbol$context]($style)'
