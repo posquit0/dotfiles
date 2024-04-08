@@ -46,6 +46,8 @@ defaults write com.apple.finder ShowPathbar -bool true
 defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 1
 # Set the default view style for folders without custom setting (Nlsv: List view, clmv: Column view, icnv: Icon view, glyv: Gallery view)
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+# Always search current folder
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 # Keep folders on top when sorting by name
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 # Remove items in the bin after 30 days
@@ -58,7 +60,7 @@ defaults write com.apple.finder FXRemoveOldTrashItems -bool true
 # Set position to left on screen
 defaults write com.apple.dock orientation left
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide -int 1
 # Change the Dock opening and closing animation times (defaults to 0.5)
 defaults write com.apple.dock autohide-time-modifier -float "0.4"
 # Change the Dock opening delay (defaults to 0.2)
@@ -99,6 +101,12 @@ defaults write com.apple.appstore ShowDebugMenu -bool true
 
 # Show the main window when launching Activity Monitor
 defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
+
+###############################################################################
+# Clock                                                            #
+###############################################################################
+
+defaults write com.apple.menuextra.clock FlashDateSeparators -bool true
 
 ###############################################################################
 # Kill affected applications                                                  #
