@@ -28,7 +28,7 @@ defaults write com.apple.dock expose-group-apps -bool false
 # When switching to an app, switch to a space with open windows for this app
 defaults write NSGlobalDomain AppleSpacesSwitchOnActivate -bool true
 # Set up separate spaces for each display (if you use Spaces and have multiple displays)
-defaults write com.apple.spaces spans-displays -bool true
+defaults write com.apple.spaces spans-displays -int 0
 
 ###############################################################################
 # Finder
@@ -107,6 +107,34 @@ defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 ###############################################################################
 
 defaults write com.apple.menuextra.clock FlashDateSeparators -bool true
+
+###############################################################################
+# Keyboard
+###############################################################################
+
+# When a key is held down, the accents menu is displayed
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+# Switche between keyboard layouts for writing in other languages
+defaults write com.apple.HIToolbox AppleFnUsageType -int 1
+# Behave `fn` keys as standard function keys
+defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+
+###############################################################################
+# Mouse & Trackpad
+###############################################################################
+
+# Right click for magic mouse
+defaults write com.apple.AppleMultitouchMouse MouseButtonMode -string TwoButton
+
+# Set click weight to `Medium`
+defaults write com.apple.AppleMultitouchTrackpad FirstClickThreshold -int 1
+# Trackpad: Tap
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+# Enable dragging with three finger drag
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
 
 ###############################################################################
 # Kill affected applications                                                  #
