@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Check if there is no argument
+if [ $# -eq 0 ]; then
+	echo "Usage: $(basename $0) <tag name>"
+	exit 1
+fi
+
+tag_name=$1
+
+echo "[!] Pushing 'main' branch to the remote repository."
+git push origin main
+
+echo "[!] Creating Git tag '${tag_name}'."
+git tag $tag_name
+
+echo "[!] Pushing '${tag_name}' Git tag to the remote repository."
+git push origin $tag_name
+
+echo "[!] Creating GitHub Release with '${tag_name}' Git tag."
+gh release create $tag_name --generate-notes
