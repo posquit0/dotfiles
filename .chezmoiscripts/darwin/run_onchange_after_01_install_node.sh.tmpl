@@ -3,10 +3,11 @@
 set -eufo pipefail
 
 
-if which n > /dev/null; then
-  echo "[!] The version manager for Node.js 'n' - Found!"
-  n lts
-  echo "[+] Successfully installed 'node' {{ output "n" "--lts" | trim }}."
+if which volta > /dev/null; then
+  echo "[!] The version manager for Node.js 'volta' - Found!"
+  volta install node 
+  echo "[+] Successfully installed 'node'."
+  echo "{{ output "volta" "list" "-d" | trim }}."
 else
-  echo "[!] The version manager for Node.js 'n' - Not Found!"
+  echo "[!] The version manager for Node.js 'volta' - Not Found!"
 fi
