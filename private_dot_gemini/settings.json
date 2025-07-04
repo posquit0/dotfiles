@@ -1,0 +1,17 @@
+{
+  "contextFileName": "GEMINI.md",
+  "preferredEditor": "nvim",
+  "theme": "GitHub",
+  "selectedAuthType": "oauth-personal",
+  "fileFiltering": {
+    "respectGitIgnore": true,
+    "enableRecursiveFileSearch": true
+  },
+  "telemetry": {
+    "enabled": true,
+    "target": "local",
+    "otlpEndpoint": "http://localhost:4317",
+    "logPrompts": true
+  },
+  "usageStatisticsEnabled": false
+}
