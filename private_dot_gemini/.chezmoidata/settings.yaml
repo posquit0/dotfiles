@@ -1,0 +1,21 @@
+gemini:
+  ## Auth
+  selectedAuthType: "oauth-personal"
+
+  ## Editor
+  preferredEditor: "neovim"
+  theme: "GitHub"
+
+  ## Context
+  contextFileName: "GEMINI.md"
+  fileFiltering:
+    enableRecursiveFileSearch: true
+    respectGitIgnore: true
+
+  ## Monitoring
+  telemetry: 
+    enabled: true
+    target: "local"
+    otlpEndpoint: "http://localhost:4317"
+    logPrompts: true
+  usageStatisticsEnabled: false
