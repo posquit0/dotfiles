@@ -1,3 +1,20 @@
+encryption = "gpg"
+
+
+################################################
+# Encryption
+################################################
+
+[gpg]
+  args = [
+    # Mute some info messages to stderr instead of stdout
+    "--quiet",
+  ]
+  recipient = "74F3F6BE2D0EC4E8D00AFD490E44F71854180758"
+  # Suffix appended to GPG-encrypted files
+  suffix = ".asc"
+
+
 ################################################
 # Data
 ################################################
@@ -15,21 +32,6 @@
 [git]
   autoAdd = true
   autoCommit = false
-
-
-################################################
-# Encryption
-################################################
-
-encryption = "gpg"
-[gpg]
-  args = [
-    # Mute some info messages to stderr instead of stdout
-    "--quiet",
-  ]
-  recipient = "74F3F6BE2D0EC4E8D00AFD490E44F71854180758"
-  # Suffix appended to GPG-encrypted files
-  suffix = ".asc"
 
 
 ################################################
