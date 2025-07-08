@@ -1,0 +1,22 @@
+claude:
+  cleanupPeriodDays: 30
+  includeCoAuthoredBy: false
+
+  permissions:
+    defaultMode: acceptEdits
+    allow:
+    - Bash(git diff:*)
+    - Bash(ls:*)
+    - Bash(mv:*)
+    - Bash(npm run lint)
+    - Bash(npm run test:*)
+    - Read(~/.zshrc)
+    - WebFetch(domain:docs.aws.amazon.com)
+    - WebFetch(domain:registry.terraform.io)
+    - WebFetch(domain:developer.hashicorp.com)
+    deny:
+    - Bash(curl:*)
+
+  # env:
+  #   CLAUDE_CODE_ENABLE_TELEMETRY: "1"
+  #   OTEL_METRICS_EXPORTER: "otlp"
