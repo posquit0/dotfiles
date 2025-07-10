@@ -17,6 +17,13 @@ claude:
     deny:
     - Bash(curl:*)
 
+  hooks:
+    PreToolUse:
+    - matcher: Bash
+      hooks:
+      - type: command
+        command: "jq -r '\"\\(.tool_input.command) - \\(.tool_input.description // \"No description\")\"' >> ~/.claude/bash-command-log.txt"
+
   # env:
   #   CLAUDE_CODE_ENABLE_TELEMETRY: "1"
   #   OTEL_METRICS_EXPORTER: "otlp"
