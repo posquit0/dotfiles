@@ -9,6 +9,7 @@ mcp_servers:
     command: npx
     args: 
     - "@playwright/mcp@latest"
+    - --config=${HOME}/.playwright/config.json
 
   terraform:
     command: docker

@@ -27,9 +27,9 @@ playwright:
     # Remote Playwright server endpoint
     # remoteEndpoint: 
 
-  server:
-    host: localhost
-    # port: 
+  # server:
+  #   host: localhost
+  #   port: 
 
   # List of additional capabilities
   capabilities:
