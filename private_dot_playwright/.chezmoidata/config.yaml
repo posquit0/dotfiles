@@ -1,0 +1,57 @@
+playwright:
+  browser:
+    # Browser type to use (chromium, firefox, or webkit)
+    browserName: chromium
+    # Keep the browser profile in memory, do not save it to disk.
+    isolated: true
+    # Path to user data directory for browser profile persistence
+    # userDataDir: 
+
+    # Browser launch options (see Playwright docs)
+    # @see https://playwright.dev/docs/api/class-browsertype#browser-type-launch
+    launchOptions:
+      channel: chromium
+      headless: true
+      # executablePath: 
+
+    # Browser context options
+    # @see https://playwright.dev/docs/api/class-browser#browser-new-context
+    contextOptions:
+      viewport:
+        width: 1280
+        height: 720
+
+    # CDP endpoint for connecting to existing browser
+    # cdpEndpoint: 
+
+    # Remote Playwright server endpoint
+    # remoteEndpoint: 
+
+  server:
+    host: localhost
+    # port: 
+
+  # List of additional capabilities
+  capabilities:
+  # Tab management
+  - 'tabs'
+  # Browser installation
+  - 'install'
+  # PDF generation
+  - 'pdf'
+  # Coordinate-based interactions
+  - 'vision'
+
+  # Directory for output files
+  # outputDir: 
+
+  # Network configuration
+  # network:
+    # List of origins to allow the browser to request. Default is to allow all. Origins matching both `allowedOrigins` and `blockedOrigins` will be blocked.
+    # allowedOrigins: string[];
+
+    # List of origins to block the browser to request. Origins matching both `allowedOrigins` and `blockedOrigins` will be blocked.
+    # blockedOrigins: string[];
+ 
+  # Whether to send image responses to the client. Can be "allow" or "omit". 
+  imageResponses: allow
