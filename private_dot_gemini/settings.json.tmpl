@@ -1,1 +1,1 @@
-{{ .gemini | toPrettyJson }}
+{{ .gemini | setValueAtPath "mcpServers" .mcp_servers | toPrettyJson }}
