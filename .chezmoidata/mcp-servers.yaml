@@ -1,4 +1,15 @@
 mcp_servers:
+  context7:
+    command: npx
+    args:
+    - -y
+    - "@upstash/context7-mcp"
+
+  playwright: 
+    command: npx
+    args: 
+    - "@playwright/mcp@latest"
+
   terraform:
     command: docker
     args:
