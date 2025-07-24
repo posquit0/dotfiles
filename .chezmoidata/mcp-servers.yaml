@@ -1,4 +1,10 @@
 mcp_servers:
+  ccusage:
+    command: npx
+    args: 
+    - ccusage@latest
+    - mcp
+
   context7:
     command: npx
     args:
