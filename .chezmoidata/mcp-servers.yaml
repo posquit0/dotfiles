@@ -20,8 +20,6 @@ mcp_servers:
     - -e
     - GITHUB_PERSONAL_ACCESS_TOKEN
     - ghcr.io/github/github-mcp-server
-    env:
-      GITHUB_PERSONAL_ACCESS_TOKEN: "$GH_TOKEN"
 
   playwright: 
     command: npx

@@ -1,0 +1,3 @@
+{{- /* chezmoi:modify-template */ -}}
+{{ $json := fromJson .chezmoi.stdin }}
+{{ $json | setValueAtPath "mcpServers" .mcp_servers | toPrettyJson }}
