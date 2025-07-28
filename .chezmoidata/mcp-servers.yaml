@@ -12,8 +12,12 @@ mcp_servers:
     - "@upstash/context7-mcp"
 
   github:
-    command: docker
+    command: gopass
     args:
+    - env
+    - --keep-case
+    - env/ai-agent
+    - docker
     - run
     - -i
     - --rm
@@ -22,10 +26,10 @@ mcp_servers:
     - ghcr.io/github/github-mcp-server
 
   playwright: 
-    command: npx
+    command: /bin/bash
     args: 
-    - "@playwright/mcp@latest"
-    - --config=${HOME}/.playwright/config.json
+    - -c
+    - npx @playwright/mcp@latest --config=${HOME}/.playwright/config.json
 
   terraform:
     command: docker
