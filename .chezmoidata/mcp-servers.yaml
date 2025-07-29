@@ -31,6 +31,12 @@ mcp_servers:
     - -c
     - npx @playwright/mcp@latest --config=${HOME}/.playwright/config.json
 
+  sequential-thinking:
+    command: npx
+    args:
+    - -y
+    - "@modelcontextprotocol/server-sequential-thinking"
+
   terraform:
     command: docker
     args:
