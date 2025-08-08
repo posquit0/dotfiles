@@ -27,3 +27,8 @@ Library/
 {{ if .github.is_codespaces }}
 .kaf/
 {{ end }}
+
+
+## Tmux
+.tmux/plugins/
+!.tmux/plugins/tpm
