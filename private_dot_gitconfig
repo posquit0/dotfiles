@@ -1,0 +1,21 @@
+# vim: set ft=gitconfig:
+# .gitconfig
+#
+# Maintained by Byungjin Park <posquit0.bj@gmail.com>
+# https://www.posquit0.com/
+
+
+###################################################
+# Common
+###################################################
+
+[include]
+    path = ~/.gitconfig.d/gitconfig
+
+
+###################################################
+# Users & Credentials
+###################################################
+
+[include]
+    path = ~/.git-users.d/users.gitconfig
