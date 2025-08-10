@@ -5,11 +5,13 @@ claude:
   permissions:
     defaultMode: acceptEdits
     allow:
+    - Bash(cat:*)
     - Bash(git diff:*)
     - Bash(ls:*)
     - Bash(mv:*)
     - Bash(npm run lint)
     - Bash(npm run test:*)
+    - Bash(source:*)
     - Read(~/.zshrc)
     - WebFetch(domain:docs.aws.amazon.com)
     - WebFetch(domain:registry.terraform.io)
