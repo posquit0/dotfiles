@@ -6,7 +6,11 @@ claude:
     defaultMode: acceptEdits
     allow:
     - Bash(cat:*)
+    - Bash(git add:*)
+    - Bash(git checkout:*)
+    - Bash(git commit:*)
     - Bash(git diff:*)
+    - Bash(git push:*)
     - Bash(ls:*)
     - Bash(mv:*)
     - Bash(npm run lint)
