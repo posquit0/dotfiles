@@ -1,6 +1,8 @@
 kind: SwitchConfig
 version: v1alpha1
+execShell: /usr/bin/zsh
 showPreview: true
+refreshIndexAfter: 1h0m0s
 
 kubeconfigStores:
 - kind: filesystem
