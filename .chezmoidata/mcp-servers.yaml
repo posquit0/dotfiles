@@ -1,4 +1,11 @@
 mcp_servers:
+  aws-knowledge-mcp-server:
+    command: uvx
+    args: 
+    - fastmcp
+    - run
+    - https://knowledge-mcp.global.api.aws
+
   ccusage:
     command: npx
     args: 
@@ -37,9 +44,15 @@ mcp_servers:
     - "@modelcontextprotocol/server-sequential-thinking"
 
   terraform:
-    command: docker
+    command: gopass
     args:
+    - env
+    - --keep-case
+    - env/ai-agent
+    - docker
     - run
     - -i
     - --rm
+    - -e
+    - TFE_TOKEN
     - hashicorp/terraform-mcp-server
