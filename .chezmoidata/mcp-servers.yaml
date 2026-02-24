@@ -1,14 +1,14 @@
 mcp_servers:
   aws-knowledge-mcp-server:
     command: uvx
-    args: 
+    args:
     - fastmcp
     - run
     - https://knowledge-mcp.global.api.aws
 
   ccusage:
     command: npx
-    args: 
+    args:
     - "@ccusage/mcp@latest"
 
   context7:
@@ -33,7 +33,7 @@ mcp_servers:
 
   playwright: 
     command: /bin/bash
-    args: 
+    args:
     - -c
     - npx @playwright/mcp@latest --config=${HOME}/.playwright/config.json
 
