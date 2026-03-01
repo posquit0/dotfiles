@@ -1,0 +1,4 @@
+# INFO: `ghostty +show-config --default --docs` to show the default configuration with documentation.
+config-file = key-binding.config
+config-file = visual.config
+config-file = ?local.config
