@@ -1,0 +1,43 @@
+kiro: 
+  ai.terminal-hash-sub: true
+  codeWhisperer.shareCodeWhispererContentWithAWS: false
+
+
+  chat.defaultModel: claude-opus4.6
+  chat.diffTool: delta
+  # Show greeting message on chat start
+  chat.greeting.enabled: false
+  # Enable edit mode for chat interface
+  chat.editMode: true
+  # Enable desktop notifications
+  chat.enableNotifications: true
+  # Show startup hints with tips and shortcuts
+  chat.enablePromptHints: true
+  # Show conversation history hints
+  chat.enableHistoryHints: true
+  # Show context usage percentage in prompt
+  chat.enableContextUsageIndicator: true
+
+
+  ## MCP
+  # Track previously loaded MCP servers
+  mcp.loadedBefore: true
+  # MCP server initialization timeout
+  mcp.initTimeout: 10
+  # Non-interactive MCP timeout
+  mcp.noInteractiveTimeout: 5
+
+
+  ## Observability
+  telemetry.enabled: true
+
+
+  ## Experimental
+  chat.enableThinking: true
+  chat.enableTangentMode: false
+  chat.enableTodoList: true
+  chat.enableCheckpoint: false
+
+  # Configure key bindings
+  chat.tangentModeKey: "t"
+  chat.delegateModeKey: "d"
