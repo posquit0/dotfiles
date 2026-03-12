@@ -1,0 +1,31 @@
+views:
+  v1/nodes:
+    columns:
+    # - 'NODEGROUP:.metadata.labels.eks\.amazonaws\.com/nodegroup'
+    - 'INSTANCE_TYPE:.metadata.labels.node\.kubernetes\.io/role'
+    - INTERNAL-IP|S
+    - EXTERNAL-IP|W
+    - 'AZ_ID:.metadata.labels.topology\.k8s\.aws/zone-id'
+    - 'COMPUTE_TYPE:.metadata.labels.eks\.amazonaws\.com/compute-type'
+    - 'INSTANCE_TYPE:.metadata.labels.node\.kubernetes\.io/instance-type'
+    - ARCH|S
+    - STATUS
+    - TAINTS|W
+    - PODS
+    - CPU
+    - CPU/A|W
+    - '%CPU'
+    - MEM
+    - MEM/A|W
+    - '%MEM'
+    - AGE|R
+    - 'CAPACITY_TYPE:.metadata.labels.eks\.amazonaws\.com/capacityType|W'
+    - VERSION|W
+    ## Hide
+    - NAME|W
+    - GPU/A|H
+    - GPU/C|H
+    - SH-GPU/A|H
+    - SH-GPU/C|H
+    - ROLE|H
+    - LABELS|H
