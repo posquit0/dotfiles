@@ -31,6 +31,13 @@ mcp_servers:
     - GITHUB_PERSONAL_ACCESS_TOKEN
     - ghcr.io/github/github-mcp-server
 
+  gitnexus:
+    command: npx
+    args:
+    - -y
+    - gitnexus@latest
+    - mcp
+
   playwright: 
     command: /bin/bash
     args:
