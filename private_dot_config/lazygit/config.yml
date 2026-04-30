@@ -2,5 +2,16 @@ git:
   paging:
     colorArg: always
     pager: delta --dark --paging=never
+
 gui:
   nerdFontsVersion: "3"
+
+customCommands:
+- key: <c-a>
+  context: files
+  command: >-
+    msg=$(git diff --staged | claude -p "You are a commit message generator. Output ONLY the commit message itself, nothing else. No explanation, no markdown fences, no preamble. Use conventional commit format. Keep the subject line under 72 chars. If needed, add a blank line then bullet-point body." --output-format text);
+    git commit -e -m "$msg"
+  description: 'AI commit message'
+  loadingText: 'Generating commit message...'
+  output: terminal
