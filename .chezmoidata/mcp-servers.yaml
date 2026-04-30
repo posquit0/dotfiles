@@ -44,6 +44,12 @@ mcp_servers:
     - -c
     - npx @playwright/mcp@latest --config=${HOME}/.playwright/config.json
 
+  railway:
+    command: npx
+    args:
+    - -y
+    - "@railway/mcp-server"
+
   sequential-thinking:
     command: npx
     args:
