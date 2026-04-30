@@ -1,6 +1,6 @@
 git:
-  paging:
-    colorArg: always
+  pagers:
+  - colorArg: always
     pager: delta --dark --paging=never
 
 gui:
