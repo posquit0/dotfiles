@@ -3,7 +3,7 @@ kiro:
   codeWhisperer.shareCodeWhispererContentWithAWS: false
 
 
-  chat.defaultModel: claude-opus4.6
+  chat.defaultModel: claude-opus-4.7
   chat.diffTool: delta
   # Show greeting message on chat start
   chat.greeting.enabled: false
