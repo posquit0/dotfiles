@@ -1,9 +1,9 @@
 config {
   plugin_dir = "~/.tflint.d/plugins"
 
-  format = "compact"
-  call_module_type = "all"
-  force = false
+  format              = "compact"
+  call_module_type    = "all"
+  force               = false
   disabled_by_default = false
 
   ignore_module = {}
@@ -25,7 +25,7 @@ rule "terraform_comment_syntax" {
 
 rule "terraform_naming_convention" {
   enabled = true
-  format = "snake_case"
+  format  = "snake_case"
 
   custom_formats = {
     extended_snake_case = {
@@ -66,8 +66,8 @@ rule "terraform_workspace_remote" {
 
 plugin "aws" {
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
-  version = "0.26.0"
+  version = "0.47.0"
 
-  enabled = true
+  enabled    = true
   deep_check = false
 }
