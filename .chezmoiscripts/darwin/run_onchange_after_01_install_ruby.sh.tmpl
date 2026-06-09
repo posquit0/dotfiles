@@ -3,12 +3,12 @@
 set -eufo pipefail
 
 
-{{- $rubyVersion := "3.2.2" }}
-if which rbenv > /dev/null; then
-  echo "[!] The version manager for Ruby 'rbenv' - Found!"
-  rbenv install -s {{ $rubyVersion }}
-  rbenv global {{ $rubyVersion }}
+{{- $rubyVersion := "4.0.5" }}
+if which mise > /dev/null; then
+  echo "[!] The version manager for Ruby 'mise' - Found!"
+  mise use --global ruby@{{ $rubyVersion }}
   echo "[+] Successfully installed 'ruby' {{ $rubyVersion }}."
+  echo "{{ output "mise" "ls" "ruby" "-g" | trim }}."
 else
-  echo "[!] The version manager for Ruby 'rbenv' - Not Found!"
+  echo "[!] The version manager for Ruby 'mise' - Not Found!"
 fi

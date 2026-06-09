@@ -3,11 +3,11 @@
 set -eufo pipefail
 
 
-if which volta > /dev/null; then
-  echo "[!] The version manager for Node.js 'volta' - Found!"
-  volta install node 
+if which mise > /dev/null; then
+  echo "[!] The version manager for Node.js 'mise' - Found!"
+  mise use --global node@26
   echo "[+] Successfully installed 'node'."
-  echo "{{ output "volta" "list" "-d" | trim }}."
+  echo "{{ output "mise" "ls" "node" "-g" | trim }}."
 else
-  echo "[!] The version manager for Node.js 'volta' - Not Found!"
+  echo "[!] The version manager for Node.js 'mise' - Not Found!"
 fi
