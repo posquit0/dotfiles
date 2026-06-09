@@ -41,4 +41,4 @@ And if you're feeling especially charitable, follow [posquit0](https://www.posqu
 
 Provided under the terms of the [MIT License](https://github.com/posquit0/dotfiles/blob/main/LICENSE).
 
-Copyright © 2014-2023, [Byungjin Park](https://www.posquit0.com).
+Copyright © 2014-2026, [Byungjin Park](https://www.posquit0.com).
