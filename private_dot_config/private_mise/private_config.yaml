@@ -2,4 +2,7 @@
 terraform = "latest"
 
 [tool_alias]
-terraform = "asdf:https://github.com/asdf-community/asdf-hashicorp"
+terraform = "asdf:asdf-community/asdf-hashicorp"
+
+[settings]
+idiomatic_version_file_enable_tools = ["terraform"]
