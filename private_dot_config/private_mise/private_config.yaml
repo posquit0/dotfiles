@@ -1,0 +1,5 @@
+[tools]
+terraform = "latest"
+
+[tool_alias]
+terraform = "asdf:https://github.com/asdf-community/asdf-hashicorp"
