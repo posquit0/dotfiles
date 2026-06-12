@@ -2,10 +2,10 @@
 terraform = "latest"
 
 [tool_alias]
-terraform = "asdf:asdf-community/asdf-hashicorp"
+terraform = "asdf:mise-plugins/mise-hashicorp"
 
 [settings]
-idiomatic_version_file_enable_tools = ["terraform"]
+idiomatic_version_file_enable_tools = ["deno", "node", "terraform", "packer"]
 
 
 # "_" is a special key for information you'd like to put into mise.toml that mise will never parse
