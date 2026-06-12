@@ -12,7 +12,7 @@ k9s:
     noIcons: false
     reactive: true
   shellPod:
-    image: nicolaka/netshoot:v0.11
+    image: nicolaka/netshoot:v0.15
     namespace: default
     limits:
       cpu: 100m
