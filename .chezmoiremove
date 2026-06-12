@@ -1,0 +1,4 @@
+# Stale targets to remove from the home directory.
+
+# mise never reads YAML config; replaced by .config/mise/config.toml
+.config/mise/config.yaml
