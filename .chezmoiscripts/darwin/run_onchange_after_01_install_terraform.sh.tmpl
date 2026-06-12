@@ -3,11 +3,11 @@
 set -eufo pipefail
 
 
-{{- $terraformVersion := "1.15.5" }}
+{{- $terraformVersion := "1.15.6" }}
 if which mise > /dev/null; then
   echo "[!] The version manager for Terraform 'mise' - Found!"
   mise use --global terraform@{{ $terraformVersion }}
-  echo "[+] Successfully installed 'terraform' {{ $terrVersion }}."
+  echo "[+] Successfully installed 'terraform' {{ $terraformVersion }}."
   echo "{{ output "mise" "ls" "terraform" "-g" | trim }}."
 else
   echo "[!] The version manager for Terraform 'mise' - Not Found!"
