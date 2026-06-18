@@ -1,0 +1,23 @@
+# Global yamlfmt config, aligned with ~/.config/yamllint/config
+
+line_ending: lf
+
+formatter:
+  type: basic
+
+  indent: 2
+  indentless_arrays: true
+
+  # Don't force-insert `---`
+  include_document_start: false
+
+  # Remove trailing whitespace
+  trim_trailing_whitespace: true
+
+  # Add a single newline at the end of the file if one is not already present
+  eof_newline: true
+
+  # Add spaces before an inline comment
+  pad_line_comments: 1
+
+  retain_line_breaks_single: true
