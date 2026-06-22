@@ -20,4 +20,5 @@ formatter:
   # Add spaces before an inline comment
   pad_line_comments: 1
 
-  retain_line_breaks_single: true
+  # Keep line breaks always
+  retain_line_breaks: true
