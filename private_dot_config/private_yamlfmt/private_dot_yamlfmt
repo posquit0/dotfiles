@@ -20,5 +20,8 @@ formatter:
   # Add spaces before an inline comment
   pad_line_comments: 1
 
+  # Use literal style for folded blocks
+  scan_folded_as_literal: true
+
   # Keep line breaks always
   retain_line_breaks: true
