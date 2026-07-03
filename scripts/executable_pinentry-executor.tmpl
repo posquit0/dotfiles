@@ -1,0 +1,29 @@
+{{- $curses  := lookPath "pinentry-curses"   | default "/opt/homebrew/bin/pinentry-curses"  -}}
+{{- $mac     := lookPath "pinentry-mac"      | default "/opt/homebrew/bin/pinentry-mac"     -}}
+{{- $touchid := lookPath "pinentry-touchid"  | default "/opt/homebrew/bin/pinentry-touchid" -}}
+#!/bin/sh
+
+PINENTRY_MODE_DEFAULT="${PINENTRY_MODE_DEFAULT:-{{ if eq .machine.type "laptop" }}touchid{{ else if eq .machine.type "desktop" }}mac{{ else }}touchid{{ end }}}"
+
+PINENTRY_CURSES="{{ $curses }}"
+PINENTRY_MAC="{{ $mac }}"
+PINENTRY_TOUCHID="{{ $touchid }}"
+
+mode=""
+
+case "$PINENTRY_USER_DATA" in
+  *MODE=curses*)     mode="curses"  ;;
+  *MODE=mac*)        mode="mac"     ;;
+  *MODE=touchid*)    mode="touchid" ;;
+esac
+
+[ -z "$mode" ] && [ -n "$PINENTRY_MODE" ] && mode="$PINENTRY_MODE"
+
+[ -z "$mode" ] && mode="$PINENTRY_MODE_DEFAULT"
+
+case "$mode" in
+  curses)  exec "$PINENTRY_CURSES"  "$@" ;;
+  mac)     exec "$PINENTRY_MAC"     "$@" ;;
+  touchid) exec "$PINENTRY_TOUCHID" "$@" ;;
+  *)       exec "$PINENTRY_TOUCHID" "$@" ;;
+esac

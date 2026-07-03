@@ -1,10 +1,4 @@
-{{- if eq .chezmoi.os "darwin" -}}
-{{-   if eq .machine.type "laptop" -}}
-pinentry-program {{ output "which" "pinentry-touchid" | trim }}
-{{-   else if eq .machine.type "desktop" -}}
-pinentry-program {{ output "which" "pinentry-mac" | trim }}
-{{-   end }}
-{{- end }}
+pinentry-program {{ .chezmoi.homeDir }}/scripts/pinentry-executor
 
 default-cache-ttl 600
 max-cache-ttl 7200
