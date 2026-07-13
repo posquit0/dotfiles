@@ -11,10 +11,10 @@ plugins:
     - debug
     - -it
     - node/$NAME
-    # - --profile
-    # - netadmin
+    - --profile
+    - sysadmin
     - --image
-    - nicolaka/netshoot:v0.11
+    - nicolaka/netshoot:v0.16
 
   debug-pod:
     shortCut: Shift-D
@@ -33,7 +33,7 @@ plugins:
     # - --profile
     # - netadmin
     - --image
-    - nicolaka/netshoot:v0.11
+    - nicolaka/netshoot:v0.16
 
   debug-pod-container:
     shortCut: Shift-D
@@ -54,7 +54,7 @@ plugins:
     - --profile
     - netadmin
     - --image
-    - nicolaka/netshoot:v0.11
+    - nicolaka/netshoot:v0.16
     - --share-processes
 
   watch-events:
