@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# GnuPG version: {{ output "gpg" "--version" | regexFind "[0-9]+\\.[0-9]+\\.[0-9]+" }}
+#
+# Homebrew upgrades the gpg binaries but leaves the previously spawned daemons
+# (keyboxd, gpg-agent, scdaemon, ...) resident in memory. The stale keyboxd then
+# emits "server 'keyboxd' is older than us" warnings on every gpg call, which
+# floods `chezmoi apply` while it decrypts the encrypted_*.asc files.
+#
+# This script's content changes whenever the gpg version above changes, so
+# chezmoi re-runs it after each upgrade to restart the daemons with the new
+# binaries. It runs `before` the target state is applied, so decryption during
+# the very same apply is already clean.
+
+echo "[!] gpg version changed - restarting GnuPG daemons."
+gpgconf --kill all || true
+echo "[+] GnuPG daemons restarted."
