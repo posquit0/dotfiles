@@ -1,9 +1,3 @@
-[tools]
-node = "26"
-ruby = "4.0.5"
-terraform = "1.15.6"
-uv = "latest"
-
 [tool_alias]
 terraform = "asdf:mise-plugins/mise-hashicorp"
 
