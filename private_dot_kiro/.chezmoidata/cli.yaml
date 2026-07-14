@@ -1,9 +1,10 @@
-kiro: 
+kiro:
   ai.terminal-hash-sub: true
+  app.hideMenubarIcon: true
   codeWhisperer.shareCodeWhispererContentWithAWS: false
 
 
-  chat.defaultModel: claude-opus-4.7
+  chat.defaultModel: claude-opus-4.8
   chat.diffTool: delta
   # Show greeting message on chat start
   chat.greeting.enabled: false
