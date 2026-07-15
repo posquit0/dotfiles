@@ -1,0 +1,8 @@
+default_profile: posquit0
+
+profiles:
+  posquit0:
+    backend: pass
+    options:
+      binary: gopass
+      prefix: terraform/posquit0
