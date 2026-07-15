@@ -103,12 +103,6 @@ defaults write com.apple.appstore ShowDebugMenu -bool true
 defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 
 ###############################################################################
-# Clock                                                            #
-###############################################################################
-
-defaults write com.apple.menuextra.clock FlashDateSeparators -bool true
-
-###############################################################################
 # Keyboard
 ###############################################################################
 
