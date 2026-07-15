@@ -1,0 +1,5 @@
+[tool_alias]
+terraform = "asdf:mise-plugins/mise-hashicorp"
+
+[settings]
+idiomatic_version_file_enable_tools = ["terraform"]
