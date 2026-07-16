@@ -8,7 +8,7 @@ if which mise > /dev/null; then
   echo "[!] The version manager for Ruby 'mise' - Found!"
   mise use --global ruby@{{ $rubyVersion }}
   echo "[+] Successfully installed 'ruby' {{ $rubyVersion }}."
-  echo "{{ output "mise" "ls" "ruby" "-g" | trim }}."
+  echo "$(mise ls ruby -g)."
 else
   echo "[!] The version manager for Ruby 'mise' - Not Found!"
 fi

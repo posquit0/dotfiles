@@ -7,7 +7,7 @@ if which mise > /dev/null; then
   echo "[!] The version manager for Node.js 'mise' - Found!"
   mise use --global node@26
   echo "[+] Successfully installed 'node'."
-  echo "{{ output "mise" "ls" "node" "-g" | trim }}."
+  echo "$(mise ls node -g)."
 else
   echo "[!] The version manager for Node.js 'mise' - Not Found!"
 fi
