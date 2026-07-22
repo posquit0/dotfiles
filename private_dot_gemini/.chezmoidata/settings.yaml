@@ -1,6 +1,9 @@
 gemini:
   ## Auth
   selectedAuthType: "oauth-personal"
+  security:
+    auth:
+      selectedType: "gemini-api-key"
 
   ## Editor
   preferredEditor: "neovim"
@@ -13,7 +16,7 @@ gemini:
     respectGitIgnore: true
 
   ## Monitoring
-  telemetry: 
+  telemetry:
     enabled: true
     target: "local"
     otlpEndpoint: "http://localhost:4317"
