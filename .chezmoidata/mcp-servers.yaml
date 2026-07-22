@@ -6,11 +6,6 @@ mcp_servers:
     - run
     - https://knowledge-mcp.global.api.aws
 
-  ccusage:
-    command: npx
-    args:
-    - "@ccusage/mcp@latest"
-
   context7:
     command: npx
     args:
@@ -44,11 +39,11 @@ mcp_servers:
     - -c
     - npx @playwright/mcp@latest --config=${HOME}/.playwright/config.json
 
-  railway:
-    command: npx
-    args:
-    - -y
-    - "@railway/mcp-server"
+  # railway:
+  #   command: npx
+  #   args:
+  #   - -y
+  #   - "@railway/mcp-server"
 
   sequential-thinking:
     command: npx
@@ -68,4 +63,4 @@ mcp_servers:
     - --rm
     - -e
     - TFE_TOKEN
-    - hashicorp/terraform-mcp-server
+    - hashicorp/terraform-mcp-server:1.1.0
