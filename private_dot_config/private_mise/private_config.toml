@@ -1,3 +1,9 @@
+[tools]
+"github:tedilabs/tfvault" = "0.5.0"
+node = "26"
+ruby = "4.0.5"
+terraform = "1.15.6"
+
 [tool_alias]
 terraform = "asdf:mise-plugins/mise-hashicorp"
 

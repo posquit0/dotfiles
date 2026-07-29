@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# mise config: {{ include "private_dot_config/private_mise/private_config.toml" | sha256sum }}
+#
+# The global mise config is the single source of truth for tool versions, so
+# this script only needs to realize whatever `[tools]` declares. Using
+# `mise install` instead of `mise use --global` matters: `use` rewrites the
+# config file that chezmoi itself manages, which left `.config/mise/config.toml`
+# permanently dirty and split the version pins between here and the config.
+#
+# The hash above changes whenever the mise config changes, so chezmoi re-runs
+# this after every version bump. It runs `after` the target state is applied,
+# so the config on disk is already the new one.
+
+if which mise > /dev/null; then
+  echo "[!] The version manager 'mise' - Found!"
+  mise install
+  echo "[+] Successfully installed the tools declared in the global mise config."
+  mise ls --global
+else
+  echo "[!] The version manager 'mise' - Not Found!"
+fi

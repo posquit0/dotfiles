@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# terraformrc: {{ include "dot_terraformrc" | sha256sum }}
+#
+# Terraform looks up the credentials helper declared in ~/.terraformrc as
+# ~/.terraform.d/plugins/terraform-credentials-tfvault, but mise only puts
+# `tfvault` on PATH via its shim. `tfvault install` bridges the two by writing a
+# wrapper there that execs the shim, so the helper follows whatever version mise
+# has active.
+
+if ! which tfvault > /dev/null; then
+  echo "[!] The Terraform credentials helper 'tfvault' - Not Found!"
+  exit 0
+fi
+
+echo "[!] The Terraform credentials helper 'tfvault' - Found!"
+tfvault install --force
+tfvault status
+echo "[+] Successfully linked 'tfvault' as the Terraform credentials helper."
