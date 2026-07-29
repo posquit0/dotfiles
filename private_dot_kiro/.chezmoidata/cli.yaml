@@ -4,7 +4,7 @@ kiro:
   codeWhisperer.shareCodeWhispererContentWithAWS: false
 
 
-  chat.defaultModel: claude-opus-4.8
+  chat.defaultModel: claude-opus-5
   chat.diffTool: delta
   # Show greeting message on chat start
   chat.greeting.enabled: false
@@ -35,7 +35,7 @@ kiro:
 
   ## Experimental
   chat.enableThinking: true
-  chat.enableTangentMode: false
+  chat.enableTangentMode: true
   chat.enableTodoList: true
   chat.enableCheckpoint: false
 
