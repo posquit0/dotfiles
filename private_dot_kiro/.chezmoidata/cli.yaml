@@ -4,8 +4,17 @@ kiro:
   codeWhisperer.shareCodeWhispererContentWithAWS: false
 
 
+  ## Agent
   chat.defaultModel: claude-opus-5
+  chat.defaultAgent: cindy
+
+
+  ## Chat UI
+  chat.ui: tui
   chat.diffTool: delta
+  chat.disableAutoCompaction: true
+  chat.disableGranularTrust: false
+  chat.disableWrap: false
   # Show greeting message on chat start
   chat.greeting.enabled: false
   # Enable edit mode for chat interface
@@ -20,6 +29,21 @@ kiro:
   chat.enableContextUsageIndicator: true
 
 
+  ## Display & Accessibility
+  # Animated spinners and shimmers
+  chat.allowAnimations: true
+  # Unicode/braille symbols and box-drawing
+  chat.allowAsciiArt: true
+  # Status indicator icons (●, ○, ⚠).
+  chat.allowIcons: true
+  # Show the agent's reasoning (thinking) blocks in chat output
+  chat.showThinking: true
+
+  ## API
+  # API request timeout in seconds
+  api.timeout: 30
+
+
   ## MCP
   # Track previously loaded MCP servers
   mcp.loadedBefore: true
@@ -29,6 +53,24 @@ kiro:
   mcp.noInteractiveTimeout: 5
 
 
+  ## Tool Search
+  # INFO: Enable Tool Search if:
+  # - You have 5+ MCP servers configured
+  # - You see context window overflow errors during long conversations
+  # - The /tools command shows MCP tools consuming more than 50,000 tokens total
+  # - If you only use a few MCP tools, the overhead of Tool Search may not be worth it.
+  toolSearch.enabled: true
+  # Activate when MCP tool specs exceed this % of context window
+  toolSearch.minPct: 5
+  # Activate when MCP tool specs exceed this token count
+  toolSearch.minTokens: 50000
+
+
+  ## Key Bindings
+  chat.keybindings.cancelStream: esc
+  chat.keybindings.closeMenu: esc
+  chat.keybindings.quit: ctrl+c
+
   ## Observability
   telemetry.enabled: true
 
@@ -37,7 +79,7 @@ kiro:
   chat.enableThinking: true
   chat.enableTangentMode: true
   chat.enableTodoList: true
-  chat.enableCheckpoint: false
+  chat.enableCheckpoint: true
 
   # Configure key bindings
   chat.tangentModeKey: "t"
