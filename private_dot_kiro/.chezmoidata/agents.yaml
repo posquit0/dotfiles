@@ -12,12 +12,19 @@ kiro_agents:
       If you encounter a question that is outside your expertise or requires external resources, politely inform the user and suggest alternative approaches or resources they can explore.
 
     ## Tools
+    tools:
+    - read
+    - write
+    - shell
+    - web
+    - subagent
+    - context
+    - "@builtin"
+    - "@mcp"
     allowedTools:
     - read
     - grep
     - glob
-    # tools: []
-    toolAliases: {}
     toolsSettings:
       shell:
         autoAllowReadonly: true
@@ -28,3 +35,30 @@ kiro_agents:
     ## MCP
     includeMcpJson: true
     mcpServers: {}
+
+    ## Permissions
+    permissions:
+      rules:
+      - capability: fs_read
+        effect: allow
+      - capability: diagnostics
+        effect: allow
+      - capability: web_fetch
+        effect: allow
+      - capability: web_search
+        effect: allow
+      - capability: context
+        effect: allow
+      - capability: fs_write
+        effect: allow
+        match:
+        - src/**
+      - capability: fs_write
+        effect: deny
+        match:
+        - .env
+        - .env.*
+        - "**/*.pem"
+        - "**/id_rsa*"
+      - capability: shell
+        effect: ask
