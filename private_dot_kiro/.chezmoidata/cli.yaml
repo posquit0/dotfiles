@@ -41,6 +41,9 @@ kiro:
   # Control how the CLI tool manages, stores, and scopes your persistent conversation history across your AI assistant sessions
   chat.historyMode: global
 
+  # Disable autocomplete in chat input
+  autocomplete.disable: true
+
 
   ## API
   # API request timeout in seconds
