@@ -38,10 +38,13 @@ kiro:
   chat.allowIcons: true
   # Show the agent's reasoning (thinking) blocks in chat output
   chat.showThinking: true
+  # Control how the CLI tool manages, stores, and scopes your persistent conversation history across your AI assistant sessions
+  chat.historyMode: global
+
 
   ## API
   # API request timeout in seconds
-  api.timeout: 30
+  api.timeout: 1800
 
 
   ## MCP
