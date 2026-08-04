@@ -1,0 +1,163 @@
+#!/usr/bin/env zsh
+#
+# ai-commit-msg
+#
+# Write a Conventional Commits message for the staged diff and print it to
+# stdout, so a caller can hand it to an editor:
+#
+#   msg=$(ai-commit-msg) && git commit -e -m "$msg"
+#
+# The backend follows the same contract as ~/.zsh/ai.zshrc, so a single
+# setting drives both the inline shell helpers and this script:
+#   ZSH_AI_PROVIDER           claude-code (default), kiro-cli or codex
+#   ZSH_AI_MODEL              model override applied to every provider
+#   ZSH_AI_<PROVIDER>_MODEL   model to use for that provider
+#   ZSH_AI_<PROVIDER>_OPTS    extra CLI flags, parsed as shell words
+# Only ZSH_AI_PROVIDER and ZSH_AI_MODEL are exported by ai.zshrc; export the
+# per-provider overrides yourself to make them visible here.
+#
+# Unlike the inline helpers, no provider pins a cheap default model: a commit
+# message is worth whatever tier the account defaults to.
+#
+# Maintained by Byungjin Park <posquit0.bj@gmail.com>
+# https://www.posquit0.com/
+
+emulate -L zsh
+setopt extended_glob
+
+# Supported AI backends, mapped to the binary that provides them
+typeset -A PROVIDER_BIN=(
+  claude-code claude
+  kiro-cli    kiro-cli
+  codex       codex
+)
+# Hint shown when a provider returns nothing, usually an auth or quota issue
+typeset -A PROVIDER_HINT=(
+  claude-code 'check `claude /login` or quota'
+  kiro-cli    'check `kiro-cli login` or quota'
+  codex       'check `codex login` or quota'
+)
+
+: ${ZSH_AI_PROVIDER:=claude-code}
+# The diff travels in the prompt itself, since not every provider reads stdin;
+# cap it so a huge staged change cannot exceed the argument size limit
+: ${ZSH_AI_COMMIT_DIFF_LIMIT:=100000}
+
+die() {
+  print -ru2 -- "ai-commit-msg: $*"
+  exit 1
+}
+
+# Providers do not necessarily emit clean text when redirected: kiro-cli keeps
+# colouring its reply, prefixes it with a `> ` marker and appends an OSC 9
+# "response complete" notification. Drop the control sequences, the marker and
+# a markdown fence wrapped around the whole message.
+clean() {
+  local s=$1
+  local esc=$'\e' bel=$'\a'
+  s=${s//${esc}\\/$bel}                  # normalise string terminators to BEL
+  s=${s//${esc}\]<->[^$bel]#${bel}/}     # OSC (notifications, title changes)
+  s=${s//${esc}\[[0-9;?]#[a-zA-Z]/}      # CSI (colours, cursor movement)
+  s=${s//${esc}[()][A-Za-z0-9]/}         # charset selection
+  s=${s//$'\r'/}
+  s=${${s##[[:space:]]##}#> }
+  s=${s##[[:space:]]##}
+  if [[ $s == '```'* ]]; then
+    # Drop the opening fence with its info string, then the closing fence
+    s=${${s#'```'}#[^$'\n']#$'\n'}
+    s=${s%%'```'*}
+  fi
+  print -r -- ${s%%[[:space:]]##}
+}
+
+main() {
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+    || die 'not inside a git work tree'
+
+  local stat diff
+  stat=$(git --no-pager diff --staged --stat) || die 'git diff failed'
+  [[ -n $stat ]] || die 'nothing staged'
+  diff=$(git --no-pager diff --staged --no-color)
+  if (( $#diff > ZSH_AI_COMMIT_DIFF_LIMIT )); then
+    diff=${diff[1,ZSH_AI_COMMIT_DIFF_LIMIT]}$'\n'"[diff truncated at ${ZSH_AI_COMMIT_DIFF_LIMIT} characters]"
+  fi
+
+  local provider=$ZSH_AI_PROVIDER
+  local bin=${PROVIDER_BIN[$provider]}
+  [[ -n $bin ]] \
+    || die "unknown ZSH_AI_PROVIDER '${provider}' (supported: ${(kj:, :)PROVIDER_BIN})"
+  (( $+commands[$bin] )) \
+    || die "${bin} not found in PATH (ZSH_AI_PROVIDER=${provider})"
+
+  # ZSH_AI_<PROVIDER>_{MODEL,OPTS}, e.g. ZSH_AI_CLAUDE_CODE_MODEL
+  local key=${${provider:u}//-/_}
+  local var=ZSH_AI_${key}_MODEL
+  local model=${(P)var}
+  : ${model:=$ZSH_AI_MODEL}
+
+  # Split the per-provider flags the way the shell would, so quoted values
+  # such as --foo='a b' survive as a single argument
+  local -a opts
+  var=ZSH_AI_${key}_OPTS
+  [[ -n ${(P)var} ]] && opts=(${(Q)${(z)${(P)var}}})
+
+  local -a cmd
+  case $provider in
+    claude-code)
+      cmd=($bin -p --output-format text)
+      ;;
+    kiro-cli)
+      # --wrap never keeps the reply unwrapped for parsing, and --trust-tools=
+      # denies every tool so generating a message can never touch the repo
+      cmd=($bin chat --no-interactive --wrap never --trust-tools=)
+      # Before answering, kiro-cli snapshots the work tree into a shadow
+      # repository and tags it. With tag.gpgsign set that tag gets signed, so
+      # git blocks on pinentry (and on an editor for the tag message) and
+      # nothing is ever generated unless a terminal is attached. The snapshot
+      # is throwaway, so sign nothing; the real commit is still signed by the
+      # caller's own git.
+      cmd=(env GIT_CONFIG_COUNT=2
+        GIT_CONFIG_KEY_0=tag.gpgsign GIT_CONFIG_VALUE_0=false
+        GIT_CONFIG_KEY_1=commit.gpgsign GIT_CONFIG_VALUE_1=false
+        "${cmd[@]}")
+      ;;
+    codex)
+      # `codex exec` writes only the final message to stdout (the session log
+      # goes to stderr). --ephemeral skips persisting a session for a one-off
+      # question, and the read-only sandbox keeps the agent from changing
+      # anything in the repository it is looking at
+      cmd=($bin exec --color never --ephemeral
+        --skip-git-repo-check --sandbox read-only)
+      ;;
+  esac
+  [[ -n $model ]] && cmd+=(--model "$model")
+  cmd+=("${opts[@]}")
+
+  local prompt="You are a commit message generator. Output ONLY the commit message itself, nothing else. No explanation, no markdown fences, no preamble. Use conventional commit format. Keep the subject line under 72 chars. If needed, add a blank line then bullet-point body.
+
+Staged files:
+${stat}
+
+Staged diff:
+${diff}"
+
+  # Only chatter when a human is watching; keep the pipe usable in scripts
+  [[ -t 2 ]] && print -ru2 -- "Generating commit message with ${model:-$provider}…"
+
+  # Provider logs go to stderr and would drown the caller (codex prints its
+  # whole session there); ZSH_AI_DEBUG brings them back for troubleshooting
+  local raw
+  if [[ -n $ZSH_AI_DEBUG ]]; then
+    raw=$("${cmd[@]}" "$prompt" </dev/null)
+  else
+    raw=$("${cmd[@]}" "$prompt" </dev/null 2>/dev/null)
+  fi
+
+  local msg=$(clean "$raw")
+  [[ -n $msg ]] \
+    || die "${provider} returned an empty message; ${PROVIDER_HINT[$provider]:-check auth or quota}"
+
+  print -r -- "$msg"
+}
+
+main "$@"
