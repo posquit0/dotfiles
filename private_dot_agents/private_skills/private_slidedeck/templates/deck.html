@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{제목}}</title>
+<!-- 폰트는 유일하게 허용되는 외부 리소스 (오프라인이면 시스템 폰트로 자연 강등) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── 테마: 덱마다 --accent / --accent-soft 두 개만 교체한다. 나머지 변수·구조 CSS는 수정하지 않는다.
+   accent 예시:
+     blue  (기본)  : #2F63E0 / #E3EBFB
+     teal          : #0F8A7A / #DCF2EE
+     violet        : #6D4FD0 / #EAE4FA
+     rose          : #C2417A / #FAE3ED
+   ── 타이포는 전사 공유(큰 회의실·화상 공유) 기준으로 조정되어 있다. 인라인 style로 줄이지 말 것. */
+:root{
+  --paper:#F4F7FB;
+  --grid:rgba(20,35,60,.055);
+  --ink:#14233C;
+  --ink-soft:#4A5A74;
+  --accent:#2F63E0;
+  --accent-soft:#E3EBFB;
+  --green:#178A55;
+  --green-soft:#E1F2E9;
+  --red:#D2403A;
+  --red-soft:#FAE5E4;
+  --amber:#C07A12;
+  --amber-soft:#F8EEDB;
+  --panel:#0F1B30;
+  --panel-ink:#D8E2F4;
+  --panel-dim:#6E80A0;
+  --panel-key:#8FB4FF;
+  --panel-str:#8FD8B0;
+  --panel-num:#F0C674;
+  --line:rgba(20,35,60,.14);
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'IBM Plex Sans KR',-apple-system,'Apple SD Gothic Neo','Pretendard',sans-serif;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    var(--paper);
+  background-size:32px 32px,32px 32px,auto;
+  color:var(--ink);
+  overflow:hidden;
+}
+.deck{position:relative;width:100%;height:100dvh;}
+.slide{
+  position:absolute;inset:0;
+  display:none;
+  flex-direction:column;
+  padding:clamp(28px,5vh,64px) clamp(24px,6vw,96px) clamp(64px,9vh,96px);
+  overflow-y:auto;
+}
+.slide.active{display:flex;animation:slidein .35s ease;}
+@keyframes slidein{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion: reduce){
+  .slide.active{animation:none;}
+  .frag{transition:none;}
+}
+
+/* ---------- chrome (하단 조작 인터페이스 — 모든 덱에 항상 동일하게 포함) ---------- */
+.progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);z-index:50;transition:width .25s ease;}
+.counter{
+  position:fixed;bottom:18px;right:24px;z-index:50;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);
+  background:var(--paper);padding:4px 10px;border:1px solid var(--line);border-radius:999px;
+}
+.navbtns{position:fixed;bottom:14px;left:24px;z-index:50;display:flex;gap:8px;}
+.navbtns button{
+  width:38px;height:38px;border-radius:50%;border:1.5px solid var(--ink);
+  background:var(--paper);color:var(--ink);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.navbtns button:hover{background:var(--ink);color:var(--paper);}
+.navbtns button:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+.hint{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:40;
+  font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;
+}
+@media(max-width:720px){.hint{display:none;}}
+
+/* ---------- shared type (전사 공유 기준: 본문 최소 17px) ---------- */
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.35vw,16px);letter-spacing:.14em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:14px;font-weight:600;
+}
+.eyebrow .no{color:var(--ink-soft);margin-right:10px;}
+h1{font-size:clamp(34px,5.4vw,64px);line-height:1.18;font-weight:700;letter-spacing:-.02em;}
+h2{font-size:clamp(28px,3.8vw,46px);line-height:1.22;font-weight:700;letter-spacing:-.015em;margin-bottom:18px;}
+h3{font-size:clamp(18px,1.9vw,24px);font-weight:700;margin-bottom:8px;}
+p,li{font-size:clamp(17px,1.9vw,23px);line-height:1.66;color:var(--ink);}
+.soft{color:var(--ink-soft);}
+.lede{font-size:clamp(19px,2.2vw,27px);line-height:1.62;max-width:56ch;}
+strong{font-weight:700;}
+mark{background:var(--accent-soft);color:var(--ink);padding:1px 5px;border-radius:4px;font-weight:600;}
+.kbd{font-family:'IBM Plex Mono',monospace;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:.86em;}
+code.inline{font-family:'IBM Plex Mono',monospace;font-size:.88em;background:#fff;border:1px solid var(--line);padding:1px 6px;border-radius:5px;white-space:nowrap;}
+
+/* ---------- stamps (signature) ---------- */
+.stamp{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:clamp(13px,1.5vw,17px);letter-spacing:.08em;
+  border:2.5px solid currentColor;border-radius:8px;padding:5px 12px;
+  transform:rotate(-4deg);background:rgba(255,255,255,.75);
+}
+.stamp.ok{color:var(--green);}
+.stamp.deny{color:var(--red);}
+.stamp.mut{color:var(--amber);}
+.stamp.big{font-size:clamp(17px,2.1vw,24px);padding:8px 18px;border-width:3px;}
+
+/* ---------- cards / grids ---------- */
+.cols{display:grid;gap:clamp(14px,2vw,26px);margin-top:10px;}
+.cols.c2{grid-template-columns:repeat(2,1fr);}
+.cols.c3{grid-template-columns:repeat(3,1fr);}
+@media(max-width:860px){.cols.c2,.cols.c3{grid-template-columns:1fr;}}
+.card{
+  background:#fff;border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:clamp(16px,2vw,24px);
+}
+.card .tag{
+  font-family:'IBM Plex Mono',monospace;font-size:clamp(12.5px,1.3vw,15px);font-weight:600;letter-spacing:.1em;
+  color:var(--accent);display:block;margin-bottom:8px;text-transform:uppercase;
+}
+.card.tint-b{background:var(--accent-soft);border-color:transparent;}
+.card.tint-g{background:var(--green-soft);border-color:transparent;}
+.card.tint-r{background:var(--red-soft);border-color:transparent;}
+.card.tint-a{background:var(--amber-soft);border-color:transparent;}
+ul.tick{list-style:none;}
+ul.tick li{padding-left:26px;position:relative;margin-bottom:9px;}
+ul.tick li::before{content:"✓";position:absolute;left:0;top:1px;color:var(--green);font-weight:700;}
+ul.cross li::before{content:"✕";color:var(--red);}
+ul.dot{list-style:none;}
+ul.dot li{padding-left:20px;position:relative;margin-bottom:9px;}
+ul.dot li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--accent);}
+
+/* ---------- code ---------- */
+pre.code{
+  background:var(--panel);color:var(--panel-ink);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(13px,1.45vw,17px);line-height:1.62;
+  border-radius:var(--radius);padding:clamp(14px,1.8vw,22px);
+  overflow-x:auto;white-space:pre;
+}
+pre.code .c{color:var(--panel-dim);font-style:italic;}
+pre.code .k{color:var(--panel-key);}
+pre.code .s{color:var(--panel-str);}
+pre.code .n{color:var(--panel-num);}
+.codewrap{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.codewrap .cap{font-family:'IBM Plex Mono',monospace;font-size:clamp(12.5px,1.3vw,15px);color:var(--ink-soft);}
+
+/* ---------- pipeline diagram ---------- */
+.pipe{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:22px 0 10px;}
+.pipe .node{
+  background:#fff;border:1.5px solid var(--line);border-radius:12px;
+  padding:12px 16px;text-align:center;min-width:118px;flex:1;
+}
+.pipe .node .t{font-weight:700;font-size:clamp(15px,1.6vw,20px);}
+.pipe .node .d{font-size:clamp(13px,1.35vw,16px);color:var(--ink-soft);margin-top:3px;line-height:1.5;}
+.pipe .node.hot{border-color:var(--accent);border-width:2.5px;background:var(--accent-soft);}
+.pipe .arrow{align-self:center;padding:0 6px;color:var(--ink-soft);font-size:20px;font-weight:700;}
+@media(max-width:860px){.pipe{flex-direction:column;}.pipe .arrow{transform:rotate(90deg);padding:2px 0;align-self:center;}}
+
+/* ---------- comparison table ---------- */
+table.cmp{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--line);}
+table.cmp th,table.cmp td{padding:clamp(9px,1.2vw,14px) clamp(10px,1.4vw,18px);text-align:left;font-size:clamp(15px,1.6vw,20px);line-height:1.55;border-bottom:1px solid var(--line);vertical-align:top;}
+table.cmp th{background:var(--ink);color:#fff;font-weight:600;font-size:clamp(14px,1.5vw,18px);}
+table.cmp tr:last-child td{border-bottom:none;}
+table.cmp td:first-child{font-weight:600;white-space:nowrap;}
+table.cmp .good{color:var(--green);font-weight:600;}
+table.cmp .bad{color:var(--red);font-weight:600;}
+table.cmp .mid{color:var(--amber);font-weight:600;}
+.tablewrap{overflow-x:auto;border-radius:var(--radius);}
+
+/* ---------- layer cake ---------- */
+.cake{display:flex;flex-direction:column;gap:10px;max-width:860px;margin-top:14px;}
+.cake .layer{border-radius:12px;padding:16px 20px;border:2px solid transparent;}
+.cake .layer .lt{font-weight:700;font-size:clamp(17px,1.8vw,22px);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.cake .layer .ld{font-size:clamp(15px,1.6vw,19px);color:var(--ink-soft);margin-top:4px;line-height:1.6;}
+.cake .l1{background:var(--accent-soft);border-color:var(--accent);}
+.cake .l2{background:var(--green-soft);border-color:var(--green);}
+.cake .l3{background:#fff;border-color:var(--line);}
+
+/* ---------- interactive: fragments (순차 공개 — → 키가 조각을 먼저 공개한 뒤 슬라이드를 넘김) ---------- */
+.frag{opacity:0;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease;}
+.frag.on{opacity:1;transform:none;}
+
+/* ---------- interactive: tabs (대안·시나리오 전환) ---------- */
+.tabs .tabbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.tabs .tab-btn{
+  font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.4vw,16px);font-weight:600;
+  padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);
+  background:#fff;color:var(--ink-soft);cursor:pointer;transition:all .15s;
+}
+.tabs .tab-btn:hover{border-color:var(--ink);color:var(--ink);}
+.tabs .tab-btn.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.tabs .tab-panel{display:none;}
+.tabs .tab-panel.on{display:block;animation:slidein .25s ease;}
+
+/* ---------- interactive: terminal demo player (클릭할 때마다 한 박자씩 재생) ---------- */
+.term{background:var(--panel);border-radius:var(--radius);overflow:hidden;cursor:pointer;user-select:none;}
+.term-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08);}
+.term-head .tdots{display:flex;gap:5px;}
+.term-head .tdots i{width:10px;height:10px;border-radius:50%;background:#3A4A66;}
+.term-head .ttl{font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1.25vw,14px);color:var(--panel-dim);}
+.term-play{
+  margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:clamp(12.5px,1.3vw,15px);font-weight:600;
+  color:var(--panel-ink);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;padding:4px 14px;cursor:pointer;
+}
+.term-body{
+  padding:clamp(14px,1.8vw,22px);min-height:140px;
+  font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.5vw,18px);line-height:1.7;color:var(--panel-ink);
+}
+.term .tl{display:none;white-space:pre-wrap;}
+.term .tl.cmd{color:#fff;font-weight:600;}
+.term .tl.cmd::before{content:"$ ";color:var(--panel-key);}
+.term .tl.cmd.typing::after{content:"▌";color:var(--panel-key);animation:blink .8s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.term .tl .c{color:var(--panel-dim);font-style:italic;}
+.term .tl .k{color:var(--panel-key);}
+.term .tl .s{color:var(--panel-str);}
+.term .tl .n{color:var(--panel-num);}
+
+/* title slide */
+.slide.title{justify-content:center;}
+.title .stamprow{display:flex;gap:18px;margin:26px 0 30px;flex-wrap:wrap;}
+.title .meta{font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.4vw,16px);color:var(--ink-soft);line-height:2;}
+.divider{height:2px;background:var(--ink);width:64px;margin:22px 0;}
+.footnote{margin-top:auto;padding-top:18px;font-size:clamp(14px,1.5vw,18px);color:var(--ink-soft);line-height:1.6;}
+.spacer{height:14px;}
+
+/* PDF 내보내기: P 키 → 인쇄. 인터랙티브 요소는 모두 펼쳐진 상태로 인쇄됨 */
+@media print{
+  body{overflow:visible;}
+  .deck{height:auto;}
+  .slide{display:flex !important;position:relative;inset:auto;
+         page-break-after:always;height:100vh;overflow:hidden;animation:none;}
+  .navbtns,.hint,.progress,.counter{display:none;}
+  .frag{opacity:1 !important;transform:none !important;}
+  .tabs .tab-panel{display:block !important;}
+  .term .tl{display:block !important;}
+  .term-play{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1. 표지: eyebrow(영문 대문자 주제 라벨) + h1(핵심어는 accent 색 span) + lede(무엇을+왜) + meta -->
+<section class="slide title">
+  <div class="eyebrow">{{TOPIC LABEL · YYYY EDITION}}</div>
+  <h1>{{제목 앞부분}}<br><span style="color:var(--accent)">{{핵심 키워드}}</span></h1>
+  <div class="stamprow">
+    <span class="stamp ok big">✓ {{도장1}}</span>
+    <span class="stamp deny big">✕ {{도장2}}</span>
+  </div>
+  <p class="lede">{{무엇을 다루는가 — 한두 문장.}}<br>{{왜 지금 이 이야기인가.}}</p>
+  <div class="meta" style="margin-top:26px;">
+    {{N}} slides · 방향키 <span class="kbd">←</span> <span class="kbd">→</span> 로 넘기기 · 모바일은 화면을 좌우로 쓸어넘기기
+  </div>
+</section>
+
+<!-- 2. 아젠다: PART별 카드 (cols c3 + tag + ul.dot) -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">02</span>AGENDA</div>
+  <h2>오늘 다룰 내용</h2>
+  <div class="cols c3">
+    <div class="card">
+      <span class="tag">PART 1 · {{파트명}}</span>
+      <ul class="dot">
+        <li>{{항목}}</li>
+        <li>{{항목}}</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag">PART 2 · {{파트명}}</span>
+      <ul class="dot">
+        <li>{{항목}}</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag">PART 3 · {{파트명}}</span>
+      <ul class="dot">
+        <li>{{항목}}</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 개념 슬라이드: h2에 <mark> 강조 + lede에 정의·비유 + pipe로 흐름.
+     발표 흐름상 단계를 하나씩 보여주고 싶으면 node/arrow에 .frag를 붙인다
+     (같은 data-frag 값은 → 한 번에 함께 공개). -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">03</span>PART 1 · {{파트명}}</div>
+  <h2>{{개념}} = {{비유를 담은}} <mark>{{핵심어}}</mark></h2>
+  <p class="lede">{{일상 사물에 빗댄 도입 문장. 그 다음 개념의 정의를 <strong>강조</strong>와 함께 서술.}}</p>
+  <div class="pipe">
+    <div class="node frag" data-frag="1"><div class="t">{{단계}}</div><div class="d">{{한 줄 설명}}</div></div>
+    <div class="arrow frag" data-frag="2">→</div>
+    <div class="node hot frag" data-frag="2"><div class="t">{{강조할 단계}}</div><div class="d">{{한 줄 설명}}</div></div>
+    <div class="arrow frag" data-frag="3">→</div>
+    <div class="node frag" data-frag="3"><div class="t">{{단계}}</div><div class="d">{{한 줄 설명}}</div></div>
+  </div>
+  <p class="soft" style="margin-top:14px;">{{다이어그램에서 기억할 포인트 한 문장.}}</p>
+</section>
+
+<!-- 4. 장단 비교: 틴트 카드 2단 (tint-g + tick / tint-r + tick cross) -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">04</span>PART 1 · {{파트명}}</div>
+  <h2>{{대상}} — 무엇이 좋고 무엇이 문제인가</h2>
+  <div class="cols c2" style="margin-top:18px;">
+    <div class="card tint-g">
+      <span class="tag" style="color:var(--green)">좋은 점</span>
+      <ul class="tick">
+        <li>{{장점}}</li>
+        <li>{{장점}}</li>
+      </ul>
+    </div>
+    <div class="card tint-r">
+      <span class="tag" style="color:var(--red)">문제점</span>
+      <ul class="tick cross">
+        <li><strong>{{요지}}</strong> — {{부연}}</li>
+        <li><strong>{{요지}}</strong> — {{부연}}</li>
+      </ul>
+    </div>
+  </div>
+  <p class="footnote">{{바닥 각주: 이 슬라이드의 한 줄 정리 또는 실무 관점 코멘트.}}</p>
+</section>
+
+<!-- 5. 코드 슬라이드: codewrap(cap 캡션 + pre.code) 2단, 오른쪽엔 "읽는 법" dot 리스트 -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">05</span>PART 2 · {{파트명}}</div>
+  <h2>{{제목}} — "{{코드가 하는 일 한 줄}}"</h2>
+  <div class="cols c2">
+    <div class="codewrap">
+      <span class="cap">① {{코드 캡션}}</span>
+      <pre class="code"><span class="c"># 주석은 .c, 키는 .k, 문자열은 .s, 숫자는 .n</span>
+<span class="k">key:</span> <span class="s">"value"</span>
+<span class="k">count:</span> <span class="n">10</span></pre>
+    </div>
+    <div>
+      <span class="cap" style="font-family:'IBM Plex Mono',monospace;font-size:clamp(12.5px,1.3vw,15px);color:var(--ink-soft);">읽는 법</span>
+      <ul class="dot" style="margin-top:10px;">
+        <li><code class="inline">{{키워드}}</code> — {{설명}}</li>
+        <li>{{핵심 포인트}}</li>
+      </ul>
+      <div class="card tint-b" style="margin-top:14px;">
+        <p><strong>{{기억할 것!}}</strong> {{한 문장.}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 터미널 데모: CLI 워크플로우는 정적 코드 대신 term 플레이어로 —
+     클릭할 때마다 명령이 타이핑되고 출력이 나타난다. cmd 줄은 자동으로 "$ " 프롬프트가 붙는다. -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">06</span>PART 2 · {{파트명}}</div>
+  <h2>{{도구}} 데모 — <mark>직접 보면 한 번에 이해</mark></h2>
+  <div class="cols c2">
+    <div class="term">
+      <div class="term-head"><span class="tdots"><i></i><i></i><i></i></span><span class="ttl">{{데모 제목}}</span><button class="term-play" type="button">▶ 재생</button></div>
+      <div class="term-body">
+        <div class="tl cmd">{{명령어}}</div>
+        <div class="tl out"><span class="s">✔</span> {{출력 결과}}</div>
+        <div class="tl cmd">{{다음 명령어}}</div>
+        <div class="tl out"><span class="c">{{부가 출력 (dim)}}</span></div>
+      </div>
+    </div>
+    <div>
+      <ul class="dot" style="margin-top:10px;">
+        <li>{{데모에서 짚을 포인트}}</li>
+        <li>{{데모에서 짚을 포인트}}</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7. 탭 전환: 대안·시나리오·전/후 비교를 한 슬라이드에서 전환하며 설명할 때 -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">07</span>PART 2 · {{파트명}}</div>
+  <h2>{{주제}} — 시나리오별로 보기</h2>
+  <div class="tabs">
+    <div class="tabbar">
+      <button class="tab-btn on" type="button">{{탭 1}}</button>
+      <button class="tab-btn" type="button">{{탭 2}}</button>
+    </div>
+    <div class="tab-panel on">
+      <p class="lede">{{시나리오 1 설명}}</p>
+    </div>
+    <div class="tab-panel">
+      <p class="lede">{{시나리오 2 설명}}</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. 비교 테이블: table.cmp + good/bad/mid 색 판정 + footnote 요약 -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">08</span>PART 2 · {{파트명}}</div>
+  <h2>{{A}}와 {{B}}, 뭐가 다른가?</h2>
+  <div class="tablewrap">
+  <table class="cmp">
+    <thead><tr><th></th><th>{{A}}</th><th>{{B}}</th></tr></thead>
+    <tbody>
+      <tr><td>{{기준}}</td><td class="bad">{{나쁜 평가}}</td><td class="good">{{좋은 평가}}</td></tr>
+      <tr><td>{{기준}}</td><td class="mid">{{중간 평가}}</td><td class="good">{{좋은 평가}}</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="footnote">요약: <strong>{{결론 한 문장}}</strong> — {{다음 슬라이드로 잇는 연결어}}.</p>
+</section>
+
+<!-- 9. 레이어 케이크: 계층 아키텍처·역할 분담은 cake로. 층을 하나씩 쌓으며 설명하려면 .frag -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">09</span>PART 3 · {{파트명}}</div>
+  <h2>{{전략 제목}} — <mark>"{{전략 한 줄}}"</mark></h2>
+  <p class="lede">{{왜 층으로 나누는지 한두 문장.}}</p>
+  <div class="cake">
+    <div class="layer l1 frag">
+      <div class="lt">1층 · {{이름}} <span class="stamp ok" style="font-size:13px;">{{라벨}}</span></div>
+      <div class="ld">{{이 층이 맡는 일.}}</div>
+    </div>
+    <div class="layer l2 frag">
+      <div class="lt">2층 · {{이름}} <span class="stamp mut" style="font-size:13px;">{{라벨}}</span></div>
+      <div class="ld">{{이 층이 맡는 일.}}</div>
+    </div>
+    <div class="layer l3 frag">
+      <div class="lt">3층 · {{이름}} (보너스)</div>
+      <div class="ld">{{이 층이 맡는 일.}}</div>
+    </div>
+  </div>
+  <p class="footnote">핵심 설계 원칙: <strong>{{원칙 한 문장}}</strong></p>
+</section>
+
+<!-- 10. 요약: dot 복기 + stamprow 도장 + 참고 자료 카드 -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">10</span>SUMMARY</div>
+  <h2>한 장 요약</h2>
+  <div class="cols c2" style="margin-top:6px;">
+    <div>
+      <ul class="dot">
+        <li><strong>{{개념}}</strong> = {{한 줄 복기}}</li>
+        <li><strong>{{개념}}</strong> = {{한 줄 복기}}</li>
+      </ul>
+      <div class="stamprow" style="display:flex;gap:14px;margin-top:24px;flex-wrap:wrap;">
+        <span class="stamp ok big">✓ {{결론 도장1}}</span>
+        <span class="stamp mut big">✎ {{결론 도장2}}</span>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag">참고 자료</span>
+      <ul class="dot">
+        <li>{{출처}}</li>
+      </ul>
+      <p class="soft" style="margin-top:10px;">{{시점·버전 정보의 기준과 재확인 안내.}}</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="navbtns">
+  <button id="prevBtn" aria-label="이전 슬라이드">←</button>
+  <button id="nextBtn" aria-label="다음 슬라이드">→</button>
+</div>
+<div class="counter" id="counter">01 / 10</div>
+<div class="hint">← → 방향키 · Space 이동 · F 전체화면 · P 인쇄</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var idx = 0;
+  var progress = document.getElementById('progress');
+  var counter = document.getElementById('counter');
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function frags(s){ return Array.prototype.slice.call(s.querySelectorAll('.frag')); }
+  function show(i, revealFrags){
+    idx = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function(s, j){ s.classList.toggle('active', j === idx); });
+    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+    counter.textContent = pad(idx + 1) + ' / ' + pad(slides.length);
+    var active = slides[idx];
+    if (active) active.scrollTop = 0;
+    frags(active).forEach(function(f){ f.classList.toggle('on', !!revealFrags); });
+    try { history.replaceState(null, '', '#' + (idx + 1)); } catch (_) {} // #N 딥링크 (히스토리 오염 없이)
+  }
+  // → 는 현재 슬라이드의 미공개 조각(.frag)을 먼저 공개하고, 조각이 없을 때 슬라이드를 넘긴다.
+  // 같은 data-frag 값을 가진 조각들은 한 박자에 함께 공개된다.
+  function next(){
+    var fs = frags(slides[idx]).filter(function(f){ return !f.classList.contains('on'); });
+    if (fs.length){
+      var g = fs[0].getAttribute('data-frag');
+      fs.forEach(function(f){ if (f === fs[0] || (g !== null && f.getAttribute('data-frag') === g)) f.classList.add('on'); });
+      return;
+    }
+    show(idx + 1);
+  }
+  function prev(){
+    var on = frags(slides[idx]).filter(function(f){ return f.classList.contains('on'); });
+    if (on.length){
+      var last = on[on.length - 1];
+      var g = last.getAttribute('data-frag');
+      on.forEach(function(f){ if (f === last || (g !== null && f.getAttribute('data-frag') === g)) f.classList.remove('on'); });
+      return;
+    }
+    show(idx - 1, true); // 뒤로 진입할 때는 조각을 모두 펼친 상태로
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    else if (e.key.toLowerCase() === 'f') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+    else if (e.key.toLowerCase() === 'p') { window.print(); }
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+
+  // touch swipe
+  var tx = null, ty = null;
+  document.addEventListener('touchstart', function(e){
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) { dx < 0 ? next() : prev(); }
+    tx = ty = null;
+  }, {passive:true});
+
+  // tabs
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs'), function(t){
+    var btns = Array.prototype.slice.call(t.querySelectorAll('.tab-btn'));
+    var panels = Array.prototype.slice.call(t.querySelectorAll('.tab-panel'));
+    btns.forEach(function(b, i){
+      b.addEventListener('click', function(){
+        btns.forEach(function(x, j){ x.classList.toggle('on', j === i); });
+        panels.forEach(function(x, j){ x.classList.toggle('on', j === i); });
+      });
+    });
+  });
+
+  // terminal demo player: 클릭할 때마다 한 박자씩 — cmd 줄은 타이핑 연출 후 이어지는 out 줄을 함께 표시
+  Array.prototype.forEach.call(document.querySelectorAll('.term'), function(term){
+    var lines = Array.prototype.slice.call(term.querySelectorAll('.tl'));
+    var btn = term.querySelector('.term-play');
+    var pos = 0, busy = false;
+    lines.forEach(function(l){
+      if (l.classList.contains('cmd')) l.setAttribute('data-txt', l.textContent);
+    });
+    function reset(){
+      lines.forEach(function(l){ l.style.display = 'none'; });
+      pos = 0;
+      if (btn) btn.textContent = '▶ 재생';
+    }
+    function typewriter(el, done){
+      var txt = el.getAttribute('data-txt') || '';
+      el.textContent = '';
+      el.style.display = 'block';
+      el.classList.add('typing');
+      var i = 0;
+      var t = setInterval(function(){
+        el.textContent = txt.slice(0, ++i);
+        if (i >= txt.length){ clearInterval(t); el.classList.remove('typing'); done(); }
+      }, 26);
+    }
+    function step(){
+      if (busy) return;
+      if (pos >= lines.length){ reset(); return; }
+      var ln = lines[pos];
+      if (ln.classList.contains('cmd')){
+        busy = true;
+        typewriter(ln, function(){
+          busy = false; pos++;
+          while (pos < lines.length && !lines[pos].classList.contains('cmd')){
+            lines[pos].style.display = 'block'; pos++;
+          }
+          if (btn) btn.textContent = pos >= lines.length ? '↺ 처음부터' : '▶ 다음';
+        });
+      } else {
+        ln.style.display = 'block'; pos++;
+      }
+    }
+    reset();
+    term.addEventListener('click', step);
+  });
+
+  function fromHash(){
+    var n = parseInt(location.hash.slice(1), 10);
+    return isNaN(n) ? 0 : n - 1;
+  }
+  window.addEventListener('hashchange', function(){ if (fromHash() !== idx) show(fromHash()); });
+  show(fromHash());
+})();
+</script>
+</body>
+</html>
