@@ -16,6 +16,10 @@
 # Only ZSH_AI_PROVIDER and ZSH_AI_MODEL are exported by ai.zshrc; export the
 # per-provider overrides yourself to make them visible here.
 #
+# While a provider is working, an animated status line is drawn on stderr when
+# stderr is a terminal; ZSH_AI_SPINNER_INTERVAL tunes its refresh rate and
+# NO_COLOR drops the colour pulse.
+#
 # Unlike the inline helpers, no provider pins a cheap default model: a commit
 # message is worth whatever tier the account defaults to.
 #
@@ -42,10 +46,141 @@ typeset -A PROVIDER_HINT=(
 # The diff travels in the prompt itself, since not every provider reads stdin;
 # cap it so a huge staged change cannot exceed the argument size limit
 : ${ZSH_AI_COMMIT_DIFF_LIMIT:=100000}
+# Status line refresh interval in milliseconds. Faster than the inline helpers
+# in ~/.zsh/ai.zshrc, because this line is short and sits in a plain terminal
+: ${ZSH_AI_SPINNER_INTERVAL:=70}
+
+# Colour the status line unless the terminal asked not to. 24-bit colour when
+# the terminal advertises it, otherwise the 6x6x6 xterm cube.
+typeset -g COLOR=1
+[[ -n $NO_COLOR ]] && COLOR=
+typeset -g COLOR_PREFIX='38;5;'
+[[ $COLORTERM == (truecolor|24bit) ]] && COLOR_PREFIX='38;2;'
+# Set while the status line owns the last line of the terminal
+typeset -g ANIMATING=
+# PID of the running provider, so a cancelled run takes it down too
+typeset -g PROVIDER_PID=
+# Set by the INT trap once the user has asked to stop
+typeset -g CANCELLED=
 
 die() {
+  status_clear
   print -ru2 -- "ai-commit-msg: $*"
   exit 1
+}
+
+# zselect sleeps without forking a process per animation frame
+zmodload zsh/zselect 2>/dev/null && typeset -g HAS_ZSELECT=1
+
+nap() {  # $1: milliseconds
+  if [[ -n $HAS_ZSELECT ]]; then
+    zselect -t $(( $1 / 10 ))  # centiseconds
+  else
+    command sleep $(( $1 / 1000.0 ))
+  fi
+}
+
+# Restore the terminal after the status line: erase it and show the cursor
+# again. Safe to call when nothing was ever drawn.
+status_clear() {
+  [[ -n $ANIMATING ]] || return 0
+  print -nu2 -- $'\r\e[K\e[?25h'
+  ANIMATING=
+}
+
+cancel() {
+  # Only flag the cancellation and stop the provider: writing to the terminal
+  # here would interleave with a frame that SIGINT interrupted mid-write. The
+  # animation loop notices, unwinds, and main() does the cleanup last.
+  CANCELLED=1
+  [[ -n $PROVIDER_PID ]] && kill $PROVIDER_PID 2>/dev/null
+}
+
+# Instagram's brand gradient as 24-bit stops: violet-blue through purple and
+# magenta into red, orange and yellow
+typeset -ga GRAD_STOPS=(
+  '64;93;230'    # #405DE6
+  '88;81;219'    # #5851DB
+  '131;58;180'   # #833AB4
+  '193;53;132'   # #C13584
+  '225;48;108'   # #E1306C
+  '253;29;29'    # #FD1D1D
+  '245;96;64'    # #F56040
+  '247;119;55'   # #F77737
+  '252;175;69'   # #FCAF45
+  '255;220;128'  # #FFDC80
+)
+
+# Expand the stops into $1 evenly interpolated steps in $RAMP, so the gradient
+# runs smoothly across the characters of the status line instead of banding.
+# Without 24-bit colour each step collapses onto the nearest xterm cube entry.
+ramp_build() {
+  local -i n=$1 i seg frac steps r g b
+  local -i count=$#GRAD_STOPS
+  local -a from to
+  typeset -ga RAMP=()
+  steps=$(( count - 1 ))
+  for (( i = 0; i < n; i++ )); do
+    # Position along the whole ramp, in thousandths of a segment
+    (( frac = i * steps * 1000 / (n > 1 ? n - 1 : 1) ))
+    (( seg = frac / 1000 + 1 ))
+    (( seg > steps )) && (( seg = steps ))
+    (( frac = frac - (seg - 1) * 1000 ))
+    from=(${(s.;.)GRAD_STOPS[seg]})
+    to=(${(s.;.)GRAD_STOPS[seg + 1]})
+    (( r = from[1] + (to[1] - from[1]) * frac / 1000 ))
+    (( g = from[2] + (to[2] - from[2]) * frac / 1000 ))
+    (( b = from[3] + (to[3] - from[3]) * frac / 1000 ))
+    if [[ $COLOR_PREFIX == '38;2;' ]]; then
+      RAMP+=("${r};${g};${b}")
+    else
+      RAMP+=($(( 16 + 36 * (r * 5 / 255) + 6 * (g * 5 / 255) + b * 5 / 255 )))
+    fi
+  done
+}
+
+# Animate a single status line on stderr until $1 exits: a braille spinner and
+# the Instagram gradient sweeping along the label, with the elapsed time and the
+# cancel hint pinned to the right. Everything goes to stderr because stdout
+# carries the commit message.
+animate() {
+  local pid=$1 label=$2
+  local -a frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local -i tick=0 start=$SECONDS max n idx
+  # The line is drawn on stderr, so measure the terminal behind fd 2: $COLUMNS
+  # is 0 in a non-interactive shell and `tput cols` only ever sees stdout
+  local -i cols=${${(z)"$(stty size <&2 2>/dev/null)"}[2]:-0}
+  (( cols > 0 )) || cols=80
+  local esc=$'\e' text suffix painted
+
+  [[ -n $COLOR ]] && ramp_build 48
+
+  ANIMATING=1
+  print -nru2 -- "${esc}[?25l"  # hide the cursor while the line is redrawn
+  while kill -0 $pid 2>/dev/null; do
+    [[ -n $CANCELLED ]] && break
+    suffix=" [$(( SECONDS - start ))s, Ctrl+C to cancel]"
+    text="${frames[tick % $#frames + 1]} ${label}..."
+    # -2 leaves room for the ellipsis and for double-width glyphs
+    (( max = cols - $#suffix - 2 ))
+    (( max > 1 && $#text > max )) && text="${text[1,max]}…"
+    if [[ -n $COLOR ]]; then
+      # Two ramp steps per frame, so the gradient visibly travels. The index is
+      # computed separately because a subscript starting with `(` would be
+      # parsed as subscript flags instead of arithmetic.
+      painted=
+      for (( n = 1; n <= $#text; n++ )); do
+        (( idx = (n + tick * 2) % $#RAMP + 1 ))
+        painted+="${esc}[${COLOR_PREFIX}${RAMP[idx]}m${text[n]}"
+      done
+      text="${painted}${esc}[0m"
+      suffix="${esc}[38;5;244m${suffix}${esc}[0m"
+    fi
+    print -nru2 -- $'\r'"${esc}[K${text}${suffix}"
+    (( tick++ ))
+    nap $ZSH_AI_SPINNER_INTERVAL
+  done
+  status_clear
 }
 
 # Providers do not necessarily emit clean text when redirected: kiro-cli keeps
@@ -141,17 +276,37 @@ ${stat}
 Staged diff:
 ${diff}"
 
-  # Only chatter when a human is watching; keep the pipe usable in scripts
-  [[ -t 2 ]] && print -ru2 -- "Generating commit message with ${model:-$provider}…"
-
-  # Provider logs go to stderr and would drown the caller (codex prints its
-  # whole session there); ZSH_AI_DEBUG brings them back for troubleshooting
+  # Only chatter when a human is watching; keep the pipe usable in scripts.
+  # With ZSH_AI_DEBUG the provider writes to the same terminal, so a redrawn
+  # status line would be scrambled by its output: print it once instead.
   local raw
+  local tmp=$(mktemp) || die 'mktemp failed'
+  trap cancel INT
   if [[ -n $ZSH_AI_DEBUG ]]; then
-    raw=$("${cmd[@]}" "$prompt" </dev/null)
+    [[ -t 2 ]] && print -ru2 -- "Generating commit message with ${model:-$provider}…"
+    "${cmd[@]}" "$prompt" </dev/null >"$tmp" &
+    PROVIDER_PID=$!
+    wait $PROVIDER_PID
   else
-    raw=$("${cmd[@]}" "$prompt" </dev/null 2>/dev/null)
+    # Provider logs go to stderr and would drown the caller (codex prints its
+    # whole session there)
+    "${cmd[@]}" "$prompt" </dev/null >"$tmp" 2>/dev/null &
+    PROVIDER_PID=$!
+    if [[ -t 2 ]]; then
+      animate $PROVIDER_PID "Generating commit message with ${model:-$provider}"
+    fi
+    wait $PROVIDER_PID
   fi
+  trap - INT
+  PROVIDER_PID=
+  if [[ -n $CANCELLED ]]; then
+    status_clear
+    command rm -f "$tmp"
+    print -ru2 -- 'ai-commit-msg: cancelled'
+    exit 130
+  fi
+  raw=$(<"$tmp")
+  command rm -f "$tmp"
 
   local msg=$(clean "$raw")
   [[ -n $msg ]] \
@@ -159,5 +314,8 @@ ${diff}"
 
   print -r -- "$msg"
 }
+
+# Never leave the terminal without a cursor, whichever way this exits
+trap status_clear EXIT
 
 main "$@"
