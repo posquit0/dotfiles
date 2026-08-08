@@ -1,3 +1,7 @@
+[ui]
+mouse_capture = true
+
+
 [keys]
 prefix = "ctrl+a"
 new_tab = "prefix+c"
