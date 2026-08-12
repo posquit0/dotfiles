@@ -2,6 +2,15 @@
 mouse_capture = true
 
 
+[ui.toast]
+delivery = "herdr"
+
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+
 [keys]
 # Prefix
 prefix = "ctrl+a"
