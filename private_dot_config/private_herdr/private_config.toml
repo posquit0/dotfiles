@@ -19,6 +19,12 @@ prefix = "ctrl+a"
 detach = "prefix+d"
 reload_config = "prefix+shift+r"
 
+# Workspaces
+workspace_picker = "prefix+w"
+switch_workspace = "prefix+shift+1..9"
+previous_workspace = "prefix+up"
+next_workspace = "prefix+down"
+
 # Tabs
 new_tab = "prefix+c"
 switch_tab = "prefix+1..9"
