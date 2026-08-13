@@ -32,9 +32,9 @@ next_tab = ["prefix+n", "prefix+right"]
 previous_tab = ["prefix+p", "prefix+left"]
 
 # Panes
-focus_pane_left = "prefix+h"
-focus_pane_down = "prefix+j"
-focus_pane_up = "prefix+k"
-focus_pane_right = "prefix+l"
+focus_pane_left = ["prefix+h", "alt+h"]
+focus_pane_down = ["prefix+j", "alt+j"]
+focus_pane_up = ["prefix+k", "alt+k"]
+focus_pane_right = ["prefix+l", "alt+l"]
 split_horizontal = "prefix+minus"
 split_vertical = "prefix+|"
