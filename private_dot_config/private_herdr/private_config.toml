@@ -47,6 +47,13 @@ split_vertical = "prefix+|"
 
 # Shpells
 [[keys.command]]
+key = "prefix+alt+f"
+type = "popup"
+command = "zsh -l"
+width = "80%"
+height = "70%"
+
+[[keys.command]]
 key = "prefix+alt+g"
 type = "popup"
 command = "lazygit"
