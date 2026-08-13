@@ -1,9 +1,14 @@
 [ui]
 mouse_capture = true
+show_agent_labels_on_pane_borders = true
 
 
 [ui.toast]
 delivery = "herdr"
+
+
+[ui.sidebar.agents.rows_by_agent]
+claude = [["state_icon", "workspace", "tab"], ["terminal_title_stripped"], ["agent"]]
 
 
 [theme]
@@ -38,3 +43,37 @@ focus_pane_up = ["prefix+k", "alt+k"]
 focus_pane_right = ["prefix+l", "alt+l"]
 split_horizontal = "prefix+minus"
 split_vertical = "prefix+|"
+
+
+# Shpells
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "lazygit"
+width = "80%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+alt+k"
+type = "popup"
+command = "k9s"
+width = "80%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+alt+t"
+type = "popup"
+command = "pug"
+width = "80%"
+height = "80%"
+
+
+[experimental]
+switch_ascii_input_source_in_prefix = true
+reveal_hidden_cursor_for_cjk_ime = true
+cjk_ime_agents = ["claude", "codex"]
+pane_history = true
+
+
+[advanced]
+scrollback_limit_bytes = 50000000
