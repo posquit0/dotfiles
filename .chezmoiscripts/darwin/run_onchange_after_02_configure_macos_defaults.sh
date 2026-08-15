@@ -28,7 +28,7 @@ defaults write com.apple.dock expose-group-apps -bool false
 # When switching to an app, switch to a space with open windows for this app
 defaults write NSGlobalDomain AppleSpacesSwitchOnActivate -bool true
 # Set up separate spaces for each display (if you use Spaces and have multiple displays)
-defaults write com.apple.spaces spans-displays -int 0
+defaults write com.apple.spaces spans-displays -bool false
 
 ###############################################################################
 # Finder
@@ -52,15 +52,23 @@ defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 # Remove items in the bin after 30 days
 defaults write com.apple.finder FXRemoveOldTrashItems -bool true
+# Disable the warning when changing a file extension
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+# Save new documents to disk instead of iCloud
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+# Show folder icons in the window title bar (requires Full Disk Access for the terminal)
+defaults write com.apple.universalaccess showWindowTitlebarIcons -bool true || echo "Skipped showWindowTitlebarIcons (needs Full Disk Access)"
+# Remove the rollover delay before the title bar icon appears
+defaults write NSGlobalDomain NSToolbarTitleViewRolloverDelay -float 0
 
 ###############################################################################
 # Desktop & Dock
 ###############################################################################
 
 # Set position to left on screen
-defaults write com.apple.dock orientation left
+defaults write com.apple.dock orientation -string "left"
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -int 1
+defaults write com.apple.dock autohide -bool true
 # Change the Dock opening and closing animation times (defaults to 0.5)
 defaults write com.apple.dock autohide-time-modifier -float "0.4"
 # Change the Dock opening delay (defaults to 0.2)
@@ -81,33 +89,45 @@ defaults write com.apple.dock mineffect -string suck
 # Menu Bar
 ###############################################################################
 
-# Configure the time and date format for the menubar digital clock
-defaults write com.apple.menuextra.clock DateFormat -string "\"EEE d MMM HH:mm:ss\""
+# Show seconds in the menubar digital clock
+defaults write com.apple.menuextra.clock ShowSeconds -bool true
+# Show the day of the week in the menubar digital clock
+defaults write com.apple.menuextra.clock ShowDayOfWeek -bool true
+# Always show the date in the menubar digital clock (0: when space allows, 1: always, 2: never)
+defaults write com.apple.menuextra.clock ShowDate -int 1
 # The clock indicator (which by default is the colon) will flash on and off each second
 defaults write com.apple.menuextra.clock FlashDateSeparators -bool true
 
 ###############################################################################
-# Mac App Store                                                               #
+# Screenshots                                                                 #
 ###############################################################################
 
-# Enable the WebKit Developer Tools in the Mac App Store
-defaults write com.apple.appstore WebKitDeveloperExtras -bool true
-# Enable Debug Menu in the Mac App Store
-defaults write com.apple.appstore ShowDebugMenu -bool true
+# Save screenshots to a dedicated folder
+mkdir -p "${HOME}/screenshots"
+defaults write com.apple.screencapture location -string "${HOME}/screenshots"
+# Disable the shadow around window captures
+defaults write com.apple.screencapture disable-shadow -bool true
 
 ###############################################################################
 # Activity Monitor                                                            #
 ###############################################################################
 
-# Show the main window when launching Activity Monitor
-defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
+# Update stats every 2 seconds (1: very often, 2: often, 5: normally)
+defaults write com.apple.ActivityMonitor UpdatePeriod -int 2
+# Show CPU usage in the Dock icon (0: application icon, 5: CPU usage, 6: CPU history)
+defaults write com.apple.ActivityMonitor IconType -int 5
 
 ###############################################################################
 # Keyboard
 ###############################################################################
 
-# When a key is held down, the accents menu is displayed
-defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+# When a key is held down, repeat the character instead of showing the accents menu
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+# Set a fast key repeat rate (lower is faster; System Settings minimum is KeyRepeat=2)
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
+# Enable keyboard navigation to move focus between controls with Tab
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 2
 # Switche between keyboard layouts for writing in other languages
 defaults write com.apple.HIToolbox AppleFnUsageType -int 1
 # Behave `fn` keys as standard function keys
@@ -131,13 +151,37 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
 
 ###############################################################################
+# TextEdit                                                                    #
+###############################################################################
+
+# Use plain text for new documents
+defaults write com.apple.TextEdit RichText -bool false
+# Disable smart quotes
+defaults write com.apple.TextEdit SmartQuotes -bool false
+
+###############################################################################
+# Time Machine                                                                #
+###############################################################################
+
+# Don’t offer newly connected disks as Time Machine backup destinations
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+
+###############################################################################
+# Safari                                                                      #
+###############################################################################
+
+# Show the full URL in the address bar (requires Full Disk Access for the terminal)
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true || echo "Skipped Safari settings (needs Full Disk Access)"
+
+###############################################################################
 # Kill affected applications                                                  #
 ###############################################################################
 
 for app in \
 	"Dock" \
 	"Finder" \
-	"SystemUIServer"; do
+	"SystemUIServer" \
+	"ControlCenter"; do
 	killall ${app} &>/dev/null
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."
