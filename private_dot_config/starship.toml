@@ -63,6 +63,7 @@ ssh_symbol = " "
 
 [sudo]
 disabled = true
+symbol = " "
 
 [username]
 disabled = false
@@ -89,7 +90,7 @@ symbol = " "
 
 [aws]
 disabled = false
-symbol = " "
+symbol = " "
 style = "bold 208"
 format = ' [$symbol($profile )(\($region\))]($style)'
 
@@ -123,6 +124,10 @@ us-gov-east-1 = "usge1"
 # [aws.profile_aliases]
 # CompanyGroupFrobozzOnCallAccess = 'Frobozz'
 
+[direnv]
+disabled = false
+symbol = " "
+
 [docker_context]
 symbol = " "
 
@@ -132,7 +137,7 @@ detect_extensions = []
 detect_files = ["helmfile.yaml", "Chart.yaml"]
 detect_folders = []
 version_format = 'v${raw}'
-symbol = "⎈ "
+symbol = " "
 style = "bold white"
 format = 'via [$symbol($version )]($style)'
 
@@ -149,7 +154,7 @@ disabled = false
 detect_extensions = ["tf", "tfplan", "tfstate"]
 detect_files = ["terraform.tfstate", ".terraform-version"]
 detect_folders = [".terraform"]
-symbol = "󱁢 "
+symbol = " "
 style = "bold 105"
 version_format = 'v${raw}'
 format = 'via [$symbol$workspace]($style) '
@@ -169,6 +174,7 @@ symbol = " "
 
 [php]
 disabled = false
+symbol = " "
 
 [python]
 disabled = false
@@ -180,11 +186,11 @@ symbol = " "
 
 [rust]
 disabled = false
-symbol = " "
+symbol = "󱘗 "
 
 [java]
 disabled = false
-symbol = " "
+symbol = " "
 
 [scala]
 disabled = false
@@ -192,8 +198,7 @@ symbol = " "
 
 [swift]
 disabled = true
-
-
+symbol = " "
 
 ###################################################
 # Modules: MISC
@@ -208,20 +213,25 @@ disabled = true
 
 [shlvl]
 disabled = true
+symbol = "󰹍 "
 
 [status]
 disabled = true
+symbol = " "
 
 [time]
 disabled = true
 
 [vagrant]
 disabled = false
-
+symbol = " "
 
 ###################################################
 # Modules: Disabled
 ###################################################
+
+[azure]
+symbol = " "
 
 [battery]
 disabled = true
@@ -230,23 +240,65 @@ disabled = true
 disabled = true
 symbol = " "
 
+[bun]
+symbol = " "
+
 [c]
 symbol = " "
 
+[cmake]
+symbol = " "
+
+[cobol]
+symbol = " "
+
 [conda]
-symbol = " "
+symbol = " "
+
+[container]
+symbol = " "
+
+[cpp]
+symbol = " "
+
+[crystal]
+symbol = " "
 
 [dart]
-symbol = " "
+symbol = " "
+
+[deno]
+symbol = " "
+
+[dotnet]
+symbol = " "
 
 [elixir]
-symbol = " "
+symbol = " "
 
 [elm]
 symbol = " "
 
+[erlang]
+symbol = " "
+
+[fennel]
+symbol = " "
+
+[fortran]
+symbol = " "
+
 [fossil_branch]
 symbol = " "
+
+[gcloud]
+symbol = "󱇶 "
+
+[gleam]
+symbol = " "
+
+[gradle]
+symbol = " "
 
 [guix_shell]
 symbol = " "
@@ -260,8 +312,14 @@ symbol = " "
 [julia]
 symbol = " "
 
+[kotlin]
+symbol = " "
+
 [lua]
 symbol = " "
+
+[maven]
+symbol = " "
 
 [memory_usage]
 symbol = "󰍛 "
@@ -269,30 +327,61 @@ symbol = "󰍛 "
 [meson]
 symbol = "󰔷 "
 
+[mojo]
+symbol = "󰈸 "
+
+[nats]
+symbol = " "
+
+[netns]
+symbol = "󰛳 "
+
 [nim]
-symbol = "󰆥 "
+symbol = " "
 
 [nix_shell]
 symbol = " "
 
+[ocaml]
+symbol = " "
+
+[odin]
+symbol = "󰟢 "
+
+[opa]
+symbol = " "
+
+[openstack]
+symbol = " "
+
 [os.symbols]
+AIX = " "
+AlmaLinux = " "
 Alpaquita = " "
 Alpine = " "
+ALTLinux = " "
 Amazon = " "
 Android = " "
+AOSC = " "
 Arch = " "
 Artix = " "
+Bluefin = " "
+CachyOS = " "
 CentOS = " "
 Debian = " "
 DragonFly = " "
-Emscripten = " "
-EndeavourOS = " "
+Elementary = " "
+Emscripten = " "
+EndeavourOS = " "
 Fedora = " "
 FreeBSD = " "
-Garuda = "󰛓 "
+Garuda = " "
 Gentoo = " "
 HardenedBSD = "󰞌 "
-Illumos = "󰈸 "
+Illumos = " "
+InstantOS = " "
+Ios = "󰀷 "
+Kali = " "
 Linux = " "
 Mabox = " "
 Macos = " "
@@ -302,52 +391,83 @@ MidnightBSD = " "
 Mint = " "
 NetBSD = " "
 NixOS = " "
-OpenBSD = "󰈺 "
+Nobara = " "
+OpenBSD = " "
+OpenCloudOS = " "
+openEuler = " "
 openSUSE = " "
-OracleLinux = "󰌷 "
+OracleLinux = "󰺡 "
+PikaOS = " "
 Pop = " "
 Raspbian = " "
-Redhat = " "
-RedHatEnterprise = " "
+Redhat = "󱄛 "
+RedHatEnterprise = "󱄛 "
 Redox = "󰀘 "
-Solus = "󰠳 "
+RockyLinux = " "
+Solus = " "
 SUSE = " "
 Ubuntu = " "
+Ultramarine = " "
 Unknown = " "
+Uos = " "
+Void = " "
 Windows = "󰍲 "
+Zorin = " "
 
 [perl]
 disabled = true
+symbol = " "
 
 [pijul_channel]
 symbol = " "
 
+[pixi]
+symbol = "󰏗 "
+
+[pulumi]
+symbol = " "
+
 [purescript]
 disabled = true
+symbol = " "
 
 [rlang]
 disabled = true
+symbol = "󰟔 "
 
 [raku]
 disabled = true
+symbol = "󱖊 "
 
 [red]
 disabled = true
+symbol = "󱍼 "
 
 [singularity]
 disabled = true
+symbol = " "
 
 [solidity]
 disabled = true
+symbol = " "
 
 [spack]
 disabled = true
+symbol = " "
+
+[typst]
+symbol = " "
 
 [vlang]
 disabled = true
+symbol = " "
 
 [vcsh]
 disabled = true
 
+[xmake]
+symbol = " "
+
 [zig]
 disabled = true
+symbol = " "
