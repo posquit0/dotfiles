@@ -50,12 +50,13 @@ body{
   color:var(--ink);
   overflow:hidden;
 }
+/* 두 가지 보기 모드 (body[data-mode]) — 슬라이드 모드: 한 장씩 / 문서 모드: 전 슬라이드 세로 스택 + 스크롤 */
 .deck{position:relative;width:100%;height:100dvh;}
 .slide{
   position:absolute;inset:0;
   display:none;
   flex-direction:column;
-  padding:clamp(28px,5vh,64px) clamp(24px,6vw,96px) clamp(64px,9vh,96px);
+  padding:clamp(28px,5vh,64px) clamp(24px,6vw,96px) calc(var(--chrome-h) + clamp(20px,4vh,48px));
   overflow-y:auto;
 }
 .slide.active{display:flex;animation:slidein .35s ease;}
@@ -64,27 +65,78 @@ body{
   .slide.active{animation:none;}
   .frag{transition:none;}
 }
+body[data-mode="doc"]{overflow:visible;height:auto;} /* 문서(window) 스크롤로 전환 — scroll 이벤트 동기화용 */
+body[data-mode="doc"] .deck{height:auto;padding-bottom:var(--chrome-h);}
+body[data-mode="doc"] .slide{
+  display:flex;position:relative;inset:auto;
+  min-height:100dvh;overflow:visible;animation:none;
+  border-bottom:1px solid var(--line);
+}
+body[data-mode="doc"] .slide::after{
+  content:attr(data-n);position:absolute;top:14px;right:18px;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums;
+}
+/* 문서 모드는 읽기용 — 인터랙티브 요소를 모두 펼친 상태로 보여준다 (인쇄와 동일) */
+body[data-mode="doc"] .frag{opacity:1 !important;transform:none !important;}
+body[data-mode="doc"] .tabs .tab-panel{display:block !important;}
+body[data-mode="doc"] .term .tl{display:block !important;}
+body[data-mode="doc"] .term-play{display:none;}
 
-/* ---------- chrome (하단 조작 인터페이스 — 모든 덱에 항상 동일하게 포함) ---------- */
-.progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);z-index:50;transition:width .25s ease;}
-.counter{
-  position:fixed;bottom:18px;right:24px;z-index:50;
-  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);
-  background:var(--paper);padding:4px 10px;border:1px solid var(--line);border-radius:999px;
+/* ---------- chrome (하단 조작 바 — 모든 덱에 항상 동일하게 포함) ---------- */
+:root{--chrome-h:36px;}
+#chrome{
+  position:fixed;left:0;right:0;bottom:0;height:var(--chrome-h);z-index:50;
+  display:flex;align-items:center;gap:12px;padding:0 14px;
+  background:rgba(244,247,251,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);
 }
-.navbtns{position:fixed;bottom:14px;left:24px;z-index:50;display:flex;gap:8px;}
-.navbtns button{
-  width:38px;height:38px;border-radius:50%;border:1.5px solid var(--ink);
-  background:var(--paper);color:var(--ink);font-size:16px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:all .15s;
+#chrome button{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);
+  background:transparent;border:1px solid var(--line);border-radius:6px;
+  padding:3px 9px;cursor:pointer;white-space:nowrap;transition:all .15s;
 }
-.navbtns button:hover{background:var(--ink);color:var(--paper);}
-.navbtns button:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
-.hint{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:40;
-  font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;
+#chrome button:hover{border-color:var(--ink);}
+#chrome button:focus-visible,#toc button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+#chrome .ch{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw;color:var(--ink);text-transform:uppercase;letter-spacing:.08em;}
+#chrome .bar{flex:1 1 auto;height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
+#chrome .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s ease;}
+#chrome .pos{font-variant-numeric:tabular-nums;white-space:nowrap;}
+@media(max-width:720px){#chrome .ch{display:none;}}
+
+/* 목차 오버레이 (O) — eyebrow 라벨(PART N · …)별로 묶어 슬라이드 번호+제목을 나열 */
+#toc{
+  position:fixed;inset:0;z-index:60;background:var(--paper);
+  overflow:auto;padding:38px clamp(24px,5vw,64px) 80px;display:none;
 }
-@media(max-width:720px){.hint{display:none;}}
+#toc.on{display:block;}
+#toc h3{font-size:26px;font-weight:700;margin-bottom:6px;}
+#toc .hint{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);margin-bottom:24px;}
+#toc .grp{margin-bottom:22px;}
+#toc .grp>h4{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:9px;display:flex;align-items:center;gap:8px;font-weight:600;
+}
+#toc .grp>h4 i{width:20px;height:3px;background:var(--accent);border-radius:2px;}
+#toc .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
+#toc button{
+  text-align:left;background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:9px 12px;cursor:pointer;color:var(--ink);font-family:inherit;font-size:14px;
+  display:flex;gap:9px;align-items:baseline;line-height:1.4;
+}
+#toc button:hover{border-color:var(--accent);}
+#toc button.cur{border-color:var(--accent);background:var(--accent-soft);}
+#toc button span.n{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);flex:0 0 auto;font-variant-numeric:tabular-nums;}
+
+/* 단축키 도움말 (?) */
+#help{
+  position:fixed;right:14px;bottom:calc(var(--chrome-h) + 10px);z-index:55;
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);
+  box-shadow:0 8px 24px rgba(20,35,60,.10);display:none;line-height:1.9;
+}
+#help.on{display:block;}
+#help b{color:var(--ink);font-weight:600;}
 
 /* ---------- shared type (전사 공유 기준: 본문 최소 17px) ---------- */
 .eyebrow{
@@ -241,8 +293,9 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
   body{overflow:visible;}
   .deck{height:auto;}
   .slide{display:flex !important;position:relative;inset:auto;
-         page-break-after:always;height:100vh;overflow:hidden;animation:none;}
-  .navbtns,.hint,.progress,.counter{display:none;}
+         page-break-after:always;height:100vh;min-height:0;overflow:hidden;animation:none;border-bottom:none;}
+  .slide::after{display:none;}
+  #chrome,#toc,#help{display:none !important;}
   .frag{opacity:1 !important;transform:none !important;}
   .tabs .tab-panel{display:block !important;}
   .term .tl{display:block !important;}
@@ -252,7 +305,6 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
 </head>
 <body>
 
-<div class="progress" id="progress"></div>
 <div class="deck" id="deck">
 
 <!-- 1. 표지: eyebrow(영문 대문자 주제 라벨) + h1(핵심어는 accent 색 span) + lede(무엇을+왜) + meta -->
@@ -265,7 +317,7 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
   </div>
   <p class="lede">{{무엇을 다루는가 — 한두 문장.}}<br>{{왜 지금 이 이야기인가.}}</p>
   <div class="meta" style="margin-top:26px;">
-    {{N}} slides · 방향키 <span class="kbd">←</span> <span class="kbd">→</span> 로 넘기기 · 모바일은 화면을 좌우로 쓸어넘기기
+    {{N}} slides · 방향키 <span class="kbd">←</span> <span class="kbd">→</span> 로 넘기기 · <span class="kbd">O</span> 목차 · <span class="kbd">D</span> 문서 모드 · <span class="kbd">?</span> 단축키
   </div>
 </section>
 
@@ -467,75 +519,227 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
 
 </div>
 
-<div class="navbtns">
-  <button id="prevBtn" aria-label="이전 슬라이드">←</button>
-  <button id="nextBtn" aria-label="다음 슬라이드">→</button>
+<!-- 하단 조작 바: 목차 · 현재 챕터 · 진행바 · 위치 · ◀▶ · 모드 토글 · 도움말 -->
+<div id="chrome" role="toolbar" aria-label="슬라이드 조작">
+  <button id="btnToc" type="button" title="목차 (O)">목차</button>
+  <span class="ch" id="chName"></span>
+  <span class="bar"><i id="barFill"></i></span>
+  <span class="pos" id="posText">01 / 10</span>
+  <button id="btnPrev" type="button" title="이전 (←)" aria-label="이전 슬라이드">◀</button>
+  <button id="btnNext" type="button" title="다음 (→)" aria-label="다음 슬라이드">▶</button>
+  <button id="btnMode" type="button" title="문서 모드 (D)">문서 모드</button>
+  <button id="btnHelp" type="button" title="단축키 (?)" aria-label="단축키 도움말">?</button>
 </div>
-<div class="counter" id="counter">01 / 10</div>
-<div class="hint">← → 방향키 · Space 이동 · F 전체화면 · P 인쇄</div>
+
+<div id="toc" role="dialog" aria-label="전체 목차">
+  <h3>전체 목차</h3>
+  <div class="hint">슬라이드를 고르면 그 장으로 이동합니다 · 닫기 <b>Esc</b></div>
+  <div id="tocBody"></div>
+</div>
+
+<div id="help" role="dialog" aria-label="단축키">
+  <div><b>← →</b> 이동 &nbsp; <b>Space</b> 다음 &nbsp; <b>Home/End</b> 처음·끝</div>
+  <div><b>O</b> 목차 &nbsp; <b>D</b> 문서 모드 &nbsp; <b>F</b> 전체 화면 &nbsp; <b>?</b> 이 도움말</div>
+  <div><b>P</b> 인쇄 — 슬라이드 단위 PDF 로 저장됩니다</div>
+</div>
 
 <script>
 (function(){
-  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(deck.querySelectorAll('.slide'));
+  var total = slides.length;
+  var body = document.body;
+  var barFill = document.getElementById('barFill');
+  var posText = document.getElementById('posText');
+  var chName = document.getElementById('chName');
+  var toc = document.getElementById('toc');
+  var tocBody = document.getElementById('tocBody');
+  var help = document.getElementById('help');
+  var btnMode = document.getElementById('btnMode');
   var idx = 0;
-  var progress = document.getElementById('progress');
-  var counter = document.getElementById('counter');
+  var mode = 'present';
+  var MODE_KEY = 'slidedeck-mode:' + location.pathname; // 덱(파일)별로 모드 선호를 따로 기억
+
   function pad(n){ return (n < 10 ? '0' : '') + n; }
   function frags(s){ return Array.prototype.slice.call(s.querySelectorAll('.frag')); }
+  function store(k, v){ try { localStorage.setItem(k, v); } catch (_) {} }
+  function load(k){ try { return localStorage.getItem(k); } catch (_) { return null; } }
+  function text(el){
+    if (!el) return '';
+    var c = el.cloneNode(true);
+    Array.prototype.forEach.call(c.querySelectorAll('br'), function(br){ br.replaceWith(' '); }); // 표지 h1의 줄바꿈은 공백으로
+    return c.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  // 챕터 라벨 = eyebrow에서 번호(.no)를 뺀 텍스트 ("PART 1 · 파트명", "AGENDA", "SUMMARY" …).
+  // 표지처럼 eyebrow가 없으면 직전 라벨을 이어받고, 첫 장이면 "표지".
+  function chapterOf(s){
+    var eb = s.querySelector('.eyebrow');
+    if (!eb) return null;
+    var clone = eb.cloneNode(true);
+    var no = clone.querySelector('.no');
+    if (no) no.remove();
+    return text(clone);
+  }
+  function titleOf(s){
+    var t = s.querySelector('h1') || s.querySelector('h2') || s.querySelector('h3');
+    return (text(t) || ('슬라이드 ' + (slides.indexOf(s) + 1))).slice(0, 64);
+  }
+  var chapters = [];
+  slides.forEach(function(s, i){
+    var c = chapterOf(s);
+    if (c === null) c = i === 0 ? '표지' : chapters[i - 1];
+    chapters.push(c);
+    s.setAttribute('data-n', (i + 1) + ' / ' + total);
+  });
+
   function show(i, revealFrags){
-    idx = Math.max(0, Math.min(slides.length - 1, i));
-    slides.forEach(function(s, j){ s.classList.toggle('active', j === idx); });
-    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
-    counter.textContent = pad(idx + 1) + ' / ' + pad(slides.length);
-    var active = slides[idx];
-    if (active) active.scrollTop = 0;
-    frags(active).forEach(function(f){ f.classList.toggle('on', !!revealFrags); });
+    idx = Math.max(0, Math.min(total - 1, i));
+    var cur = slides[idx];
+    if (mode === 'present'){
+      slides.forEach(function(s, j){ s.classList.toggle('active', j === idx); });
+      cur.scrollTop = 0;
+      frags(cur).forEach(function(f){ f.classList.toggle('on', !!revealFrags); });
+    } else {
+      cur.scrollIntoView({block:'start', behavior:'auto'});
+    }
+    sync();
+  }
+  function sync(){
+    posText.textContent = pad(idx + 1) + ' / ' + pad(total);
+    barFill.style.width = ((idx + 1) / total * 100).toFixed(2) + '%';
+    chName.textContent = chapters[idx] || '';
+    Array.prototype.forEach.call(tocBody.querySelectorAll('button'), function(b){
+      b.classList.toggle('cur', parseInt(b.getAttribute('data-i'), 10) === idx);
+    });
     try { history.replaceState(null, '', '#' + (idx + 1)); } catch (_) {} // #N 딥링크 (히스토리 오염 없이)
   }
   // → 는 현재 슬라이드의 미공개 조각(.frag)을 먼저 공개하고, 조각이 없을 때 슬라이드를 넘긴다.
-  // 같은 data-frag 값을 가진 조각들은 한 박자에 함께 공개된다.
+  // 같은 data-frag 값을 가진 조각들은 한 박자에 함께 공개된다. 문서 모드에서는 조각이 항상 펼쳐져 있어 바로 넘긴다.
   function next(){
-    var fs = frags(slides[idx]).filter(function(f){ return !f.classList.contains('on'); });
-    if (fs.length){
-      var g = fs[0].getAttribute('data-frag');
-      fs.forEach(function(f){ if (f === fs[0] || (g !== null && f.getAttribute('data-frag') === g)) f.classList.add('on'); });
-      return;
+    if (mode === 'present'){
+      var fs = frags(slides[idx]).filter(function(f){ return !f.classList.contains('on'); });
+      if (fs.length){
+        var g = fs[0].getAttribute('data-frag');
+        fs.forEach(function(f){ if (f === fs[0] || (g !== null && f.getAttribute('data-frag') === g)) f.classList.add('on'); });
+        return;
+      }
     }
     show(idx + 1);
   }
   function prev(){
-    var on = frags(slides[idx]).filter(function(f){ return f.classList.contains('on'); });
-    if (on.length){
-      var last = on[on.length - 1];
-      var g = last.getAttribute('data-frag');
-      on.forEach(function(f){ if (f === last || (g !== null && f.getAttribute('data-frag') === g)) f.classList.remove('on'); });
-      return;
+    if (mode === 'present'){
+      var on = frags(slides[idx]).filter(function(f){ return f.classList.contains('on'); });
+      if (on.length){
+        var last = on[on.length - 1];
+        var g = last.getAttribute('data-frag');
+        on.forEach(function(f){ if (f === last || (g !== null && f.getAttribute('data-frag') === g)) f.classList.remove('on'); });
+        return;
+      }
     }
     show(idx - 1, true); // 뒤로 진입할 때는 조각을 모두 펼친 상태로
   }
 
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
-    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
-    else if (e.key === 'Home') { e.preventDefault(); show(0); }
-    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
-    else if (e.key.toLowerCase() === 'f') {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
+  // 모드 전환: present(한 장씩) ↔ doc(세로 스택). 선호는 localStorage에 덱별로 저장.
+  function setMode(m){
+    mode = m;
+    body.setAttribute('data-mode', m);
+    btnMode.textContent = m === 'present' ? '문서 모드' : '슬라이드 모드';
+    btnMode.title = m === 'present' ? '문서 모드 (D)' : '슬라이드 모드 (D)';
+    if (m === 'present'){
+      slides.forEach(function(s, j){ s.classList.toggle('active', j === idx); });
+      window.scrollTo(0, 0);
+      slides[idx].scrollTop = 0;
+    } else {
+      slides.forEach(function(s){ s.classList.remove('active'); });
+      slides[idx].scrollIntoView({block:'start', behavior:'auto'});
     }
-    else if (e.key.toLowerCase() === 'p') { window.print(); }
+    sync();
+    store(MODE_KEY, m);
+  }
+
+  // 목차: 같은 챕터 라벨이 연속되는 슬라이드를 한 그룹으로
+  function buildToc(){
+    tocBody.innerHTML = '';
+    var grp = null, lastLabel = null;
+    slides.forEach(function(s, i){
+      var label = chapters[i];
+      if (label !== lastLabel){
+        grp = document.createElement('div');
+        grp.className = 'grp';
+        var h = document.createElement('h4');
+        h.appendChild(document.createElement('i'));
+        h.appendChild(document.createTextNode(label));
+        grp.appendChild(h);
+        var grid = document.createElement('div');
+        grid.className = 'grid';
+        grp.appendChild(grid);
+        tocBody.appendChild(grp);
+        lastLabel = label;
+      }
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('data-i', i);
+      var n = document.createElement('span'); n.className = 'n'; n.textContent = i + 1;
+      var t = document.createElement('span'); t.textContent = titleOf(s);
+      b.appendChild(n); b.appendChild(t);
+      b.addEventListener('click', function(){ closeOverlays(); show(i, true); });
+      grp.querySelector('.grid').appendChild(b);
+    });
+  }
+  function closeOverlays(){ toc.classList.remove('on'); help.classList.remove('on'); }
+  function toggleToc(){ help.classList.remove('on'); toc.classList.toggle('on'); }
+  function toggleHelp(){ help.classList.toggle('on'); }
+  function toggleFullscreen(){
+    if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }
+    else document.exitFullscreen();
+  }
+
+  document.getElementById('btnPrev').addEventListener('click', prev);
+  document.getElementById('btnNext').addEventListener('click', next);
+  document.getElementById('btnToc').addEventListener('click', toggleToc);
+  btnMode.addEventListener('click', function(){ setMode(mode === 'present' ? 'doc' : 'present'); });
+  document.getElementById('btnHelp').addEventListener('click', toggleHelp);
+
+  document.addEventListener('keydown', function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return; // 브라우저 단축키(⌘P 등)는 건드리지 않음
+    var k = e.key;
+    if (k === 'Escape') { closeOverlays(); return; }
+    if (toc.classList.contains('on')) { if (k === 'o' || k === 'O') toggleToc(); return; }
+    // 버튼에 포커스가 있을 때 Space는 그 버튼의 클릭이므로 중복 처리하지 않음
+    if (k === ' ' && e.target && e.target.tagName === 'BUTTON') return;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); show(0); }
+    else if (k === 'End') { e.preventDefault(); show(total - 1); }
+    else if (k === 'o' || k === 'O') { toggleToc(); }
+    else if (k === 'd' || k === 'D') { setMode(mode === 'present' ? 'doc' : 'present'); }
+    else if (k === 'f' || k === 'F') { toggleFullscreen(); }
+    else if (k === '?' || k === '/') { toggleHelp(); }
+    else if (k === 'p' || k === 'P') { window.print(); }
   });
 
-  document.getElementById('nextBtn').addEventListener('click', next);
-  document.getElementById('prevBtn').addEventListener('click', prev);
+  // 문서 모드: 스크롤 위치에 따라 현재 슬라이드(위치·챕터·진행바)를 갱신
+  var scrollTick = null;
+  window.addEventListener('scroll', function(){
+    if (mode !== 'doc' || scrollTick) return;
+    scrollTick = setTimeout(function(){
+      scrollTick = null;
+      var mid = window.innerHeight * .35, best = 0;
+      for (var i = 0; i < total; i++){
+        if (slides[i].getBoundingClientRect().top <= mid) best = i; else break;
+      }
+      if (best !== idx) { idx = best; sync(); }
+    }, 120);
+  }, {passive:true});
 
-  // touch swipe
+  // touch swipe (슬라이드 모드에서만 — 문서 모드는 세로 스크롤이 본연의 조작)
   var tx = null, ty = null;
   document.addEventListener('touchstart', function(e){
     tx = e.touches[0].clientX; ty = e.touches[0].clientY;
   }, {passive:true});
   document.addEventListener('touchend', function(e){
-    if (tx === null) return;
+    if (tx === null || mode !== 'present') { tx = ty = null; return; }
     var dx = e.changedTouches[0].clientX - tx;
     var dy = e.changedTouches[0].clientY - ty;
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) { dx < 0 ? next() : prev(); }
@@ -599,12 +803,17 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
     term.addEventListener('click', step);
   });
 
+  // 딥링크: #7 (기본) 또는 #s7 모두 수용
   function fromHash(){
-    var n = parseInt(location.hash.slice(1), 10);
-    return isNaN(n) ? 0 : n - 1;
+    var m = /^#s?(\d+)$/.exec(location.hash || '');
+    var n = m ? parseInt(m[1], 10) : NaN;
+    return (n >= 1 && n <= total) ? n - 1 : 0;
   }
-  window.addEventListener('hashchange', function(){ if (fromHash() !== idx) show(fromHash()); });
-  show(fromHash());
+  window.addEventListener('hashchange', function(){ if (fromHash() !== idx) show(fromHash(), true); });
+
+  buildToc();
+  idx = fromHash();
+  setMode(load(MODE_KEY) === 'doc' ? 'doc' : 'present');
 })();
 </script>
 </body>
