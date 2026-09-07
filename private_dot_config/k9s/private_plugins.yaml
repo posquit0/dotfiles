@@ -30,8 +30,8 @@ plugins:
     - -n
     - $NAMESPACE
     - $NAME
-    # - --profile
-    # - netadmin
+    - --profile
+    - netadmin
     - --image
     - nicolaka/netshoot:v0.16
 
