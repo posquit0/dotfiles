@@ -1,6 +1,8 @@
 [tools]
 "github:tedilabs/tfvault" = "0.5.0"
 node = "26"
+"npm:@agentclientprotocol/claude-agent-acp" = "0.76.0"
+"npm:@agentclientprotocol/codex-acp" = "1.11.0"
 "npm:@playwright/cli" = "0.1.18"
 ruby = "4.0.5"
 terraform = "1.15.6"
