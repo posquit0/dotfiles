@@ -3,6 +3,7 @@
 node = "26"
 ruby = "4.0.5"
 terraform = "1.15.6"
+tflint = "0.64.0"
 
 [tool_alias]
 terraform = "asdf:mise-plugins/mise-hashicorp"
