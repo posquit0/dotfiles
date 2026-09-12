@@ -2,6 +2,6 @@
 
 set -eufo pipefail
 
-if which pinentry-touchid >/dev/null; then
-	pinentry-touchid -fix
-fi
+
+# Reload gpg-agent so config changes (e.g. cache TTL) take effect.
+gpgconf --reload gpg-agent || true
