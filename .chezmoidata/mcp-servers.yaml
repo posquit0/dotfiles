@@ -18,6 +18,7 @@ mcp_servers:
     - env
     - --keep-case
     - env/ai-agent
+    - --
     - docker
     - run
     - -i
@@ -57,6 +58,7 @@ mcp_servers:
     - env
     - --keep-case
     - env/ai-agent
+    - --
     - docker
     - run
     - -i
