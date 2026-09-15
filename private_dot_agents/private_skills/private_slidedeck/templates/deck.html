@@ -239,6 +239,22 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
 .cake .l2{background:var(--green-soft);border-color:var(--green);}
 .cake .l3{background:#fff;border-color:var(--line);}
 
+/* ---------- diagram (SVG 구조도) — 경계(zone) 안에 노드를 놓고 흐름을 화살표로 잇는다.
+   좌표만 바꿔 쓰면 되도록 스타일은 클래스로 고정. 화살표 마커는 각 svg의 defs에 둔다. */
+svg.dgm{width:100%;height:auto;max-height:64vh;margin-top:2px;}
+svg.dgm .zone{fill:#fff;stroke:var(--line);stroke-width:2;stroke-dasharray:7 5;}     /* VPC·계정 등 경계 */
+svg.dgm .zt{font:600 17px 'IBM Plex Sans KR',sans-serif;fill:var(--ink);}            /* 경계 이름 */
+svg.dgm .zc{font:400 14px 'IBM Plex Mono',monospace;fill:var(--ink-soft);}           /* 경계 부제 */
+svg.dgm .nd{fill:#fff;stroke:var(--line);stroke-width:1.5;}                          /* 일반 노드 */
+svg.dgm .nd.key{stroke:var(--accent);stroke-width:2.5;}                              /* 이 덱의 주인공 노드 */
+svg.dgm .nd.hub{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.5;}      /* 중앙 허브 */
+svg.dgm .nt{font:600 16px 'IBM Plex Sans KR',sans-serif;fill:var(--ink);}            /* 노드 이름 */
+svg.dgm .ns{font:400 13px 'IBM Plex Mono',monospace;fill:var(--ink-soft);}           /* 노드 부제 */
+svg.dgm .fl{stroke:var(--accent);stroke-width:2.5;fill:none;}                        /* 흐름 (marker-end는 직접 지정) */
+svg.dgm .fx{font:600 13px 'IBM Plex Mono',monospace;fill:var(--accent);}             /* 흐름 라벨 */
+svg.dgm .gone{stroke:var(--red);stroke-width:2.5;stroke-dasharray:8 6;fill:none;opacity:.5;}  /* 폐기된 경로 */
+svg.dgm .goneT{font:600 14px 'IBM Plex Sans KR',sans-serif;fill:var(--red);opacity:.9;}
+
 /* ---------- interactive: fragments (순차 공개 — → 키가 조각을 먼저 공개한 뒤 슬라이드를 넘김) ---------- */
 .frag{opacity:0;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease;}
 .frag.on{opacity:1;transform:none;}
@@ -492,9 +508,66 @@ table.cmp .mid{color:var(--amber);font-weight:600;}
   <p class="footnote">핵심 설계 원칙: <strong>{{원칙 한 문장}}</strong></p>
 </section>
 
-<!-- 10. 요약: dot 복기 + stamprow 도장 + 참고 자료 카드 -->
+<!-- 10. 구조도: 여러 경계에 걸친 배치·흐름은 SVG 한 장으로. 좌표만 바꿔 쓴다.
+     격자 감각: 경계 3개면 x=12 / 432 / 816 (폭 352·316·352), 노드는 경계 안쪽에서 26px 들여쓴다.
+     흐름 라벨이 다른 요소를 덮으면 라벨을 지우고 svg 아래 범례로 뺀다 (겹침 > 정보량). -->
 <section class="slide">
-  <div class="eyebrow"><span class="no">10</span>SUMMARY</div>
+  <div class="eyebrow"><span class="no">10</span>PART 3 · {{파트명}}</div>
+  <h2>{{전체 구조 한 눈에}}</h2>
+  <svg class="dgm" viewBox="0 0 1180 452" role="img" aria-label="{{그림이 보여주는 것을 한 문장으로 — 스크린리더용}}">
+    <defs>
+      <marker id="dgm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+      </marker>
+    </defs>
+
+    <!-- 왼쪽 경계 -->
+    <rect class="zone" x="12" y="46" width="352" height="300" rx="14"/>
+    <text class="zt" x="32" y="74">{{경계 이름}} <tspan class="zc">· {{역할}}</tspan></text>
+    <text class="zc" x="32" y="94">{{부제 · CIDR 등}}</text>
+    <rect class="nd" x="38" y="112" width="300" height="62" rx="10"/>
+    <text class="nt" x="54" y="139">{{노드}}</text>
+    <text class="ns" x="54" y="159">{{부제}}</text>
+    <path class="fl" marker-end="url(#dgm-arrow)" d="M188,174 V228"/>
+    <text class="fx" x="200" y="206">{{포트·프로토콜}}</text>
+    <rect class="nd key" x="38" y="232" width="300" height="86" rx="10"/>
+    <text class="nt" x="54" y="260">{{주인공 노드}}</text>
+    <text class="ns" x="54" y="280">{{부제}}</text>
+
+    <!-- 가운데 허브 -->
+    <text class="zc" x="436" y="176">{{허브 소유자}}</text>
+    <rect class="nd hub" x="432" y="188" width="316" height="104" rx="14"/>
+    <text class="nt" x="452" y="224">{{허브}}</text>
+    <text class="ns" x="452" y="246">{{부제}}</text>
+
+    <!-- 오른쪽 경계 -->
+    <rect class="zone" x="816" y="46" width="352" height="300" rx="14"/>
+    <text class="zt" x="836" y="74">{{경계 이름}} <tspan class="zc">· {{역할}}</tspan></text>
+    <rect class="nd key" x="842" y="112" width="300" height="86" rx="10"/>
+    <text class="nt" x="858" y="140">{{노드}}</text>
+    <path class="fl" marker-end="url(#dgm-arrow)" d="M992,198 V252"/>
+    <rect class="nd" x="842" y="256" width="300" height="62" rx="10"/>
+    <text class="nt" x="858" y="283">{{종착 노드}}</text>
+
+    <!-- 경계를 넘는 흐름: 직각으로만 꺾는다 -->
+    <path class="fl" marker-end="url(#dgm-arrow)" d="M338,275 H386 V240 H428"/>
+    <path class="fl" marker-end="url(#dgm-arrow)" d="M748,240 H790 V155 H838"/>
+
+    <!-- (선택) 폐기된 경로: 대안을 함께 보여줄 때만 -->
+    <path class="gone" d="M188,346 V402 H992 V346"/>
+    <rect x="428" y="378" width="324" height="48" rx="10" fill="var(--paper)" stroke="var(--red)" stroke-width="2" stroke-dasharray="8 6" opacity=".5"/>
+    <text class="goneT" x="590" y="405" text-anchor="middle">{{폐기된 경로 · 이유}}</text>
+  </svg>
+  <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:10px;">
+    <span class="fx" style="font-size:15px;">← {{왼쪽 화살표가 뜻하는 것}}</span>
+    <span class="fx" style="font-size:15px;">→ {{오른쪽 화살표가 뜻하는 것}}</span>
+  </div>
+  <p class="footnote">{{그림에서 가져갈 한 문장.}}</p>
+</section>
+
+<!-- 11. 요약: dot 복기 + stamprow 도장 + 참고 자료 카드 -->
+<section class="slide">
+  <div class="eyebrow"><span class="no">11</span>SUMMARY</div>
   <h2>한 장 요약</h2>
   <div class="cols c2" style="margin-top:6px;">
     <div>
