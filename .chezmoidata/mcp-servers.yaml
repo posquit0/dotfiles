@@ -38,6 +38,7 @@ mcp_servers:
     command: playwright-mcp
     args:
     - --config=${HOME}/.playwright/config.json
+    - --browser chrome-dev
 
   # railway:
   #   command: npx
