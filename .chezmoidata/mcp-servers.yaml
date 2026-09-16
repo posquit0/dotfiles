@@ -35,10 +35,9 @@ mcp_servers:
     - mcp
 
   playwright:
-    command: /bin/bash
+    command: playwright-mcp
     args:
-    - -c
-    - npx @playwright/mcp@latest --config=${HOME}/.playwright/config.json
+    - --config=${HOME}/.playwright/config.json
 
   # railway:
   #   command: npx
