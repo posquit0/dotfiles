@@ -5,7 +5,7 @@ playwright:
     # Browser type to use (chromium, firefox, or webkit)
     browserName: chromium
     # Keep the browser profile in memory, do not save it to disk.
-    isolated: true
+    # isolated: true
     # Path to user data directory for browser profile persistence
     # userDataDir:
 
