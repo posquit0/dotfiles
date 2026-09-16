@@ -34,6 +34,13 @@ mcp_servers:
     - gitnexus@latest
     - mcp
 
+  mise:
+    command: /opt/homebrew/bin/mise
+    args:
+    - mcp
+    env:
+      MISE_EXPERIMENTAL: "1"
+
   playwright:
     command: playwright-mcp
     args:
