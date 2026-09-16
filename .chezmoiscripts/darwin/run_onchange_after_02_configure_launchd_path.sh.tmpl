@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# GUI apps (Claude Desktop, Cursor, etc.) do not inherit the shell PATH; launchd
+# hands them only `/usr/bin:/bin:/usr/sbin:/sbin`. MCP servers spawned by those
+# apps therefore cannot find mise-managed tools or Homebrew binaries.
+#
+# `launchctl config user path` persists a PATH for every process in the user
+# launchd domain. It takes a literal string (no `$HOME` expansion), so the
+# directories are resolved at render time by asking mise and Homebrew where
+# they live and by checking which user bin directories exist. The order
+# mirrors the effective PATH built by ~/.zsh/general.zshrc. Any change to the
+# resolved value re-runs this script; the new PATH only takes effect after a
+# reboot.
+
+{{- $dirs := list }}
+{{- if lookPath "mise" }}
+{{-   $dirs = append $dirs (output "mise" "doctor" "--json" | fromJson).dirs.shims }}
+{{- end }}
+{{- /* User bin directories, highest priority first (general.zshrc prepends them in reverse). */}}
+{{- range list "scripts" ".local/bin" "bin" ".bin" }}
+{{-   $dir := joinPath $.chezmoi.homeDir . }}
+{{-   if stat $dir }}
+{{-     $dirs = append $dirs $dir }}
+{{-   end }}
+{{- end }}
+{{- if lookPath "brew" }}
+{{-   $brewPrefix := output "brew" "--prefix" | trim }}
+{{-   $dirs = concat $dirs (list (joinPath $brewPrefix "bin") (joinPath $brewPrefix "sbin")) }}
+{{- end }}
+{{- $dirs = concat $dirs (list "/usr/bin" "/bin" "/usr/sbin" "/sbin") }}
+{{- /* kubectl plugins via krew; appended last like general.zshrc does. */}}
+{{- if lookPath "kubectl" }}
+{{-   $dirs = append $dirs (joinPath .chezmoi.homeDir ".krew/bin") }}
+{{- end }}
+
+LAUNCHD_PATH="{{ $dirs | join ":" }}"
+
+if [ "$(launchctl getenv PATH)" = "${LAUNCHD_PATH}" ]; then
+  echo "[+] launchd user PATH is already active."
+  exit 0
+fi
+
+echo "[!] Setting launchd user PATH (requires sudo):"
+echo "    ${LAUNCHD_PATH}"
+sudo launchctl config user path "${LAUNCHD_PATH}"
+echo "[+] Applied. Reboot for GUI apps to pick up the new PATH."
