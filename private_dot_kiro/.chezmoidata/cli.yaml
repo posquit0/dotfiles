@@ -8,6 +8,8 @@ kiro:
   chat.defaultModel: claude-opus-5
   chat.defaultAgent: cindy
 
+  chat.disableTrustAllConfirmation: true
+  chat.enableAutoAgentUpgrade: true
 
   ## Chat UI
   chat.ui: tui
