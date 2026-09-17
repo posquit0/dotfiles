@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+if [[ ${1-} == init ]]; then
+  if [[ $# -ne 2 || ( $2 != zsh && $2 != bash ) ]]; then
+    echo 'Usage: cw init <zsh|bash>' >&2
+    exit 1
+  fi
+  cat <<'EOF'
+cw() {
+  if [[ ${1-} == init ]]; then
+    command cw "$@"
+    return $?
+  fi
+  local destination
+  destination=$(command cw "$@") || return $?
+  if [[ -n "$destination" ]]; then
+    builtin cd -- "$destination"
+  fi
+}
+EOF
+  exit 0
+fi
+
+# Print the destination; the cw shell function changes the caller's directory.
+if [[ $# -gt 1 ]]; then
+  echo 'Usage: cw [org-workspace] | cw init <zsh|bash>' >&2
+  exit 1
+fi
+if [[ ${1-} == -h || ${1-} == --help ]]; then
+  echo 'Usage: cw [org-workspace] | cw init <zsh|bash>' >&2
+  echo 'Switch workspace, preserving the repository and subdirectory under ~/workspaces or ~/workspace.' >&2
+  echo 'Without an argument, choose a matching workspace with fzf.' >&2
+  echo "Shell setup: eval \"\$(cw init zsh)\" or eval \"\$(cw init bash)\"" >&2
+  exit 0
+fi
+
+case "$PWD" in
+  "$HOME/workspaces/"*) root="$HOME/workspaces" ;;
+  "$HOME/workspace/"*) root="$HOME/workspace" ;;
+  *)
+    echo 'cw: run inside a repository under ~/workspaces/<org> or ~/workspace/<org>.' >&2
+    exit 1
+    ;;
+esac
+
+relative=${PWD#"$root/"}
+if [[ $relative != */* ]]; then
+  echo 'cw: run inside a repository, not the workspace root.' >&2
+  exit 1
+fi
+relative=${relative#*/}
+
+if [[ $# -eq 1 ]]; then
+  workspace=$1
+else
+  workspaces=()
+  shopt -s nullglob dotglob
+  for directory in "$root"/*; do
+    if [[ -d "$directory/$relative" ]]; then
+      workspaces+=("${directory##*/}")
+    fi
+  done
+  if [[ ${#workspaces[@]} -eq 0 ]]; then
+    echo "cw: no workspace contains $relative." >&2
+    exit 1
+  fi
+  if ! command -v fzf >/dev/null 2>&1; then
+    echo 'cw: fzf is required for selection; use cw <org-workspace> instead.' >&2
+    exit 1
+  fi
+  workspace=$(printf '%s\n' "${workspaces[@]}" | fzf --no-multi --height=40% --layout=reverse --prompt='Workspace> ' --header="$relative") || exit $?
+fi
+
+if [[ -z $workspace || $workspace == */* || $workspace == . || $workspace == .. ]]; then
+  echo 'cw: expected a single org-workspace name.' >&2
+  exit 1
+fi
+destination="$root/$workspace/$relative"
+if [[ ! -d $destination ]]; then
+  echo "cw: directory does not exist: $destination" >&2
+  exit 1
+fi
+printf '%s\n' "$destination"
