@@ -1,0 +1,202 @@
+#!/usr/bin/env bash
+
+# Edit a chezmoi-encrypted file that is not part of the chezmoi source state.
+# Files that ARE managed by chezmoi should be edited with `chezmoi edit`, which
+# already handles decryption transparently.
+
+usage() {
+  echo 'Usage: czedit [--no-colors] <file>' >&2
+  echo 'Decrypt the file, open it in $EDITOR, then re-encrypt it in place.' >&2
+  echo 'The original ciphertext is backed up under /tmp/czedit before writing.' >&2
+  echo 'Plaintext lives only in a private temporary directory and is removed on exit.' >&2
+  echo '' >&2
+  echo '  --no-colors  Print without ANSI colors. Colors are also disabled' >&2
+  echo '               automatically when output is not a terminal.' >&2
+}
+
+colors=1
+file=
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    --no-colors)
+      colors=0
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "czedit: unknown option: $1" >&2
+      usage
+      exit 1
+      ;;
+    *)
+      if [[ -n $file ]]; then
+        echo 'czedit: expected a single file.' >&2
+        usage
+        exit 1
+      fi
+      file=$1
+      shift
+      ;;
+  esac
+done
+if [[ -n ${1-} ]]; then
+  if [[ -n $file ]]; then
+    echo 'czedit: expected a single file.' >&2
+    usage
+    exit 1
+  fi
+  file=$1
+fi
+if [[ -z $file ]]; then
+  usage
+  exit 1
+fi
+
+# Colors are decided per stream so redirecting either one stays clean.
+if [[ $colors -eq 1 && -t 1 ]]; then
+  ok_color=$'\033[32m'
+  skip_color=$'\033[33m'
+  dim_color=$'\033[2m'
+  out_reset=$'\033[0m'
+else
+  ok_color=
+  skip_color=
+  dim_color=
+  out_reset=
+fi
+if [[ $colors -eq 1 && -t 2 ]]; then
+  fail_color=$'\033[31m'
+  err_dim_color=$'\033[2m'
+  err_reset=$'\033[0m'
+else
+  fail_color=
+  err_dim_color=
+  err_reset=
+fi
+
+ok() { printf '%s✅ czedit: %s%s\n' "$ok_color" "$1" "$out_reset"; }
+skip() { printf '%s⏭️  czedit: %s%s\n' "$skip_color" "$1" "$out_reset"; }
+detail() { printf '%s   %s%s\n' "$dim_color" "$1" "$out_reset"; }
+fail() { printf '%s❌ czedit: %s%s\n' "$fail_color" "$1" "$err_reset" >&2; }
+fail_detail() { printf '%s   %s%s\n' "$err_dim_color" "$1" "$err_reset" >&2; }
+
+if [[ ! -f $file ]]; then
+  fail "not a file: $file"
+  exit 1
+fi
+if ! command -v chezmoi >/dev/null 2>&1; then
+  fail 'chezmoi is required.'
+  exit 1
+fi
+
+# Note whether the file carries an encryption armor header. Non-armored
+# ciphertext is legitimate, so this only decides which message to print if
+# decryption later fails -- it never rejects a file on its own.
+if [[ ! -s $file ]]; then
+  fail "not an encrypted file (it is empty): $file"
+  exit 1
+fi
+armored=0
+IFS= read -r first_line <"$file" 2>/dev/null || first_line=
+case $first_line in
+  '-----BEGIN PGP MESSAGE-----'* | '-----BEGIN AGE ENCRYPTED FILE-----'* | 'age-encryption.org/v1'*)
+    armored=1
+    ;;
+esac
+
+editor=${VISUAL:-${EDITOR:-vi}}
+name=${file##*/}
+
+# Name the plaintext without the configured encryption suffix so the editor
+# picks the right filetype: agents.pori.yaml.asc -> agents.pori.yaml
+suffix=$(chezmoi execute-template '{{ if eq .chezmoi.config.encryption "gpg" }}{{ .chezmoi.config.gpg.suffix }}{{ else if eq .chezmoi.config.encryption "age" }}{{ .chezmoi.config.age.suffix }}{{ end }}' 2>/dev/null)
+plain=$name
+if [[ -n $suffix && $plain == *"$suffix" ]]; then
+  plain=${plain%"$suffix"}
+fi
+[[ -n $plain ]] || plain=plaintext
+
+# Plaintext stays out of /tmp: mktemp -d is private to this user (0700).
+workdir=$(mktemp -d) || exit 1
+trap 'rm -rf "$workdir"' EXIT INT TERM
+
+if ! chezmoi decrypt "$file" >"$workdir/$plain" 2>"$workdir/.decrypt-error"; then
+  if [[ $armored -eq 0 ]]; then
+    fail "not an encrypted file: $file"
+    fail_detail 'Expected chezmoi-encrypted content (gpg or age).'
+  else
+    fail "decryption failed; $file is unchanged."
+    while IFS= read -r line; do
+      [[ -n $line ]] && fail_detail "$line"
+    done <"$workdir/.decrypt-error"
+  fi
+  exit 1
+fi
+
+# Back up the ciphertext before anything can overwrite it. The file itself is
+# untouched until the final replacement, so backing up after a successful
+# decryption is just as safe and leaves no litter behind a failed run.
+backup_dir=/tmp/czedit
+if ! mkdir -p "$backup_dir" || ! chmod 700 "$backup_dir"; then
+  fail "cannot prepare backup directory: $backup_dir"
+  exit 1
+fi
+backup="$backup_dir/$(date +%Y%m%d-%H%M%S)-$name"
+if ! cp "$file" "$backup"; then
+  fail "backup failed: $backup"
+  exit 1
+fi
+chmod 600 "$workdir/$plain"
+cp "$workdir/$plain" "$workdir/.original"
+
+if ! "$editor" "$workdir/$plain"; then
+  fail "editor exited with an error; $file is unchanged."
+  rm -f "$backup"
+  exit 1
+fi
+
+if cmp -s "$workdir/$plain" "$workdir/.original"; then
+  skip "no changes; $file is unchanged."
+  rm -f "$backup"
+  exit 0
+fi
+
+if ! chezmoi encrypt "$workdir/$plain" >"$workdir/reencrypted"; then
+  fail "encryption failed; $file is unchanged."
+  fail_detail "your edit is lost. Backup of the original: $backup"
+  exit 1
+fi
+
+# Confirm the new ciphertext decrypts back to exactly what was edited before
+# overwriting the original.
+if ! chezmoi decrypt "$workdir/reencrypted" | cmp -s - "$workdir/$plain"; then
+  fail "round-trip verification failed; $file is unchanged."
+  fail_detail "backup of the original: $backup"
+  exit 1
+fi
+
+# Replace atomically, preserving the original mode.
+staged="$file.czedit.$$"
+if ! cp "$workdir/reencrypted" "$staged"; then
+  fail "cannot stage the new file next to $file."
+  exit 1
+fi
+if ! chmod --reference="$file" "$staged" 2>/dev/null; then
+  chmod "$(stat -f %Lp "$file" 2>/dev/null || stat -c %a "$file")" "$staged" 2>/dev/null
+fi
+if ! mv -f "$staged" "$file"; then
+  rm -f "$staged"
+  fail "could not replace $file."
+  fail_detail "backup: $backup"
+  exit 1
+fi
+
+ok "updated $file"
+detail "backup of the previous version: $backup"
