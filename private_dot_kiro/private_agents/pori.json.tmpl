@@ -1,7 +1,8 @@
 {{/* definition is GPG-encrypted, decrypted at render time. */}}
 {{- $a := include "private_dot_kiro/.private-data/agents.pori.yaml.asc" | decrypt | fromYaml -}}
 {{- $mcp := dict -}}
-{{- range $a.mcpServerNames }}{{ $mcp = set $mcp . (index $.mcp_servers .) }}{{ end -}}
+{{- $mcp_servers := includeTemplate "mcp-servers" . | fromJson -}}
+{{- range $a.mcpServerNames }}{{ $mcp = set $mcp . (index $mcp_servers .) }}{{ end -}}
 {{- $out := unset $a "mcpServerNames" -}}
 {{- $_ := set $out "mcpServers" $mcp -}}
 {{ $out | toPrettyJson }}
