@@ -1,1 +1,2 @@
-{{ dict "mcpServers" .mcp_servers | toPrettyJson }}
+{{- $mcp_servers := includeTemplate "mcp-servers" . | fromJson -}}
+{{ dict "mcpServers" $mcp_servers | toPrettyJson }}

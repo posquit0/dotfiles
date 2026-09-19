@@ -1,1 +1,2 @@
-{{ .claude_desktop | setValueAtPath "mcpServers" .mcp_servers | toPrettyJson }}
+{{- $mcp_servers := includeTemplate "mcp-servers" . | fromJson -}}
+{{ .claude_desktop | setValueAtPath "mcpServers" $mcp_servers | toPrettyJson }}

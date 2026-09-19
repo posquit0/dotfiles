@@ -1,0 +1,10 @@
+{{- /* Merged MCP server map from every encrypted file in .private-data/mcp-servers.
+       Emits JSON; consumers parse it with fromJson. Each source file is a bare
+       map of server name -> definition. On a name collision the file that sorts
+       first wins, so keep names distinct across files. */ -}}
+{{- $merged := dict -}}
+{{- range (glob (printf "%s/.private-data/mcp-servers/*.yaml.asc" .chezmoi.sourceDir)) -}}
+{{-   $part := include . | decrypt | fromYaml | default dict -}}
+{{-   $merged = merge $merged $part -}}
+{{- end -}}
+{{ $merged | toJson }}
