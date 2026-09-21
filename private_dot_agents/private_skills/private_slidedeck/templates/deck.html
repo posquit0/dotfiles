@@ -304,12 +304,17 @@ svg.dgm .goneT{font:600 14px 'IBM Plex Sans KR',sans-serif;fill:var(--red);opaci
 .footnote{margin-top:auto;padding-top:18px;font-size:clamp(14px,1.5vw,18px);color:var(--ink-soft);line-height:1.6;}
 .spacer{height:14px;}
 
-/* PDF 내보내기: P 키 → 인쇄. 인터랙티브 요소는 모두 펼쳐진 상태로 인쇄됨 */
+/* PDF 내보내기: 하단 바 PDF 버튼 또는 P 키 → 인쇄. 인터랙티브 요소는 모두 펼쳐진 상태로 인쇄됨 */
+@page{size:1280px 720px;margin:0;} /* 16:9 가로 — 기본 A4 세로로 떨어지면 슬라이드가 잘린다 */
 @media print{
-  body{overflow:visible;}
+  /* 브라우저는 인쇄 시 배경색·그라디언트를 기본으로 버린다. 덱은 배경이 곧 내용이므로 강제로 유지 */
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+  html,body{margin:0 !important;height:auto !important;overflow:visible;}
   .deck{height:auto;}
   .slide{display:flex !important;position:relative;inset:auto;
-         page-break-after:always;height:100vh;min-height:0;overflow:hidden;animation:none;border-bottom:none;}
+         page-break-after:always;break-after:page;break-inside:avoid;
+         width:1280px;height:720px;min-height:0;overflow:hidden;animation:none;border-bottom:none;}
+  .slide:last-of-type{page-break-after:auto;break-after:auto;} /* 끝에 빈 페이지가 붙지 않게 */
   .slide::after{display:none;}
   #chrome,#toc,#help{display:none !important;}
   .frag{opacity:1 !important;transform:none !important;}
@@ -601,6 +606,7 @@ svg.dgm .goneT{font:600 14px 'IBM Plex Sans KR',sans-serif;fill:var(--red);opaci
   <button id="btnPrev" type="button" title="이전 (←)" aria-label="이전 슬라이드">◀</button>
   <button id="btnNext" type="button" title="다음 (→)" aria-label="다음 슬라이드">▶</button>
   <button id="btnMode" type="button" title="문서 모드 (D)">문서 모드</button>
+  <button id="btnPdf" type="button" title="PDF 로 저장 (P)" aria-label="PDF 로 저장">PDF</button>
   <button id="btnHelp" type="button" title="단축키 (?)" aria-label="단축키 도움말">?</button>
 </div>
 
@@ -613,7 +619,7 @@ svg.dgm .goneT{font:600 14px 'IBM Plex Sans KR',sans-serif;fill:var(--red);opaci
 <div id="help" role="dialog" aria-label="단축키">
   <div><b>← →</b> 이동 &nbsp; <b>Space</b> 다음 &nbsp; <b>Home/End</b> 처음·끝</div>
   <div><b>O</b> 목차 &nbsp; <b>D</b> 문서 모드 &nbsp; <b>F</b> 전체 화면 &nbsp; <b>?</b> 이 도움말</div>
-  <div><b>P</b> 인쇄 — 슬라이드 단위 PDF 로 저장됩니다</div>
+  <div><b>P</b> 또는 하단 <b>PDF</b> 버튼 — 슬라이드 단위 PDF 로 저장됩니다</div>
 </div>
 
 <script>
@@ -768,10 +774,14 @@ svg.dgm .goneT{font:600 14px 'IBM Plex Sans KR',sans-serif;fill:var(--red);opaci
     else document.exitFullscreen();
   }
 
+  // PDF: 열려 있는 오버레이를 먼저 닫고 인쇄 대화상자를 띄운다 (브라우저의 "PDF 로 저장" 사용)
+  function printDeck(){ closeOverlays(); window.print(); }
+
   document.getElementById('btnPrev').addEventListener('click', prev);
   document.getElementById('btnNext').addEventListener('click', next);
   document.getElementById('btnToc').addEventListener('click', toggleToc);
   btnMode.addEventListener('click', function(){ setMode(mode === 'present' ? 'doc' : 'present'); });
+  document.getElementById('btnPdf').addEventListener('click', printDeck);
   document.getElementById('btnHelp').addEventListener('click', toggleHelp);
 
   document.addEventListener('keydown', function(e){
@@ -789,7 +799,7 @@ svg.dgm .goneT{font:600 14px 'IBM Plex Sans KR',sans-serif;fill:var(--red);opaci
     else if (k === 'd' || k === 'D') { setMode(mode === 'present' ? 'doc' : 'present'); }
     else if (k === 'f' || k === 'F') { toggleFullscreen(); }
     else if (k === '?' || k === '/') { toggleHelp(); }
-    else if (k === 'p' || k === 'P') { window.print(); }
+    else if (k === 'p' || k === 'P') { printDeck(); }
   });
 
   // 문서 모드: 스크롤 위치에 따라 현재 슬라이드(위치·챕터·진행바)를 갱신
