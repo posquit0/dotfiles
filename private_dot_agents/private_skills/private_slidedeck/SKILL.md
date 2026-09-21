@@ -14,6 +14,14 @@ description: 나만의 표준 디자인 가이드 기반 HTML 슬라이드덱 �
   템플릿에 이미 포함되어 있고, 오프라인이면 시스템 폰트로 자연 강등되므로 추가·변경하지 않는다.
   그 외 외부 CSS/JS/이미지 로드 금지
 - 언어는 한국어 (`<html lang="ko">`), 폰트 스택은 템플릿 그대로 유지
+- **`<head>`의 생성 표식 메타 2줄은 반드시 그대로 남긴다** (덱 탐색·일괄 마이그레이션 기준):
+  ```html
+  <meta name="generator" content="slidedeck">
+  <meta name="slidedeck-version" content="2026-09-21">
+  ```
+  `slidedeck-version`은 덱을 만들 때 쓴 **템플릿 버전**이며 포맷은 `YYYY-MM-DD`로 고정한다.
+  덱 내용만 바꿀 때는 건드리지 않고, 템플릿 구조가 바뀌어 덱을 그 버전으로 옮겼을 때만 갱신한다.
+  생성된 덱 찾기: `grep -rl slidedeck-version --include='*.html' .`
 - 템플릿의 구조 CSS·JS·하단 조작 인터페이스(chrome)는 수정하지 않는다.
   커스터마이징은 `:root`의 `--accent` / `--accent-soft` 교체만
 - **하단 조작 바(`#chrome`)와 목차(`#toc`)·도움말(`#help`) 오버레이는 모든 덱에 항상 동일하게 포함**:
