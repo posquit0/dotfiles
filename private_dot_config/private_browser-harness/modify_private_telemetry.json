@@ -1,0 +1,10 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /* browser-harness owns this file, so merge rather than overwrite: force
+       telemetry off on every apply, keep any other key the CLI adds, and drop
+       install_id — it is only ever sent as the telemetry distinct_id, and it
+       must never reach this repo. `browser-harness telemetry enable` is
+       reverted the next time chezmoi runs. */ -}}
+{{- $json := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $json = unset $json "install_id" -}}
+{{- $json = set $json "disabled" true -}}
+{{ $json | toPrettyJson }}
