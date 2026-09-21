@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# mise config: {{ include "private_dot_config/private_mise/private_config.toml" | sha256sum }}
+#
+# `browser-harness skill` prints the SKILL.md that the installed CLI ships, so
+# the skill body can never drift from the binary that executes it. That is why
+# it is generated here instead of being vendored into the chezmoi source.
+#
+# The hash above ties this to the global mise config, which pins
+# `pypi:browser-harness`, so a version bump regenerates the skill. It runs
+# `after` and sorts below 01_install_mise_tools, so the CLI is already present.
+
+SKILL_DIR="{{ .chezmoi.homeDir }}/.agents/plugins/browser-harness/skills/browser-harness"
+
+if ! command -v browser-harness > /dev/null; then
+  echo "[!] The CLI 'browser-harness' - Not Found! Skipping skill generation."
+  exit 0
+fi
+
+echo "[!] The CLI 'browser-harness' - Found!"
+mkdir -p "$SKILL_DIR"
+
+# Write via a temp file so a failing CLI cannot leave a truncated SKILL.md.
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+browser-harness skill > "$tmp"
+mv "$tmp" "$SKILL_DIR/SKILL.md"
+trap - EXIT
+
+echo "[+] Successfully generated $SKILL_DIR/SKILL.md."

@@ -1,12 +1,17 @@
 {{- /* chezmoi:modify-template */ -}}
+{{- /* Powers whose directory is symlinked in by chezmoi (see private_installed/). */ -}}
+{{- $managed := list "browser-harness" "eli5" -}}
 {{- $json := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- /* Keep powers Kiro installed on its own; re-add ours so entries never duplicate. */ -}}
 {{- $powers := list -}}
 {{- range (dig "installedPowers" (list) $json) -}}
-{{-   if ne .name "eli5" -}}
+{{-   if not (has .name $managed) -}}
 {{-     $powers = append $powers . -}}
 {{-   end -}}
 {{- end -}}
-{{- $powers = append $powers (dict "name" "eli5" "registryId" "user-added") -}}
+{{- range $managed -}}
+{{-   $powers = append $powers (dict "name" . "registryId" "user-added") -}}
+{{- end -}}
 {{- $json = set $json "version" (dig "version" "1.0.0" $json) -}}
 {{- $json = set $json "installedPowers" $powers -}}
 {{ $json | toPrettyJson }}

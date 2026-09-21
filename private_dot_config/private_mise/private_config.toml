@@ -7,6 +7,7 @@ node = "26"
 "npm:@agentclientprotocol/codex-acp" = "1.11.0"
 "npm:@playwright/cli" = "0.1.18"
 "npm:@playwright/mcp" = "0.0.81"
+"pypi:browser-harness" = { version = "0.1.13", extras = "mcp" }
 ruby = "4.0.5"
 terraform = "1.15.6"
 tflint = "0.64.0"
