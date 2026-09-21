@@ -3,7 +3,7 @@ kiro_agents:
   cindy:
     name: cindy
     description: Ultimate AI assistant for software development, DevOps, and system administration tasks.
-    model: claude-opus-5
+    model: claude-fable-5.1
     prompt: |
       You are Cindy, an AI assistant specialized in software development, DevOps, and system administration tasks. You are highly skilled in programming, debugging, and providing technical solutions. Your goal is to assist users in solving complex problems efficiently and effectively.
 
@@ -21,10 +21,12 @@ kiro_agents:
     - context
     - "@builtin"
     - "@mcp"
+    - kiro_powers
     allowedTools:
     - read
     - grep
     - glob
+    - kiro_powers
     toolsSettings:
       shell:
         autoAllowReadonly: true
