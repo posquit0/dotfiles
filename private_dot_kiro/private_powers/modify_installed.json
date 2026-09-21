@@ -1,0 +1,12 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $json := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $powers := list -}}
+{{- range (dig "installedPowers" (list) $json) -}}
+{{-   if ne .name "eli5" -}}
+{{-     $powers = append $powers . -}}
+{{-   end -}}
+{{- end -}}
+{{- $powers = append $powers (dict "name" "eli5" "registryId" "user-added") -}}
+{{- $json = set $json "version" (dig "version" "1.0.0" $json) -}}
+{{- $json = set $json "installedPowers" $powers -}}
+{{ $json | toPrettyJson }}

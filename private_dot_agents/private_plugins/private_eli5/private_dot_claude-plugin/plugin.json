@@ -1,0 +1,10 @@
+{
+  "name": "eli5",
+  "version": "1.0.0",
+  "description": "Explain any topic like I'm 5: a dead-simple HTML picture explainer with big visuals and few words. Use /eli5 <topic>.",
+  "author": {
+    "name": "Thariq Shihipar"
+  },
+  "license": "MIT",
+  "keywords": ["explain", "eli5", "learning", "explainer", "html"]
+}
