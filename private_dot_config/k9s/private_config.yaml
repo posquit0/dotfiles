@@ -21,10 +21,10 @@ k9s:
   logger:
     tail: 100
     buffer: 5000
-    sinceSeconds: -1
+    sinceSeconds: 300
     fullScreen: false
     textWrap: false
-    showTime: false
+    showTime: true
   imageScans:
     enable: false
   thresholds:
