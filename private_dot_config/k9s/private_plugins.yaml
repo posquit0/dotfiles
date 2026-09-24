@@ -8,6 +8,8 @@ plugins:
     command: kubectl
     background: false
     args:
+    - --context
+    - $CONTEXT
     - debug
     - -it
     - node/$NAME
@@ -25,6 +27,8 @@ plugins:
     command: kubectl
     background: false
     args:
+    - --context
+    - $CONTEXT
     - debug
     - -it
     - -n
@@ -44,6 +48,8 @@ plugins:
     command: kubectl
     background: false
     args:
+    - --context
+    - $CONTEXT
     - debug
     - -it
     - -n
