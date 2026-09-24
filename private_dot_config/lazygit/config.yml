@@ -1,9 +1,11 @@
 git:
+  localBranchSortOrder: recency
   diffRenderers:
   - colorArg: always
     command: delta --dark --paging=never
 
 gui:
+  showDivergenceFromBaseBranch: arrowAndNumber
   nerdFontsVersion: "3"
 
 customCommands:
