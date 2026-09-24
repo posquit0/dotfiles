@@ -48,8 +48,8 @@ kiro:
 
 
   ## API
-  # API request timeout in seconds
-  api.timeout: 1800
+  # API request timeout in milliseconds
+  api.timeout: 1800000
 
 
   ## MCP
