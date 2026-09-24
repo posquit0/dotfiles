@@ -92,7 +92,7 @@ symbol = " "
 disabled = false
 symbol = " "
 style = "bold 208"
-format = ' [$symbol($profile )(\($region\))]($style)'
+format = ' [$symbol($profile )(\($region\))( \[$duration\])]($style)'
 
 [aws.region_aliases]
 us-east-1 = "use1"
@@ -148,6 +148,10 @@ disabled = false
 symbol = "󱃾 "
 style = "bold 63"
 format = ' [$symbol$context]($style)'
+
+[[kubernetes.contexts]]
+context_pattern = '.*prod.*'
+style = 'bold red'
 
 [terraform]
 disabled = false
@@ -216,7 +220,8 @@ disabled = true
 symbol = "󰹍 "
 
 [status]
-disabled = true
+disabled = false
+pipestatus = true
 symbol = " "
 
 [time]
