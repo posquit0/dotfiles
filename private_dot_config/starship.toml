@@ -208,6 +208,10 @@ symbol = " "
 # Modules: MISC
 ###################################################
 
+[cmd_duration]
+show_notifications = true
+min_time_to_notify = 60_000
+
 [package]
 disabled = false
 symbol = "󰏗 "
