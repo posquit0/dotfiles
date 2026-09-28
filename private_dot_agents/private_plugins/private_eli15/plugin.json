@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "eli15",
+  "version": "1.0.0",
+  "description": "Explain any topic like I'm 15: a visual HTML explainer with everyday analogies, real terminology, and step-by-step mechanisms. Use /eli15 <topic>.",
+  "author": {
+    "name": "Byungjin Park"
+  },
+  "keywords": ["explain", "eli15", "learning", "explainer", "html"]
+}

@@ -38,6 +38,9 @@ kiro_agents:
     includeMcpJson: true
     mcpServers: {}
 
+    ## Powers
+    includePowers: true
+
     ## Permissions
     permissions:
       rules:

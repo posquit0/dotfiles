@@ -1,2 +1,8 @@
 # Cumulative file size limit for AGENTS.md file chains
 project_doc_max_bytes = 65536
+
+[plugins."eli5@personal"]
+enabled = true
+
+[plugins."eli15@personal"]
+enabled = true

@@ -1,6 +1,6 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- /* Powers whose directory is symlinked in by chezmoi (see private_installed/). */ -}}
-{{- $managed := list "browser-harness" "eli5" -}}
+{{- $managed := list "browser-harness" "eli5" "eli15" -}}
 {{- $json := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- /* Keep powers Kiro installed on its own; re-add ours so entries never duplicate. */ -}}
 {{- $powers := list -}}
