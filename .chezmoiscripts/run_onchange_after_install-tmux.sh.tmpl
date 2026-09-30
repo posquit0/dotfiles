@@ -1,0 +1,62 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# tmux config: {{ include "external_dot_tmux/tmux.conf" | sha256sum }}
+
+for command in tmux git; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    echo "[!] Required command not found: $command" >&2
+    exit 1
+  fi
+done
+
+if [ ! -r "$HOME/.tmux.conf" ]; then
+  echo "[!] Cannot read $HOME/.tmux.conf" >&2
+  exit 1
+fi
+
+plugin_dir="$HOME/.tmux/plugins"
+tpm_dir="$plugin_dir/tpm"
+
+export GIT_TERMINAL_PROMPT=0
+if [ -d "$tpm_dir" ] && ! git -C "$tpm_dir" rev-parse --git-dir >/dev/null 2>&1; then
+  # Older dotfiles copied a submodule whose relative .git path is now broken.
+  backup_dir="$(mktemp -d "$plugin_dir/tpm.backup.XXXXXXXX")"
+  mv "$tpm_dir" "$backup_dir/tpm"
+  echo "[!] Backed up invalid TPM repository to $backup_dir/tpm"
+fi
+
+if [ ! -d "$tpm_dir" ]; then
+  echo "[+] Installing TPM"
+  mkdir -p "$plugin_dir"
+  git clone https://github.com/tmux-plugins/tpm "$tpm_dir"
+fi
+
+# TPM reads the plugin path from a running server, even through its CLI.
+# Use an isolated server without loading tmux.conf or starting plugin hooks.
+work_dir="$(mktemp -d /tmp/chezmoi-tmux.XXXXXXXX)"
+socket="$work_dir/socket"
+cleanup() {
+  tmux -S "$socket" kill-server >/dev/null 2>&1 || true
+  rm -rf "$work_dir"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+tmux -S "$socket" -f /dev/null start-server \; \
+  set-option -g exit-empty off \; \
+  set-environment -g TMUX_PLUGIN_MANAGER_PATH "$plugin_dir/"
+export TMUX="$socket,0,0"
+
+echo "[+] Installing missing tmux plugins"
+"$tpm_dir/bin/install_plugins"
+
+echo "[+] Updating tmux plugins"
+# TPM versions that update in background jobs can lose the failure exit code.
+"$tpm_dir/bin/update_plugins" all 2>&1 | tee "$work_dir/update.log"
+if grep -q 'update fail' "$work_dir/update.log"; then
+  echo "[!] Failed to update one or more tmux plugins" >&2
+  exit 1
+fi

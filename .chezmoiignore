@@ -31,4 +31,3 @@ Library/
 
 ## Tmux
 .tmux/plugins/
-!.tmux/plugins/tpm
