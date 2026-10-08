@@ -5,7 +5,7 @@ kiro:
 
 
   ## Agent
-  chat.defaultModel: claude-opus-5
+  chat.defaultModel: claude-opus-5.5
   chat.defaultAgent: cindy
 
   chat.disableTrustAllConfirmation: true
