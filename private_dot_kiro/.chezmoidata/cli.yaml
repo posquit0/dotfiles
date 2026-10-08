@@ -29,6 +29,8 @@ kiro:
   chat.enableHistoryHints: true
   # Show context usage percentage in prompt
   chat.enableContextUsageIndicator: true
+  # Access and manage your Kiro Session Dashboard via `/sessions`
+  chat.sessionDashboard.indexResponses: true
 
 
   ## Display & Accessibility
