@@ -1,0 +1,479 @@
+#!/usr/bin/env python3
+"""Browse decrypted chezmoi desired/local/HEAD differences without applying them."""
+
+import argparse
+import curses
+import difflib
+import hashlib
+import json
+import mimetypes
+import os
+from pathlib import Path
+import shlex
+import shutil
+import signal
+import subprocess
+import sys
+import tempfile
+import unicodedata
+
+
+ARMOR = (b'-----BEGIN PGP MESSAGE-----', b'-----BEGIN AGE ENCRYPTED FILE-----',
+         b'age-encryption.org/v1')
+
+
+def run(*args, data=None):
+    result = subprocess.run([str(a) for a in args], input=data, capture_output=True)
+    if result.returncode:
+        raise RuntimeError(result.stderr.decode(errors='replace').strip() or
+                           '{} exited {}'.format(args[0], result.returncode))
+    return result.stdout
+
+
+def encrypted(path):
+    if not path.is_file():
+        return False
+    with path.open('rb') as stream:
+        return stream.read(64).startswith(ARMOR)
+
+
+def snapshot(repo, revision, destination):
+    """Export committed sources, including the pinned submodule revisions."""
+    destination.mkdir(parents=True, exist_ok=True)
+    archive = run('git', '-C', repo, 'archive', revision)
+    run('tar', '-xf', '-', '-C', destination, data=archive)
+    for entry in run('git', '-C', repo, 'ls-tree', '-rz', revision).split(b'\0'):
+        if not entry:
+            continue
+        metadata, name = entry.split(b'\t', 1)
+        mode, _, commit = metadata.split()
+        if mode == b'160000':
+            relative = os.fsdecode(name)
+            snapshot(repo / relative, commit.decode(), destination / relative)
+
+
+def binary_text(text):
+    return any(ord(char) < 32 and char not in '\t\n\r\f' for char in text)
+
+
+def file_state(data, path, perm=None):
+    state = {'type': 'file'}
+    if perm is not None:
+        state['perm'] = perm
+    try:
+        content = data.decode('utf-8')
+    except UnicodeDecodeError:
+        content = None
+    if content is None or binary_text(content):
+        state.update(binary=True, size=len(data), sha256=hashlib.sha256(data).hexdigest(),
+                     format=mimetypes.guess_type(str(path))[0] or 'application/octet-stream')
+    else:
+        state['contents'] = content
+    return state
+
+
+def local_state(path):
+    if path.is_symlink():
+        return {'type': 'symlink', 'linkname': os.readlink(path)}
+    if not path.exists():
+        return None
+    if not path.is_file():
+        return {'type': 'directory'}
+    return file_state(path.read_bytes(), path, path.stat().st_mode & 0o777)
+
+
+def signature(state):
+    if state is None:
+        return None
+    if state.get('binary'):
+        return ('binary', state['sha256'], state['size'], state.get('perm'))
+    return (state['type'], state.get('contents', state.get('linkname', '')),
+            state.get('perm'))
+
+
+def lines(state):
+    if state is None:
+        return []
+    value = state.get('contents', state.get('linkname', ''))
+    result = value.splitlines(keepends=True)
+    return [line.rstrip('\r\n') + (' [no newline]' if not line.endswith('\n') else '')
+            for line in result]
+
+
+def diff_rows(desired, reference):
+    """Keep all +/- markers on the desired side, including deleted lines."""
+    if any(state and state.get('binary') for state in (desired, reference)):
+        def summary(state):
+            if state is None:
+                return ['[absent]', '', '', '', '']
+            if not state.get('binary'):
+                return [describe(state), 'Text content', '', '', '']
+            return [describe(state), state['format'], '{:,} bytes'.format(state['size']),
+                    'SHA-256:', state['sha256']]
+        same = signature(desired) == signature(reference)
+        return [(' ' if same else '!', 'Binary files: ' + ('identical' if same else 'different'), '')] + [
+            (' ', left, right) for left, right in zip(summary(desired), summary(reference))]
+    left, right = lines(desired), lines(reference)
+    # Strip equal edges before matching: repeated lines otherwise make even a
+    # single insertion quadratic. Keep the matcher's popular-line heuristic on.
+    prefix = 0
+    while prefix < min(len(left), len(right)) and left[prefix] == right[prefix]:
+        prefix += 1
+    suffix = 0
+    while (suffix < min(len(left), len(right)) - prefix and
+           left[-suffix - 1] == right[-suffix - 1]):
+        suffix += 1
+    rows = [(' ', line, line) for line in left[:prefix]]
+    end_left, end_right = len(left) - suffix, len(right) - suffix
+    for tag, a, b, c, d in difflib.SequenceMatcher(None, right[prefix:end_right], left[prefix:end_left]).get_opcodes():
+        a, b, c, d = a + prefix, b + prefix, c + prefix, d + prefix
+        if tag == 'equal':
+            rows.extend((' ', new, old) for new, old in zip(left[c:d], right[a:b]))
+        else:
+            rows.extend(('-', old, old) for old in right[a:b])
+            rows.extend(('+', new, '') for new in left[c:d])
+    rows.extend((' ', line, line) for line in left[end_left:])
+    if signature(desired) != signature(reference) and left == right:
+        rows.insert(0, ('!', describe(desired), describe(reference)))
+    return rows or [(' ', '(empty)', '(empty)')]
+
+
+def describe(state):
+    if state is None:
+        return '[absent]'
+    mode = ' {:04o}'.format(state['perm']) if 'perm' in state else ''
+    return '[{}{}]'.format('binary file' if state.get('binary') else state['type'], mode)
+
+
+class Comparison:
+    def __init__(self, workspace, path=None):
+        self.workspace = Path(workspace)
+        self.source = Path(run('chezmoi', 'source-path').decode().strip())
+        self.destination = Path(run('chezmoi', 'target-path').decode().strip())
+        self.path = Path(os.path.abspath(os.path.expanduser(path))) if path else None
+        self.raw = False
+        self.target = None
+        if self.path:
+            if self.source in self.path.parents:
+                self.target = run('chezmoi', 'target-path', self.path).decode().strip()
+                managed = json.loads(self.command(False, 'managed', '--path-style=all'))
+                if os.path.relpath(self.target, self.destination) not in managed:
+                    if not encrypted(self.path):
+                        raise RuntimeError('not a managed or encrypted source: {}'.format(self.path))
+                    self.raw = True
+            else:
+                self.target = str(self.path)
+        repo = Path(run('git', '-C', self.source, 'rev-parse', '--show-toplevel').decode().strip())
+        exported = self.workspace / 'HEAD'
+        snapshot(repo, 'HEAD', exported)
+        self.head = exported / self.source.resolve().relative_to(repo.resolve())
+        self.refresh()
+
+    def command(self, head, *args):
+        options = ['chezmoi', '--refresh-externals=never']
+        if head:
+            # HEAD is evaluated with this machine's current config/data.
+            options += ['--source', str(self.head), '--working-tree', str(self.head),
+                        '--persistent-state', str(self.workspace / 'head-state.boltdb')]
+        return run(*options, *args)
+
+    def refresh(self):
+        if self.raw:
+            self.entries = [self.raw_entry(self.path.relative_to(self.source))]
+            return
+        states = []
+        mappings = []
+        for head in (False, True):
+            mapping = json.loads(self.command(head, 'managed', '--path-style=all'))
+            targets = []
+            if self.target:
+                key = os.path.relpath(self.target, self.destination)
+                targets = [self.target]
+                if key not in mapping:
+                    states.append({})
+                    mappings.append(mapping)
+                    continue
+            dumped = json.loads(self.command(head, 'dump', '--format=json',
+                                             '--include=files,symlinks', *targets))
+            for name, state in dumped.items():
+                content = state.get('contents', '')
+                if state['type'] == 'file' and ('\ufffd' in content or binary_text(content)):
+                    # JSON dump replaces invalid UTF-8. Fetch original bytes to
+                    # compare binary files accurately, then retain metadata only.
+                    target = self.destination / name
+                    dumped[name] = file_state(self.command(head, 'cat', target), target,
+                                              state.get('perm'))
+            states.append(dumped)
+            mappings.append(mapping)
+        desired, previous = states
+        names = sorted(set(desired) | set(previous))
+        entries = []
+        for name in names:
+            target = self.destination / name
+            current = local_state(target)
+            wanted, old = desired.get(name), previous.get(name)
+            if not self.path and signature(wanted) == signature(current) == signature(old):
+                continue
+            mapping = mappings[0].get(name, {})
+            source = mapping.get('sourceAbsolute')
+            # Deleted sources retain their encryption badge from HEAD.
+            badge_source = source or mappings[1].get(name, {}).get('sourceAbsolute')
+            is_encrypted = False
+            if badge_source:
+                badge_path = Path(badge_source)
+                is_encrypted = ('encrypted' in badge_path.name.split('_')[:-1] or
+                                encrypted(badge_path))
+            entries.append({'name': name, 'source': Path(source) if source else None,
+                            'encrypted': is_encrypted,
+                            'target': target, 'desired': wanted, 'head': old, 'local': current})
+        if not self.path:
+            # Private template inputs are Git sources, not chezmoi-managed targets.
+            names = set(run('git', '-C', self.source, 'ls-files', '-z', '--cached',
+                            '--others', '--exclude-standard').split(b'\0'))
+            names.update(run('git', '-C', self.source, 'ls-tree', '-rz', '--name-only',
+                             'HEAD').split(b'\0'))
+            for name in sorted(names):
+                relative = Path(os.fsdecode(name))
+                if '.private-data' not in relative.parts:
+                    continue
+                if not (encrypted(self.source / relative) or encrypted(self.head / relative)):
+                    continue
+                entry = self.raw_entry(relative)
+                if signature(entry['desired']) != signature(entry['head']):
+                    entries.append(entry)
+            entries.sort(key=lambda entry: entry['name'])
+        if self.path and not entries:
+            raise RuntimeError('no managed file found: {}'.format(self.path))
+        self.entries = entries
+
+    def raw_entry(self, relative):
+        def state(path):
+            if not path.exists():
+                return None
+            return file_state(run('chezmoi', 'decrypt', path), path)
+        source = self.source / relative
+        return {'name': str(relative), 'source': source if source.exists() else None,
+                'target': None, 'encrypted': True, 'raw': True,
+                'desired': state(source), 'head': state(self.head / relative), 'local': None}
+
+
+def edit_command(entry, focus, mode):
+    if focus < 0:
+        raise RuntimeError('Select a diff pane with Enter/right before editing.')
+    if focus == 1:
+        if mode == 'head':
+            raise RuntimeError('HEAD is read-only.')
+        if entry['target'] is None:
+            raise RuntimeError('This source has no local target.')
+        return shlex.split(os.environ.get('VISUAL') or os.environ.get('EDITOR') or 'vi') + [str(entry['target'])]
+    source = entry['source']
+    if source is None or not source.is_file():
+        raise RuntimeError('No editable source exists for this entry.')
+    sibling = Path(__file__).resolve().with_name('executable_czedit')
+    czedit = str(sibling) if sibling.is_file() else shutil.which('czedit')
+    if not czedit:
+        raise RuntimeError('czedit is required to edit the desired state.')
+    return [czedit, str(source)]
+
+
+def safe_text(value):
+    return ''.join(c if c == '\t' or not unicodedata.category(c).startswith('C') else '?'
+                   for c in value).expandtabs(4)
+
+
+def put(screen, y, x, value, width, attr=0):
+    # Clip by terminal cells (CJK characters occupy two columns).
+    text, used = [], 0
+    for char in safe_text(value):
+        cells = 0 if unicodedata.combining(char) else (2 if unicodedata.east_asian_width(char) in 'WF' else 1)
+        if used + cells > width:
+            break
+        text.append(char)
+        used += cells
+    try:
+        screen.addstr(y, x, ''.join(text), attr)
+    except curses.error:
+        pass  # Resizes and the terminal's bottom-right cell can reject writes.
+
+
+def frame(screen, y, x, height, width, title, active):
+    accent = curses.color_pair(4) if curses.has_colors() else 0
+    attr = (accent | curses.A_BOLD) if active else curses.A_DIM
+    put(screen, y, x, '╭' + '─' * (width - 2) + '╮', width, attr)
+    for row in range(y + 1, y + height - 1):
+        put(screen, row, x, '│', 1, attr)
+        put(screen, row, x + width - 1, '│', 1, attr)
+    put(screen, y + height - 1, x, '╰' + '─' * (width - 2) + '╯', width, attr)
+    put(screen, y, x + 2, ' ' + title + ' ', width - 4, attr)
+
+
+def browse(screen, comparison):
+    try:
+        curses.curs_set(0)
+    except curses.error:
+        pass
+    if curses.has_colors():
+        curses.start_color()
+        curses.use_default_colors()
+        curses.init_pair(1, curses.COLOR_GREEN, -1)
+        curses.init_pair(2, curses.COLOR_RED, -1)
+        curses.init_pair(3, curses.COLOR_YELLOW, -1)
+        curses.init_pair(4, curses.COLOR_CYAN, -1)
+    sidebar = comparison.path is None
+    focus = -1 if sidebar else 0
+    index = offset = horizontal = file_offset = 0
+    preferred_mode = 'head' if comparison.raw else 'local'
+    message = ''
+    cached_entry, cached_rows = None, {}
+    while comparison.entries:
+        index = min(index, len(comparison.entries) - 1)
+        entry = comparison.entries[index]
+        mode = 'head' if entry.get('raw') else preferred_mode
+        # Cache only the selected file's two modes; refresh replaces entries,
+        # automatically invalidating the cache without retaining every file.
+        if entry is not cached_entry:
+            cached_entry, cached_rows = entry, {}
+        if mode not in cached_rows:
+            cached_rows[mode] = diff_rows(entry['desired'], entry[mode])
+        rows = cached_rows[mode]
+        height, width = screen.getmaxyx()
+        screen.erase()
+        if width < (80 if sidebar else 48) or height < 10:
+            put(screen, 0, 0, 'Resize terminal to {}x10 (q: quit).'.format(80 if sidebar else 48), width)
+            screen.refresh()
+            if screen.getch() in (ord('q'), 27):
+                break
+            continue
+        panel_height = height - 4
+        page = panel_height - 3
+        offset = max(0, min(offset, max(0, len(rows) - page)))
+        sidebar_width = min(36, max(24, width // 4)) if sidebar else 0
+        start = sidebar_width + 1 if sidebar else 0
+        left_width = (width - start - 1) // 2
+        right_x = start + left_width + 1
+        right_width = width - right_x
+        accent = curses.color_pair(4) if curses.has_colors() else 0
+        put(screen, 0, 0, 'czdiff  ·  {}/{}  {}'.format(index + 1, len(comparison.entries), entry['name']), width, curses.A_BOLD)
+        if sidebar:
+            frame(screen, 1, 0, panel_height, sidebar_width,
+                  'Files {}'.format(len(comparison.entries)), focus == -1)
+            file_offset = max(0, min(file_offset, index, max(0, len(comparison.entries) - page)))
+            file_offset = max(file_offset, index - page + 1)
+            for row, item in enumerate(comparison.entries[file_offset:file_offset + page], 2):
+                selected = item is entry
+                label = ('› ' if selected else '  ') + ('ENC ' if item['encrypted'] else 'TXT ') + item['name']
+                attr = (accent | (curses.A_REVERSE if focus == -1 else curses.A_BOLD)) if selected else 0
+                put(screen, row, 1, ' ' * (sidebar_width - 2), sidebar_width - 2, attr)
+                put(screen, row, 1, label, sidebar_width - 2, attr)
+            legend = 'ENC encrypted · TXT plain' if sidebar_width >= 28 else 'ENC / TXT (plain)'
+            put(screen, panel_height - 1, 2, legend, sidebar_width - 4, curses.A_DIM)
+        for pane, (x, pane_width, label) in enumerate((
+                (start, left_width, 'chezmoi'),
+                (right_x, right_width, 'local' if mode == 'local' else 'HEAD'))):
+            frame(screen, 1, x, panel_height, pane_width, label, focus == pane)
+            state = entry['desired'] if pane == 0 else entry[mode]
+            subtitle = 'desired' if pane == 0 else ('current' if mode == 'local' else 'previous desired · read-only')
+            put(screen, 2, x + 2, subtitle + ' ' + describe(state), pane_width - 4, curses.A_DIM)
+        for y, (marker, left, right) in enumerate(rows[offset:offset + page], 3):
+            color = {'+': 1, '-': 2, '!': 3}.get(marker, 0)
+            attr = curses.color_pair(color) if curses.has_colors() else (curses.A_BOLD if color else 0)
+            put(screen, y, start + 1, marker + ' ' + left[horizontal:], left_width - 2, attr)
+            put(screen, y, right_x + 2, right[horizontal:], right_width - 4)
+        status = ('Private source · no local target · comparing HEAD' if entry.get('raw') else
+                  'Lines {}-{}/{}  ·  {}'.format(offset + 1, min(offset + page, len(rows)), len(rows), mode))
+        put(screen, height - 3, 0, message or status, width, curses.A_DIM)
+        put(screen, height - 2, 0, 'Tab local/HEAD | h/l focus | e edit | n/p file | j/k move | PgUp/PgDn', width)
+        put(screen, height - 1, 0, ('Enter view | ' if sidebar else '') + '[/] horizontal | r refresh | q quit', width)
+        screen.refresh()
+        key = screen.getch()
+        message = ''
+        if key in (ord('q'), 27):
+            break
+        if key == 9:
+            if entry.get('raw'):
+                message = 'This source has no local target; showing HEAD.'
+            else:
+                preferred_mode = 'head' if preferred_mode == 'local' else 'local'
+                offset = 0
+        elif key in (ord('h'), curses.KEY_LEFT):
+            focus = max(-1 if sidebar else 0, focus - 1)
+        elif key in (ord('l'), curses.KEY_RIGHT):
+            focus = min(1, focus + 1)
+        elif key in (10, 13, curses.KEY_ENTER) and focus == -1:
+            focus = 0
+        elif key in (ord('j'), curses.KEY_DOWN, ord('k'), curses.KEY_UP,
+                     curses.KEY_NPAGE, curses.KEY_PPAGE):
+            step = page if key in (curses.KEY_NPAGE, curses.KEY_PPAGE) else 1
+            if key in (ord('k'), curses.KEY_UP, curses.KEY_PPAGE):
+                step = -step
+            if focus == -1:
+                index = max(0, min(len(comparison.entries) - 1, index + step))
+                offset = horizontal = 0
+            else:
+                offset += step
+        elif key in (ord('n'), ord('p')):
+            index = (index + (1 if key == ord('n') else -1)) % len(comparison.entries)
+            offset = horizontal = 0
+        elif key in (ord('['), ord(']')):
+            horizontal = max(0, horizontal + (8 if key == ord(']') else -8))
+        elif key in (ord('e'), ord('r')):
+            try:
+                command = edit_command(entry, focus, mode) if key == ord('e') else None
+                curses.def_prog_mode()
+                curses.endwin()
+                try:
+                    if command:
+                        result = subprocess.run(command)
+                        if result.returncode:
+                            message = 'Editor exited {}.'.format(result.returncode)
+                    comparison.refresh()
+                    for i, item in enumerate(comparison.entries):
+                        if item['name'] == entry['name']:
+                            index = i
+                            break
+                finally:
+                    curses.reset_prog_mode()
+                    screen.clearok(True)
+            except (RuntimeError, OSError) as error:
+                message = str(error)
+
+
+def run_browser(comparison):
+    term = os.environ.get('TERM')
+    # macOS ncurses 6.0 drops repeated Unicode characters with Ghostty's REP
+    # capability. Its xterm-compatible profile preserves the rounded borders.
+    if (sys.platform == 'darwin' and term == 'xterm-ghostty' and
+            curses.ncurses_version[:2] <= (6, 0)):
+        os.environ['TERM'] = 'xterm-256color'
+    try:
+        curses.wrapper(browse, comparison)
+    finally:
+        if term is not None:
+            os.environ['TERM'] = term
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, epilog='Tab: local/HEAD; h/l: focus; j/k: select/scroll; Enter: view file; e: edit; n/p: file; q: quit. HEAD uses current machine config. Requires chezmoi, git, tar and Python 3 (curses).')
+    parser.add_argument('file', nargs='?', help='managed target/source, or standalone encrypted source (default: all changed managed files)')
+    args = parser.parse_args()
+    if not sys.stdin.isatty() or not sys.stdout.isatty():
+        parser.error('an interactive terminal is required')
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
+    try:
+        with tempfile.TemporaryDirectory(prefix='czdiff-') as workspace:
+            print('czdiff: loading decrypted desired, local and HEAD states...', flush=True)
+            comparison = Comparison(workspace, args.file)
+            if not comparison.entries:
+                print('czdiff: no differences.')
+            else:
+                run_browser(comparison)
+    except (RuntimeError, OSError, ValueError, curses.error) as error:
+        print('czdiff: {}'.format(error), file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        return 130
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
