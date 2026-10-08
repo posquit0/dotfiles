@@ -12,16 +12,17 @@
 #   ZSH_AI_PROVIDER           claude-code (default), kiro-cli or codex
 #   ZSH_AI_MODEL              model override applied to every provider
 #   ZSH_AI_<PROVIDER>_MODEL   model to use for that provider
+#   ZSH_AI_EFFORT             shared reasoning effort override
+#   ZSH_AI_<PROVIDER>_EFFORT  reasoning effort for that provider
 #   ZSH_AI_<PROVIDER>_OPTS    extra CLI flags, parsed as shell words
-# Only ZSH_AI_PROVIDER and ZSH_AI_MODEL are exported by ai.zshrc; export the
-# per-provider overrides yourself to make them visible here.
+# ZSH_AI_PROVIDER, ZSH_AI_MODEL and ZSH_AI_EFFORT are exported by ai.zshrc;
+# export the per-provider overrides yourself to make them visible here.
 #
 # While a provider is working, an animated status line is drawn on stderr when
 # stderr is a terminal; ZSH_AI_SPINNER_INTERVAL tunes its refresh rate and
 # NO_COLOR drops the colour pulse.
 #
-# Unlike the inline helpers, no provider pins a cheap default model: a commit
-# message is worth whatever tier the account defaults to.
+# Default models and low effort match the inline helpers.
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
 # https://www.posquit0.com/
@@ -34,6 +35,17 @@ typeset -A PROVIDER_BIN=(
   claude-code claude
   kiro-cli    kiro-cli
   codex       codex
+)
+# Keep these defaults in sync with ~/.zsh/ai.zshrc.
+typeset -A PROVIDER_MODEL=(
+  claude-code claude-haiku-5-5
+  kiro-cli    claude-sonnet-5.5
+  codex       gpt-6.1-sol
+)
+typeset -A PROVIDER_EFFORT=(
+  claude-code low
+  kiro-cli    low
+  codex       low
 )
 # Hint shown when a provider returns nothing, usually an auth or quota issue
 typeset -A PROVIDER_HINT=(
@@ -224,11 +236,13 @@ main() {
   (( $+commands[$bin] )) \
     || die "${bin} not found in PATH (ZSH_AI_PROVIDER=${provider})"
 
-  # ZSH_AI_<PROVIDER>_{MODEL,OPTS}, e.g. ZSH_AI_CLAUDE_CODE_MODEL
+  # ZSH_AI_<PROVIDER>_{MODEL,EFFORT,OPTS}, e.g. ZSH_AI_CLAUDE_CODE_MODEL
   local key=${${provider:u}//-/_}
   local var=ZSH_AI_${key}_MODEL
   local model=${(P)var}
-  : ${model:=$ZSH_AI_MODEL}
+  : ${model:=${ZSH_AI_MODEL:-${PROVIDER_MODEL[$provider]}}}
+  var=ZSH_AI_${key}_EFFORT
+  local effort=${${(P)var}:-${ZSH_AI_EFFORT:-${PROVIDER_EFFORT[$provider]}}}
 
   # Split the per-provider flags the way the shell would, so quoted values
   # such as --foo='a b' survive as a single argument
@@ -236,10 +250,29 @@ main() {
   var=ZSH_AI_${key}_OPTS
   [[ -n ${(P)var} ]] && opts=(${(Q)${(z)${(P)var}}})
 
+  # Keep model and effort selection in one place, including Codex config flags.
+  local opt setting config_key
+  for opt in "${opts[@]}"; do
+    setting=
+    case $opt in
+      --model|--model=*|-m|-m?*) setting=MODEL ;;
+      --effort|--effort=*) setting=EFFORT ;;
+    esac
+    if [[ $provider == codex && $opt == *=* ]]; then
+      config_key=${${${opt#--config=}#-c}#=}
+      config_key=${${config_key%%=*}//[[:space:]]/}
+      case $config_key in
+        model) setting=MODEL ;;
+        model_reasoning_effort) setting=EFFORT ;;
+      esac
+    fi
+    [[ -n $setting ]] && die "set ${(L)setting} with ZSH_AI_${setting} or ZSH_AI_${key}_${setting}, not ${var}"
+  done
+
   local -a cmd
   case $provider in
     claude-code)
-      cmd=($bin -p --output-format text)
+      cmd=($bin -p --output-format text --no-session-persistence)
       ;;
     kiro-cli)
       # --wrap never keeps the reply unwrapped for parsing, and --trust-tools=
@@ -266,6 +299,13 @@ main() {
       ;;
   esac
   [[ -n $model ]] && cmd+=(--model "$model")
+  if [[ -n $effort ]]; then
+    if [[ $provider == codex ]]; then
+      cmd+=(-c "model_reasoning_effort=$effort")
+    else
+      cmd+=(--effort "$effort")
+    fi
+  fi
   cmd+=("${opts[@]}")
 
   local prompt="You are a commit message generator. Output ONLY the commit message itself, nothing else. No explanation, no markdown fences, no preamble. Use conventional commit format. Keep the subject line under 72 chars. If needed, add a blank line then bullet-point body.
@@ -279,34 +319,40 @@ ${diff}"
   # Only chatter when a human is watching; keep the pipe usable in scripts.
   # With ZSH_AI_DEBUG the provider writes to the same terminal, so a redrawn
   # status line would be scrambled by its output: print it once instead.
-  local raw
-  local tmp=$(mktemp) || die 'mktemp failed'
+  local raw error exit_code
+  local tmp=$(mktemp -d) || die 'mktemp failed'
   trap cancel INT
   if [[ -n $ZSH_AI_DEBUG ]]; then
     [[ -t 2 ]] && print -ru2 -- "Generating commit message with ${model:-$provider}…"
-    "${cmd[@]}" "$prompt" </dev/null >"$tmp" &
+    "${cmd[@]}" "$prompt" </dev/null >"$tmp/stdout" &
     PROVIDER_PID=$!
     wait $PROVIDER_PID
   else
-    # Provider logs go to stderr and would drown the caller (codex prints its
-    # whole session there)
-    "${cmd[@]}" "$prompt" </dev/null >"$tmp" 2>/dev/null &
+    # Capture logs for failures without drowning the caller on successful runs.
+    "${cmd[@]}" "$prompt" </dev/null >"$tmp/stdout" 2>"$tmp/stderr" &
     PROVIDER_PID=$!
     if [[ -t 2 ]]; then
       animate $PROVIDER_PID "Generating commit message with ${model:-$provider}"
     fi
     wait $PROVIDER_PID
   fi
+  exit_code=$?
   trap - INT
   PROVIDER_PID=
   if [[ -n $CANCELLED ]]; then
     status_clear
-    command rm -f "$tmp"
+    command rm -rf -- "$tmp"
     print -ru2 -- 'ai-commit-msg: cancelled'
     exit 130
   fi
-  raw=$(<"$tmp")
-  command rm -f "$tmp"
+  if (( exit_code != 0 )); then
+    [[ -f $tmp/stderr ]] && error=$(clean "$(<"$tmp/stderr")")
+    error=${error//$'\n'/ }
+    command rm -rf -- "$tmp"
+    die "${provider} exited with status ${exit_code}${error:+: ${error[1,500]}}"
+  fi
+  raw=$(<"$tmp/stdout")
+  command rm -rf -- "$tmp"
 
   local msg=$(clean "$raw")
   [[ -n $msg ]] \
