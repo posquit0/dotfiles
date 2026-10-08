@@ -1,7 +1,11 @@
 onboarding = false
 
+[session]
+startup_per_agent_delay_ms = 200
+
 
 [ui]
+window_title = "{hostname}: {workspace} / {tab}"
 mouse_capture = true
 show_agent_labels_on_pane_borders = true
 agent_panel_sort = "priority"
@@ -47,6 +51,10 @@ focus_pane_left = ["prefix+h", "alt+h"]
 focus_pane_down = ["prefix+j", "alt+j"]
 focus_pane_up = ["prefix+k", "alt+k"]
 focus_pane_right = ["prefix+l", "alt+l"]
+resize_pane_left = "prefix+shift+h"
+resize_pane_down = "prefix+shift+j"
+resize_pane_up = "prefix+shift+k"
+resize_pane_right = "prefix+shift+l"
 split_horizontal = "prefix+minus"
 split_vertical = "prefix+|"
 
