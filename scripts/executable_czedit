@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
-# Edit a chezmoi-encrypted file that is not part of the chezmoi source state.
-# Files that ARE managed by chezmoi should be edited with `chezmoi edit`, which
-# already handles decryption transparently.
+# Edit a source file directly, decrypting and re-encrypting encrypted files.
 
 usage() {
   echo 'Usage: czedit [--no-colors] <file>' >&2
-  echo 'Decrypt the file, open it in $EDITOR, then re-encrypt it in place.' >&2
+  echo 'Open the file in the editor; decrypt and re-encrypt encrypted files.' >&2
   echo 'The original ciphertext is backed up under /tmp/czedit before writing.' >&2
-  echo 'Plaintext lives only in a private temporary directory and is removed on exit.' >&2
+  echo 'Decrypted plaintext lives in a private temporary directory, removed on exit.' >&2
   echo '' >&2
   echo '  --no-colors  Print without ANSI colors. Colors are also disabled' >&2
   echo '               automatically when output is not a terminal.' >&2
@@ -96,13 +94,8 @@ if ! command -v chezmoi >/dev/null 2>&1; then
   exit 1
 fi
 
-# Note whether the file carries an encryption armor header. Non-armored
-# ciphertext is legitimate, so this only decides which message to print if
-# decryption later fails -- it never rejects a file on its own.
-if [[ ! -s $file ]]; then
-  fail "not an encrypted file (it is empty): $file"
-  exit 1
-fi
+# Note the armor header so encrypted files never fall back to plain editing.
+# Non-armored ciphertext is also attempted before treating a file as plaintext.
 armored=0
 IFS= read -r first_line <"$file" 2>/dev/null || first_line=
 case $first_line in
@@ -123,11 +116,28 @@ if [[ -n $suffix && $plain == *"$suffix" ]]; then
 fi
 [[ -n $plain ]] || plain=plaintext
 
+# Unmarked files may be ordinary sources or non-armored ciphertext.
+plain_source=0
+if [[ $armored -eq 0 && $name != encrypted_* && ( -z $suffix || $name != *"$suffix" ) ]]; then
+  plain_source=1
+fi
+if [[ ! -s $file ]]; then
+  if [[ $plain_source -eq 1 ]]; then
+    exec "$editor" "$file"
+  fi
+  fail "not an encrypted file (it is empty): $file"
+  exit 1
+fi
+
 # Plaintext stays out of /tmp: mktemp -d is private to this user (0700).
 workdir=$(mktemp -d) || exit 1
 trap 'rm -rf "$workdir"' EXIT INT TERM
 
 if ! chezmoi decrypt "$file" >"$workdir/$plain" 2>"$workdir/.decrypt-error"; then
+  if [[ $plain_source -eq 1 ]]; then
+    "$editor" "$file"
+    exit $?
+  fi
   if [[ $armored -eq 0 ]]; then
     fail "not an encrypted file: $file"
     fail_detail 'Expected chezmoi-encrypted content (gpg or age).'
