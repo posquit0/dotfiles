@@ -31,3 +31,7 @@ Library/
 
 ## Tmux
 .tmux/plugins/
+
+## Neovim
+# Linked to the submodule source by run_after_02_link_nvim_lockfile.sh.tmpl.
+.config/nvim/lazy-lock.json

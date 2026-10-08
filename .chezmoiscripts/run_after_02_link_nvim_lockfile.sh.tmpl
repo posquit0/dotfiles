@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+ln -sfn {{ joinPath .chezmoi.sourceDir "private_dot_config/external_nvim/lazy-lock.json" | shellQuote }} \
+  {{ joinPath .chezmoi.destDir ".config/nvim/lazy-lock.json" | shellQuote }}
