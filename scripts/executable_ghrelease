@@ -1,21 +1,48 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Check if there is no argument
 if [ $# -eq 0 ]; then
-  echo "Usage: $(basename $0) <tag name>"
+  echo "Usage: $(basename "$0") <tag name>"
   exit 1
 fi
 
 tag_name=$1
+branch=main
 
-echo "[!] Pushing 'main' branch to the remote repository."
-git push origin main
+# Semantic Versioning 2.0.0 (https://semver.org) with an optional `v` prefix.
+semver_regex='^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$'
+if [[ ! $tag_name =~ $semver_regex ]]; then
+  echo "[x] '${tag_name}' is not a valid semantic version (e.g. v1.2.3, v1.2.3-rc.1)." >&2
+  exit 1
+fi
+# The 4th group is the pre-release part (e.g. `-rc.1`). Build metadata may also contain `-`.
+prerelease=${BASH_REMATCH[4]}
 
-echo "[!] Creating Git tag '${tag_name}'."
-git tag -m "$tag_name" $tag_name
+# Check the VERSION file only if the branch has one.
+if git cat-file -e "${branch}:VERSION" 2>/dev/null; then
+  version=$(git show "${branch}:VERSION" | tr -d '[:space:]')
+  if [ "${version#v}" != "${tag_name#v}" ]; then
+    echo "[x] VERSION file on '${branch}' (${version}) does not match '${tag_name}'." >&2
+    exit 1
+  fi
+fi
 
-echo "[!] Pushing '${tag_name}' Git tag to the remote repository."
-git push origin $tag_name
+echo "[!] Creating Git tag '${tag_name}' on '${branch}' branch."
+git tag -m "$tag_name" "$tag_name" "$branch"
 
-echo "[!] Creating GitHub Release with '${tag_name}' Git tag."
-gh release create $tag_name --generate-notes
+echo "[!] Pushing '${branch}' branch and '${tag_name}' Git tag to the remote repository."
+if ! git push --atomic origin "$branch" "$tag_name"; then
+  git tag -d "$tag_name" >/dev/null
+  echo "[x] Push failed. Deleted the local '${tag_name}' Git tag." >&2
+  exit 1
+fi
+
+release_args=(--verify-tag --generate-notes)
+if [ -n "$prerelease" ]; then
+  release_args+=(--prerelease)
+  echo "[!] Creating GitHub pre-release with '${tag_name}' Git tag."
+else
+  echo "[!] Creating GitHub Release with '${tag_name}' Git tag."
+fi
+gh release create "$tag_name" "${release_args[@]}"
