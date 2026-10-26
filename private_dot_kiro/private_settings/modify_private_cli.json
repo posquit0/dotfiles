@@ -1,0 +1,13 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $json := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $settings := deepCopy .kiro -}}
+{{- /* Kiro owns model usage history; all other settings remain managed. */ -}}
+{{- if hasKey $json "chat.modelPicker.lastUsed" -}}
+{{-   $settings = set $settings "chat.modelPicker.lastUsed" (index $json "chat.modelPicker.lastUsed") -}}
+{{- end -}}
+{{- /* Preserve Kiro's formatting when the settings already match. */ -}}
+{{- if eq (toJson $json) (toJson $settings) -}}
+{{-   .chezmoi.stdin -}}
+{{- else -}}
+{{ $settings | toPrettyJson }}
+{{ end -}}
