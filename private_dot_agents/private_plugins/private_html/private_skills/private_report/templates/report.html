@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- html:report 스킬 생성 표식 — 리포트 탐색·일괄 마이그레이션의 기준이므로 지우거나 이름을 바꾸지 않는다.
+     찾기: grep -rl html-report-version --include='*.html' .   /   버전은 템플릿이 바뀔 때만 갱신한다 -->
+<meta name="generator" content="html:report">
+<meta name="html-report-version" content="2026-10-26">
+<title>{{제목}}</title>
+<!-- 외부 리소스 ①: 폰트 (오프라인이면 시스템 폰트로 자연 강등) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── 테마: 리포트마다 :root 첫 줄의 accent 네 값(라이트 한 쌍 + 다크 한 쌍)만 교체한다. 나머지 변수·구조 CSS는 수정하지 않는다.
+   accent 예시 (라이트 accent / soft · 다크 accent / soft):
+     teal (기본) : #0B6E8A #E3F1F5 · #5CC3DF #16303A
+     blue        : #2F5FD0 #E6EDFB · #8AB0FF #1A2640
+     violet      : #6A4BC4 #EEE9FA · #B9A4FF #251E3D
+     rose        : #B23A6F #FAE6EF · #F293BD #3A1C2A
+   ── 다크 토큰은 screen 에만 적용된다. 인쇄(PDF)는 OS 테마와 무관하게 항상 라이트로 나간다. */
+:root{
+  --accent-l:#0b6e8a;--accent-soft-l:#e3f1f5;--accent-d:#5cc3df;--accent-soft-d:#16303a;
+  color-scheme:light;
+  --bg:#fbfcfd;--panel:#f2f5f8;--ink:#17212b;--muted:#5a6776;--line:#dde3ea;
+  --accent:var(--accent-l);--accent-soft:var(--accent-soft-l);
+  --code-bg:#f4f6f9;--code-ink:#1d2a36;--warn:#9a5b00;--warn-bg:#fdf4e4;
+  --tk-k:#a33ea1;--tk-s:#2f7d32;--tk-n:#b35c00;
+}
+@media screen and (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#0f151b;--panel:#151d25;--ink:#e3e9ef;--muted:#9aa7b4;--line:#26313c;
+  --accent:var(--accent-d);--accent-soft:var(--accent-soft-d);
+  --code-bg:#141c24;--code-ink:#dbe4ec;--warn:#f0b65a;--warn-bg:#2a2112;
+  --tk-k:#d19ce6;--tk-s:#9ed49a;--tk-n:#f0b06a;
+}}
+@media screen{:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f151b;--panel:#151d25;--ink:#e3e9ef;--muted:#9aa7b4;--line:#26313c;
+  --accent:var(--accent-d);--accent-soft:var(--accent-soft-d);
+  --code-bg:#141c24;--code-ink:#dbe4ec;--warn:#f0b65a;--warn-bg:#2a2112;
+  --tk-k:#d19ce6;--tk-s:#9ed49a;--tk-n:#f0b06a;
+}}
+*{box-sizing:border-box}
+html{scroll-padding-top:72px} /* 고정 헤더 아래로 #앵커가 숨지 않게 */
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.75 "IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;word-break:keep-all}
+a{color:var(--accent)}
+code{font:.88em "JetBrains Mono",ui-monospace,Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+
+/* ---------- 상단 헤더: 문서 시리즈(brand) · 범위(ver) · (선택) 전역 스위치 ---------- */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:10px 24px;flex-wrap:wrap}
+header.top .brand{font-weight:700;letter-spacing:-.01em}
+header.top .ver{color:var(--muted);font-size:13px}
+.switch{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.switch button{border:0;background:transparent;color:var(--muted);padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.switch button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+
+/* ---------- 레이아웃: 왼쪽 고정 목차(JS가 채움) + 본문 820px ---------- */
+.wrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px;max-width:1180px;margin:0 auto;padding:0 24px}
+nav.toc{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;padding-block:28px;font-size:13.5px;display:flex;flex-direction:column;gap:2px}
+nav.toc a{color:var(--muted);text-decoration:none;padding:3px 10px;border-left:2px solid transparent}
+nav.toc a:hover{color:var(--ink)}
+nav.toc a.on{color:var(--ink);border-left-color:var(--accent)}
+main{padding-block:28px 96px;min-width:0;max-width:820px}
+
+/* ---------- 타이포 (읽기 기준 — 인라인 style로 줄이지 말 것) ---------- */
+h1{font-size:32px;line-height:1.3;margin:8px 0 6px;letter-spacing:-.02em;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 8px}
+.meta{font-size:13px;color:var(--muted)}
+section.lv2{padding-top:28px;margin-top:28px;border-top:1px solid var(--line)}
+h2{font-size:24px;line-height:1.4;margin:0 0 12px;letter-spacing:-.015em}
+h3{font-size:18px;line-height:1.45;margin:28px 0 8px}
+h2 a.anchor,h3 a.anchor{color:inherit;text-decoration:none}
+p,ul,ol{margin:0 0 14px}
+li{margin:3px 0}
+.src{font-size:13px;color:var(--muted);margin:-8px 0 16px}
+.src code{background:none;padding:0}
+
+/* ---------- 표: 항상 .tw 로 감싼다 (좁은 화면에서 가로 스크롤) ---------- */
+.tw{overflow-x:auto;margin:12px 0 18px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--panel);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+
+/* ---------- 코드: pre.code > code. 토큰 색은 선택 (.c 주석 · .k 키워드/키 · .s 문자열 · .n 숫자) ---------- */
+pre.code{margin:12px 0 18px;padding:14px 16px;overflow-x:auto;background:var(--code-bg);color:var(--code-ink);font:13px/1.6 "JetBrains Mono",ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:8px}
+pre.code code{background:none;padding:0;font:inherit}
+pre.code .c{color:var(--muted);font-style:italic}
+pre.code .k{color:var(--tk-k)}
+pre.code .s{color:var(--tk-s)}
+pre.code .n{color:var(--tk-n)}
+
+/* ---------- 콜아웃: 보충·미확인(기본) / 주의·부작용(.warn) ---------- */
+.callout{border-radius:8px;padding:12px 16px;margin:12px 0 18px;font-size:14.5px;background:var(--accent-soft)}
+.callout>strong{display:block;color:var(--accent);margin-bottom:2px;font-size:13px;letter-spacing:.02em}
+.callout.warn{background:var(--warn-bg)}
+.callout.warn>strong{color:var(--warn)}
+.callout div>:last-child{margin-bottom:0}
+
+/* ---------- 탭: 대안·플랫폼·환경별 내용 전환 (.tab[data-p] ↔ .pane[data-p]) ---------- */
+.tabs{border:1px solid var(--line);border-radius:8px;margin:12px 0 18px;overflow:hidden}
+.tabbar{display:flex;gap:2px;background:var(--panel);border-bottom:1px solid var(--line);padding:0 6px;overflow-x:auto}
+.tab{border:0;background:none;color:var(--muted);font:inherit;font-size:13px;padding:8px 12px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible,.switch button:focus-visible,nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.pane{display:none;padding:14px 16px}
+.pane.on{display:block}
+.pane>:last-child{margin-bottom:0}
+.pane>pre.code:only-child,.pane>.tw:only-child{margin:-14px -16px;border:0;border-radius:0} /* 코드·표만 든 탭은 가장자리까지 */
+
+/* ---------- 다이어그램: pre.mermaid 원문 → 렌더되면 div.mmd 로 교체 (렌더 실패 시 원문이 그대로 남는다) ---------- */
+pre.mermaid{background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:16px;margin:12px 0 18px;overflow-x:auto;font:13px/1.6 "JetBrains Mono",ui-monospace,Menlo,monospace;color:var(--muted)}
+.mmd{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;margin:12px 0 18px;overflow-x:auto;text-align:center} /* 다크 모드에서도 흰 카드 — 렌더 결과를 테마와 무관하게 고정 */
+.mmd svg{height:auto}
+
+@media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0;padding:0 16px}nav.toc{display:none}header.top{padding:10px 16px}main{padding-top:16px}}
+
+/* PDF: 브라우저 인쇄(⌘P)로 저장. 헤더·목차는 빼고 본문만, 탭은 모두 펼쳐 라벨을 붙인다 */
+@page{margin:16mm 14mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  header.top,nav.toc{display:none}
+  .wrap{display:block;max-width:none;padding:0}
+  main{max-width:none;padding:0}
+  .tabbar{display:none}
+  .pane{display:block}
+  .pane+.pane{border-top:1px solid var(--line)}
+  .pane::before{content:attr(data-label);display:block;margin:-14px -16px 12px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel);border-bottom:1px solid var(--line)}
+  .pane>pre.code:only-child,.pane>.tw:only-child{margin:0 -16px -14px}
+  pre.code{white-space:pre-wrap;word-break:break-all}
+  .tw,pre.code,.callout,.mmd{break-inside:avoid}
+  h2,h3{break-after:avoid}
+  a{text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <span class="brand">{{문서 시리즈 — 예: 팀 인수인계}}</span>
+  <span class="ver">{{범위 라벨 — 예: 서비스 · 영역}}</span>
+  <!-- (선택) 전역 스위치: 문서 전체의 탭을 한 번에 바꾼다 (플랫폼·환경처럼 독자가 한 관점으로만 읽을 때).
+       data-p 값이 같은 .pane 을 가진 모든 .tabs 가 따라오고, 선택은 문서별로 기억된다. 쓰지 않으면 통째로 지운다.
+  <div class="switch" role="group" aria-label="{{스위치 이름}}">
+    <button type="button" data-p="{{a}}" aria-pressed="true">{{A}}</button>
+    <button type="button" data-p="{{b}}" aria-pressed="false">{{B}}</button>
+  </div>
+  -->
+</header>
+
+<div class="wrap">
+<nav class="toc" aria-label="목차"></nav><!-- 비워 둔다: JS가 section.lv2 의 h2 로 채운다 -->
+
+<main>
+<!-- 머리: h1 + lede(무엇을 설명하는가 한두 문장) + meta(근거의 기준 시점 — 커밋·확인일) -->
+<h1>{{제목}}</h1>
+<p class="lede">{{이 문서가 무엇을 설명하는가 — 한두 문장.}}</p>
+<p class="meta">기준: {{저장소}} {{브랜치}} <code>{{커밋 7자리}}</code> · {{저장소}} {{브랜치}} <code>{{커밋 7자리}}</code> ({{YYYY-MM-DD}} 확인)</p>
+
+<!-- 1. 개요: 전체 지도. 단계 표 + 흐름도 한 장. 섹션 id는 ASCII (목차·딥링크·publish-html 섹션 링크의 기준) -->
+<section id="overview" class="lv2">
+<h2>개요</h2>
+<p>{{무엇을, 누가, 왜 — 전체 그림을 3~5문장으로. 세부는 아래 섹션으로 미룬다.}}</p>
+<div class="tw"><table>
+<thead><tr><th>단계</th><th>담당 코드</th><th>실행</th></tr></thead>
+<tbody>
+<tr><td>① {{단계}}</td><td>{{저장소}} <code>{{경로}}</code></td><td>{{주기·트리거}}</td></tr>
+<tr><td>② {{단계}}</td><td>{{저장소}} <code>{{경로}}</code></td><td>{{주기·트리거}}</td></tr>
+<tr><td>③ {{단계}}</td><td>{{저장소}} <code>{{경로}}</code></td><td>{{주기·트리거}}</td></tr>
+</tbody></table></div>
+<!-- mermaid 원문에서 < 와 & 는 &lt; &amp; 로 적는다 (화살표의 > 는 그대로 써도 된다) -->
+<pre class="mermaid">flowchart LR
+  A["{{원천}}"] --> B["{{처리}}"] --> C["{{전달}}"]</pre>
+</section>
+
+<!-- 2. 각론: 단계마다 섹션 하나. 「한 문단 설명 → 표·목록으로 구체 → p.src 근거」 순서 -->
+<section id="{{step-one}}" class="lv2">
+<h2>① {{단계 이름}}</h2>
+<p>{{이 단계가 하는 일 한 문단. 식별자(테이블·잡·경로·명령)는 <code>code</code>로.}}</p>
+<div class="tw"><table>
+<thead><tr><th>{{대상}}</th><th>{{속성}}</th><th>{{속성}}</th></tr></thead>
+<tbody>
+<tr><td><code>{{이름}}</code></td><td>{{값}}</td><td>{{값}}</td></tr>
+<tr><td><code>{{이름}}</code></td><td>{{값}}</td><td>{{값}}</td></tr>
+</tbody></table></div>
+<p class="src">소스: <a href="{{커밋 SHA로 고정한 permalink}}"><code>{{파일}}</code></a> · <a href="{{permalink}}"><code>{{파일}}</code></a></p>
+
+<h3 id="{{step-one-flow}}">{{하위 주제 — 예: 잡 이름 (실행 주기)}}</h3>
+<ul>
+<li><strong>{{요지}}</strong>: {{설명. 실패하면 어떻게 되는지까지.}}</li>
+<li><strong>{{요지}}</strong>: {{설명}}</li>
+</ul>
+
+<h3 id="{{step-one-local}}">로컬 실행</h3>
+<div class="callout warn"><strong>실행 전 확인</strong><div>{{필요한 자격 증명·환경 변수, 실제로 쓰기가 일어나는 조건. 시연은 <code>--dry-run</code> 같은 안전한 형태로.}}</div></div>
+<pre class="code"><code><span class="c"># {{주석 — 토큰 span 은 선택}}</span>
+export {{ENV}}={{값}}
+{{명령}} --dry-run</code></pre>
+<div class="tw"><table>
+<thead><tr><th>명령</th><th>옵션</th></tr></thead>
+<tbody>
+<tr><td><code>{{명령}}</code></td><td><code>{{--옵션}}</code>({{기본값}}), <code>{{--옵션}}</code></td></tr>
+</tbody></table></div>
+</section>
+
+<!-- 3. 순서가 핵심인 상호작용은 sequence 다이어그램, 대안·환경별 내용은 탭 -->
+<section id="{{step-two}}" class="lv2">
+<h2>② {{단계 이름}}</h2>
+<p>{{설명}}</p>
+<pre class="mermaid">sequenceDiagram
+  participant U as {{사용자}}
+  participant A as {{서비스}}
+  participant B as {{외부 시스템}}
+  U->>A: {{요청}}
+  A->>B: {{호출}}
+  B-->>A: {{응답}}
+  A-->>U: {{결과}}</pre>
+<div class="tabs">
+  <div class="tabbar" role="tablist">
+    <button class="tab on" type="button" role="tab" data-p="{{a}}" aria-selected="true">{{탭 A}}</button>
+    <button class="tab" type="button" role="tab" data-p="{{b}}" aria-selected="false">{{탭 B}}</button>
+  </div>
+  <div class="pane on" data-p="{{a}}">
+    <p>{{A일 때 설명}}</p>
+    <pre class="code"><code>{{A용 명령}}</code></pre>
+  </div>
+  <div class="pane" data-p="{{b}}">
+<pre class="code"><code>{{코드만 든 탭은 가장자리까지 붙는다}}</code></pre>
+  </div>
+</div>
+<div class="callout"><strong>확인 필요</strong><div>{{코드·문서로 확인하지 못한 내용은 단정하지 않고 여기에 적는다 — 무엇이 불확실하고 어떻게 확인할 수 있는지.}}</div></div>
+</section>
+
+<!-- 4. 환경·구성 비교: 행 = 항목, 열 = 환경 -->
+<section id="{{deploy}}" class="lv2">
+<h2>환경별 연결</h2>
+<div class="tw"><table>
+<thead><tr><th></th><th>dev</th><th>stage</th><th>prod</th></tr></thead>
+<tbody>
+<tr><td>{{항목}}</td><td><code>{{값}}</code></td><td><code>{{값}}</code></td><td><code>{{값}}</code></td></tr>
+<tr><td>{{항목}}</td><td>{{값}}</td><td>같음</td><td>같음</td></tr>
+</tbody></table></div>
+<ul>
+<li>{{표로 담기지 않는 연결 관계·권한의 출처}}</li>
+</ul>
+</section>
+
+<!-- 5. 마무리: 확정 목록이 아님을 밝히고, 결정이 필요한 항목을 굵은 요지 + 맥락으로 -->
+<section id="next" class="lv2">
+<h2>이후 검토 사항</h2>
+<p>확정된 작업 목록이 아니라 {{독자}}가 우선순위를 정할 때 참고할 항목이다.</p>
+<ul>
+<li><strong>{{주제}}</strong>: {{현재 상태와 결정해야 할 것.}}</li>
+<li><strong>{{주제}}</strong>: {{현재 상태와 결정해야 할 것.}}</li>
+</ul>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  var SWITCH_KEY = 'html-report-switch:' + location.pathname; // 전역 스위치 선택을 문서(경로)별로 기억
+  function load(){ try { return localStorage.getItem(SWITCH_KEY); } catch (_) { return null; } } // 게시 뷰어(샌드박스)에선 막혀 있을 수 있다
+  function store(v){ try { localStorage.setItem(SWITCH_KEY, v); } catch (_) {} }
+  function all(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function anchor(h, id){
+    if (h.querySelector('a.anchor')) return;
+    var a = document.createElement('a');
+    a.className = 'anchor'; a.href = '#' + id;
+    while (h.firstChild) a.appendChild(h.firstChild);
+    h.appendChild(a);
+  }
+
+  // 목차: section.lv2[id] > h2 를 순서대로 읽어 만든다. 제목은 #id 로 가는 앵커가 된다 (h3[id] 도 앵커만)
+  var toc = document.querySelector('nav.toc');
+  var items = [];
+  all('main section.lv2[id]').forEach(function(s){
+    var h = s.querySelector('h2');
+    if (!h) return;
+    anchor(h, s.id);
+    var a = document.createElement('a');
+    a.href = '#' + s.id;
+    a.textContent = h.textContent.replace(/\s+/g, ' ').trim();
+    if (toc) toc.appendChild(a);
+    items.push({sec: s, link: a});
+  });
+  all('main h3[id]').forEach(function(h){ anchor(h, h.id); });
+
+  // 스크롤 위치에 따라 현재 섹션 표시. 맨 아래에 닿으면 짧은 마지막 섹션을 표시
+  function spy(){
+    var cur = 0;
+    items.forEach(function(it, i){ if (it.sec.getBoundingClientRect().top < 120) cur = i; });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) cur = items.length - 1;
+    items.forEach(function(it, i){ it.link.classList.toggle('on', i === cur); });
+  }
+  window.addEventListener('scroll', spy, {passive: true});
+  spy();
+
+  // 탭: 같은 .tabs 안에서 data-p 가 같은 .tab ↔ .pane 을 켠다.
+  // 헤더 .switch 에 있는 키를 고르면 그 키의 pane 을 가진 모든 .tabs 가 함께 바뀐다
+  var globalKeys = all('.switch button[data-p]').map(function(b){ return b.getAttribute('data-p'); });
+  function select(tabs, p){
+    if (!all('.pane', tabs).some(function(x){ return x.getAttribute('data-p') === p; })) return;
+    all('.tab', tabs).forEach(function(b){
+      var on = b.getAttribute('data-p') === p;
+      b.classList.toggle('on', on); b.setAttribute('aria-selected', on);
+    });
+    all('.pane', tabs).forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-p') === p); });
+  }
+  function selectAll(p){
+    all('.switch button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-p') === p); });
+    all('.tabs').forEach(function(t){ select(t, p); });
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('.tabs .tab, .switch button');
+    if (!b) return;
+    var y = b.getBoundingClientRect().top; // 위쪽 탭 높이가 바뀌어도 누른 버튼이 화면에서 제자리에 있게
+    var p = b.getAttribute('data-p');
+    if (globalKeys.indexOf(p) >= 0) { store(p); selectAll(p); }
+    else select(b.closest('.tabs'), p);
+    window.scrollBy(0, b.getBoundingClientRect().top - y);
+  });
+  // 인쇄 시 모든 pane 이 펼쳐지므로 어느 탭의 내용인지 라벨을 달아 둔다
+  all('.tabs').forEach(function(t){
+    all('.tab', t).forEach(function(b){
+      all('.pane', t).forEach(function(x){
+        if (x.getAttribute('data-p') === b.getAttribute('data-p')) x.setAttribute('data-label', b.textContent.trim());
+      });
+    });
+  });
+  if (globalKeys.length) selectAll(globalKeys.indexOf(load()) >= 0 ? load() : globalKeys[0]);
+})();
+</script>
+<!-- 외부 리소스 ②: mermaid. pre.mermaid 가 있을 때만 불러온다 (없으면 네트워크 요청 0).
+     이 로더가 있으면 publish-html 은 자체 런타임을 덧붙이지 않는다 — 로컬과 게시본이 같은 경로로 렌더된다.
+     렌더에 실패한 블록은 원문 그대로 남는다 (빨간 오류 그림 대신). 버전은 publish-html 과 같은 값으로 고정 -->
+<script type="module">
+const blocks = [...document.querySelectorAll('pre.mermaid')];
+if (blocks.length) {
+  // 라벨 상자 폭은 그리는 순간의 폰트로 잰다. 웹폰트가 늦게 오면 대체 폰트 폭으로 재서 글자 끝이 잘리므로
+  // 다이어그램 글자에 필요한 폰트 조각(unicode-range)을 런타임과 함께 받아 둔다. 오프라인이면 바로, 느리면 3초 뒤 넘어간다
+  const fonts = document.fonts?.load('16px "IBM Plex Sans KR"', blocks.map(b => b.textContent).join(''))
+    .then(() => document.fonts.ready).catch(() => {});
+  const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.esm.min.mjs');
+  // 불러오자마자 자동 렌더를 끈다 — 폰트를 기다린 뒤에 끄면 그사이 load 이벤트에서 mermaid 가 기본 테마로 먼저 그린다
+  mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict', fontFamily: '"IBM Plex Sans KR", sans-serif' });
+  await Promise.race([fonts, new Promise(r => setTimeout(r, 3000))]);
+  let i = 0;
+  for (const el of blocks) {
+    const id = 'html-report-mmd-' + (i++);
+    try {
+      const { svg } = await mermaid.render(id, el.textContent);
+      const host = document.createElement('div');
+      host.className = 'mmd';
+      if (el.id) host.id = el.id;
+      host.innerHTML = svg;
+      el.replaceWith(host);
+    } catch {
+      document.getElementById(id)?.remove();       // 실패하면 mermaid 가 남긴 임시 요소를 치운다
+      document.getElementById('d' + id)?.remove();
+    }
+  }
+}
+</script>
+</body>
+</html>
