@@ -34,6 +34,7 @@ prefix = "ctrl+a"
 # Session
 detach = "prefix+d"
 reload_config = "prefix+shift+r"
+goto = "prefix+g"
 
 # Workspaces
 workspace_picker = "prefix+w"
@@ -48,6 +49,7 @@ next_tab = ["prefix+n", "prefix+right"]
 previous_tab = ["prefix+p", "prefix+left"]
 
 # Panes
+clear_pane = "prefix+ctrl+k"
 focus_pane_left = ["prefix+h", "alt+h"]
 focus_pane_down = ["prefix+j", "alt+j"]
 focus_pane_up = ["prefix+k", "alt+k"]
