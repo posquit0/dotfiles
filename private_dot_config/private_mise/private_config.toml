@@ -1,16 +1,16 @@
 min_version = "2026.8.16"
 
 [tools]
-"github:tedilabs/tfvault" = "0.5.0"
-node = "26"
-"npm:@agentclientprotocol/claude-agent-acp" = "0.76.0"
-"npm:@agentclientprotocol/codex-acp" = "1.11.0"
-"npm:@playwright/cli" = "0.1.18"
-"npm:@playwright/mcp" = "0.0.81"
+"github:tedilabs/tfvault" = "0.6.0"
+node = "26.12.1"
+"npm:@agentclientprotocol/claude-agent-acp" = "0.97.0"
+"npm:@agentclientprotocol/codex-acp" = "2.3.0"
+"npm:@playwright/cli" = "0.1.22"
+"npm:@playwright/mcp" = "0.0.83"
 "pypi:browser-harness" = { version = "0.1.13", extras = "mcp" }
-ruby = "4.0.5"
-terraform = "1.15.6"
-tflint = "0.64.0"
+ruby = "4.0.9"
+terraform = "1.17.0"
+tflint = "0.65.0"
 
 [tool_alias]
 terraform = "asdf:mise-plugins/mise-hashicorp"
