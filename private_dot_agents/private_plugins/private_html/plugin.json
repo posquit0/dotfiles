@@ -1,10 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "html",
-  "version": "1.0.0",
-  "description": "Standard single-file HTML documents. report: a one-page report read top to bottom, with a sticky table of contents, tables, callouts, code, tabs and mermaid diagrams. Use /html:report <topic>.",
+  "version": "1.1.0",
+  "description": "Standard single-file HTML documents. report: a one-page report read top to bottom, with a sticky table of contents, tables, callouts, code, tabs and mermaid diagrams. slidedeck: a presentation deck with keyboard navigation, TOC overlay and document mode. Use /html:report or /html:slidedeck <topic>.",
   "author": {
     "name": "Byungjin Park"
   },
-  "keywords": ["html", "report", "html-report", "document", "handover"]
+  "keywords": ["html", "report", "html-report", "document", "handover", "slidedeck", "slides", "presentation"]
 }

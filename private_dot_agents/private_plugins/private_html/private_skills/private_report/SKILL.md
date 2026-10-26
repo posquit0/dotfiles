@@ -162,7 +162,7 @@ accent는 링크, 목차 현재 위치, 탭 밑줄, 기본 콜아웃에 쓰인�
 ## 9. 파일 구조
 
 ```
-html/                        # 플러그인 — 호출은 /html:report
+html/                        # 플러그인 — 호출은 /html:report (발표용은 같은 플러그인의 slidedeck)
 └── skills/report/
     ├── SKILL.md             # 이 문서
     └── templates/
