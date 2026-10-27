@@ -2,6 +2,15 @@ claude:
   cleanupPeriodDays: 30
   includeCoAuthoredBy: false
 
+  extraKnownMarketplaces:
+    terminal-browser:
+      source:
+        source: github
+        repo: zenbu-labs/terminal-browser
+
+  enabledPlugins:
+    terminal-browser@terminal-browser: true
+
   permissions:
     defaultMode: acceptEdits
     allow:
