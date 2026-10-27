@@ -11,6 +11,11 @@ claude:
   enabledPlugins:
     terminal-browser@terminal-browser: true
 
+  pluginConfigs:
+    terminal-browser@terminal-browser:
+      options:
+        agentTool: true
+
   permissions:
     defaultMode: acceptEdits
     allow:
