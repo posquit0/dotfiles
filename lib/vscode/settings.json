@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.enableImages": true,
     "workbench.colorTheme": "Dark Modern",
     "editor.inlineSuggest.enabled": true,
     "terminal.external.osxExec": "Warp.app",
