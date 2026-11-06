@@ -2,5 +2,10 @@
 
 set -eufo pipefail
 
-# Modified Date: {{ (stat (joinPath .chezmoi.homeDir ".vim")).modTime }}
+# Track source contents so this also renders before the first apply.
+{{- $source := joinPath .chezmoi.sourceDir "external_dot_vim" }}
+# vimrc: {{ include (joinPath $source "vimrc") | sha256sum }}
+{{- range glob (joinPath $source "**/*.vim") | sortAlpha }}
+# {{ trimPrefix (printf "%s/" $source) . }}: {{ include . | sha256sum }}
+{{- end }}
 vi +PlugInstall +qall now
