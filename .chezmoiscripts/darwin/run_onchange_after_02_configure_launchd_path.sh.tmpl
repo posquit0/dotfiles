@@ -8,15 +8,15 @@ set -eufo pipefail
 #
 # `launchctl config user path` persists a PATH for every process in the user
 # launchd domain. It takes a literal string (no `$HOME` expansion), so the
-# directories are resolved at render time by asking mise and Homebrew where
-# they live and by checking which user bin directories exist. The order
+# directories are resolved at render time using mise's default shims path,
+# Homebrew's prefix, and existing user bin directories. The order
 # mirrors the effective PATH built by ~/.zsh/general.zshrc. Any change to the
 # resolved value re-runs this script; the new PATH only takes effect after a
 # reboot.
 
 {{- $dirs := list }}
 {{- if lookPath "mise" }}
-{{-   $dirs = append $dirs (output "mise" "doctor" "--json" | fromJson).dirs.shims }}
+{{-   $dirs = append $dirs (joinPath .chezmoi.homeDir ".local/share/mise/shims") }}
 {{- end }}
 {{- /* User bin directories, highest priority first (general.zshrc prepends them in reverse). */}}
 {{- range list "scripts" ".local/bin" "bin" ".bin" }}
