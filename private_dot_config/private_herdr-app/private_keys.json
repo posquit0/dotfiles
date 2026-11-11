@@ -93,7 +93,8 @@
     "alt-k": "pane.go:up",
     "alt-l": "pane.go:right",
     "ctrl-a -": "pane.split:down",
-    "ctrl-a |": "pane.split:right"
+    "ctrl-a |": "pane.split:right",
+    "alt-s": "mod.open:popup"
   },
   "terminal": {
     "cmd-f": "terminal.search",
