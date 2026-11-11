@@ -1,0 +1,33 @@
+#!/bin/zsh
+# Open a URL in a terminal browser, in a new pane of whichever multiplexer
+# hosts this shell (herdr TUI, Rex, or Herdr.app).
+# Falls back to the system browser when no pane can be made.
+# Usage: mux-pane-browser <url>   (meant to be used as $BROWSER)
+
+url=$1
+cmd=(${(z)${PANE_BROWSER_CMD:-terminal-browser open}})
+
+fallback() { exec open "$url" }
+
+[[ -n $url ]] || { print -u2 "usage: mux-pane-browser <url>"; exit 2 }
+(( $+commands[$cmd[1]] )) || fallback
+cmd[1]=$commands[$cmd[1]]  # absolute path: new panes may not share our PATH
+
+if [[ $HERDR_ENV == 1 && -n $HERDR_PANE_ID ]]; then
+  # herdr TUI
+  pane=$(herdr pane split --current --direction right --focus 2>/dev/null | jq -r '.result.pane // empty' 2>/dev/null)
+  [[ -n $pane ]] || fallback
+  herdr pane run "$pane" "${(j: :)${(q)cmd}} ${(q)url}; exit" >/dev/null 2>&1 || fallback
+elif [[ -n $REX_SESSION && -n $REX_BLOCK ]]; then
+  # Rex
+  rex split -s "$REX_SESSION" -b "$REX_BLOCK" --split=right -- $cmd "$url" >/dev/null 2>&1 || fallback
+elif [[ -n $HC_TERMINAL_ID ]] && (( $+commands[herdr-app] )); then
+  # Herdr.app (its terminals are herdr-core terminals, mapped to app panes)
+  pane=$(herdr-app ls 2>/dev/null | jq -r --arg t "$HC_TERMINAL_ID" \
+    '[.spaces[].tabs[].terminals[] | select(.terminal == $t) | .pane][0] // empty' 2>/dev/null)
+  [[ -n $pane ]] || fallback
+  argv=$(jq -cn '$ARGS.positional' --args -- $cmd "$url")
+  herdr-app do pane.split --direction right --pane "$pane" --argv "$argv" >/dev/null 2>&1 || fallback
+else
+  fallback
+fi
