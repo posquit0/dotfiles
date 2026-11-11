@@ -35,3 +35,27 @@ Library/
 ## Neovim
 # Linked to the submodule source by run_after_02_link_nvim_lockfile.sh.tmpl.
 .config/nvim/lazy-lock.json
+
+## Herdr app
+# Written by the app at start or while running. Manage only keys.json,
+# settings.json, programs.json and your own layouts/mods/themes; shipped
+# layouts and mods (listed in installed.json) are replaced on every start.
+.config/herdr-app/AGENTS.md
+.config/herdr-app/**/*.d.ts
+.config/herdr-app/**/jsconfig.json
+.config/herdr-app/*.sock
+.config/herdr-app/*.error
+.config/herdr-app/*.reset-*
+.config/herdr-app/*.corrupt-*
+.config/herdr-app/view.json
+.config/herdr-app/shared.json
+.config/herdr-app/seen.json
+.config/herdr-app/installed.json
+.config/herdr-app/window.json
+.config/herdr-app/windows.json
+.config/herdr-app/update-notes*
+.config/herdr-app/data/
+.config/herdr-app/frame/
+.config/herdr-app/icons/
+.config/herdr-app/layouts/.state/
+.config/herdr-app/layouts/*.old-*
