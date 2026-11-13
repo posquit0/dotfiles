@@ -17,7 +17,7 @@ description: 나만의 표준 디자인 가이드 기반 HTML 슬라이드덱 �
 - **`<head>`의 생성 표식 메타 2줄은 반드시 그대로 남긴다** (덱 탐색·일괄 마이그레이션 기준):
   ```html
   <meta name="generator" content="slidedeck">
-  <meta name="slidedeck-version" content="2026-09-21">
+  <meta name="slidedeck-version" content="2026-11-13">
   ```
   `slidedeck-version`은 덱을 만들 때 쓴 **템플릿 버전**이며 포맷은 `YYYY-MM-DD`로 고정한다.
   덱 내용만 바꿀 때는 건드리지 않고, 템플릿 구조가 바뀌어 덱을 그 버전으로 옮겼을 때만 갱신한다.
@@ -177,6 +177,8 @@ description: 나만의 표준 디자인 가이드 기반 HTML 슬라이드덱 �
 - PDF 내보내기: 하단 바 `PDF` 버튼 또는 `P` 키 → 브라우저 인쇄 대화상자에서 "PDF 로 저장". 별도 라이브러리 없이 `@media print`만 사용한다
   - `@page{size:1280px 720px;margin:0}`로 16:9 가로 1슬라이드=1페이지, `print-color-adjust:exact`로 배경색·그라디언트 유지
   - 두 모드 모두 동일 결과이며, 바·오버레이는 숨겨지고 frag·tabs·term은 펼쳐진 상태로 인쇄된다
+  - 반응형(`max-width`) 규칙은 `@media screen and (…)`으로 한정한다. 인쇄 시 Chrome은 미디어쿼리를 `@page` 크기가 아닌
+    기본 용지 폭(≈816px)으로 판정해서, 조건 없는 모바일 규칙이 켜지면 PDF에서 2·3단과 `.pipe`가 1단으로 접혀 넘친다
 - 마지막 슬라이드에서 순환하지 않음 (clamp)
 - URL 해시 딥링크: 슬라이드 이동 시 URL이 `#N`으로 동기화됨 (`replaceState`라 뒤로가기 오염 없음).
   `파일주소#7`처럼 특정 슬라이드 링크를 공유하면 그 슬라이드에서 열림 (`#s7` 형식도 수용)

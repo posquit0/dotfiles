@@ -6,7 +6,7 @@
 <!-- slidedeck 스킬 생성 표식 — 덱 탐색·일괄 마이그레이션의 기준이므로 지우거나 이름을 바꾸지 않는다.
      찾기: grep -rl slidedeck-version --include='*.html' .   /   버전은 템플릿이 바뀔 때만 갱신한다 -->
 <meta name="generator" content="slidedeck">
-<meta name="slidedeck-version" content="2026-09-21">
+<meta name="slidedeck-version" content="2026-11-13">
 <title>{{제목}}</title>
 <!-- 폰트는 유일하게 허용되는 외부 리소스 (오프라인이면 시스템 폰트로 자연 강등) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -175,7 +175,9 @@ code.inline{font-family:'IBM Plex Mono',monospace;font-size:.88em;background:#ff
 .cols{display:grid;gap:clamp(14px,2vw,26px);margin-top:10px;}
 .cols.c2{grid-template-columns:repeat(2,1fr);}
 .cols.c3{grid-template-columns:repeat(3,1fr);}
-@media(max-width:860px){.cols.c2,.cols.c3{grid-template-columns:1fr;}}
+/* 반응형 규칙은 screen으로 한정한다 — 인쇄 시 Chrome은 미디어쿼리를 @page(1280px)가 아닌 기본 용지 폭(≈816px)으로
+   판정하므로, 조건 없이 걸면 PDF에서 2·3단과 파이프가 1단으로 접혀 장 밖으로 넘친다 */
+@media screen and (max-width:860px){.cols.c2,.cols.c3{grid-template-columns:1fr;}}
 .card{
   background:#fff;border:1.5px solid var(--line);border-radius:var(--radius);
   padding:clamp(16px,2vw,24px);
@@ -221,7 +223,7 @@ pre.code .n{color:var(--panel-num);}
 .pipe .node .d{font-size:clamp(13px,1.35vw,16px);color:var(--ink-soft);margin-top:3px;line-height:1.5;}
 .pipe .node.hot{border-color:var(--accent);border-width:2.5px;background:var(--accent-soft);}
 .pipe .arrow{align-self:center;padding:0 6px;color:var(--ink-soft);font-size:20px;font-weight:700;}
-@media(max-width:860px){.pipe{flex-direction:column;}.pipe .arrow{transform:rotate(90deg);padding:2px 0;align-self:center;}}
+@media screen and (max-width:860px){.pipe{flex-direction:column;}.pipe .arrow{transform:rotate(90deg);padding:2px 0;align-self:center;}}
 
 /* ---------- comparison table ---------- */
 table.cmp{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--line);}
