@@ -1,6 +1,11 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- $current := .chezmoi.stdin | fromToml -}}
-{{- $merged := mustMergeOverwrite (deepCopy $current) (deepCopy .codex) -}}
+{{- $mcp_servers := includeTemplate "mcp-servers" . | fromJson -}}
+{{- /* Codex infers the transport from command or url. */ -}}
+{{- range $server := $mcp_servers -}}
+{{-   $_ := unset $server "type" -}}
+{{- end -}}
+{{- $merged := mustMergeOverwrite (deepCopy $current) (deepCopy .codex) (dict "mcp_servers" $mcp_servers) -}}
 {{- /* Preserve local formatting when the settings already match. */ -}}
 {{- if eq (toJson $current) (toJson $merged) -}}
 {{-   .chezmoi.stdin -}}
