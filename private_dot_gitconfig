@@ -10,7 +10,7 @@
 ###################################################
 
 [include]
-    path = ~/.gitconfig.d/gitconfig
+  path = ~/.gitconfig.d/gitconfig
 
 
 ###################################################
@@ -18,7 +18,7 @@
 ###################################################
 
 [include]
-    path = ~/.git-users.d/credentials.gitconfig
+  path = ~/.git-users.d/credentials.gitconfig
 
 [include]
-    path = ~/.git-users.d/users.gitconfig
+  path = ~/.git-users.d/users.gitconfig
