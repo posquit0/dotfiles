@@ -1,5 +1,6 @@
 claude:
   cleanupPeriodDays: 30
+  # Hide Claude attribution in git commits and PR descriptions (replaces deprecated includeCoAuthoredBy)
   attribution:
     commit: ""
     pr: ""
