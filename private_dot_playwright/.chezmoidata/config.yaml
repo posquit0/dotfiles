@@ -29,21 +29,6 @@ playwright:
     # Remote Playwright server endpoint
     # remoteEndpoint:
 
-  # server:
-  #   host: localhost
-  #   port:
-
-  # List of additional capabilities
-  capabilities:
-  # Tab management
-  - 'tabs'
-  # Browser installation
-  - 'install'
-  # PDF generation
-  - 'pdf'
-  # Coordinate-based interactions
-  - 'vision'
-
   # Directory for output files
   # outputDir:
 
@@ -54,6 +39,3 @@ playwright:
 
   # List of origins to block the browser to request. Origins matching both `allowedOrigins` and `blockedOrigins` will be blocked.
   # blockedOrigins: string[];
-
-  # Whether to send image responses to the client. Can be "allow" or "omit".
-  imageResponses: allow
