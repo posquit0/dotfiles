@@ -5,6 +5,14 @@ claude:
     commit: ""
     pr: ""
 
+  modelSettings:
+    claude-opus-5-5:
+      effortLevel: xhigh
+    claude-fable-5-1:
+      effortLevel: high
+    claude-fable-5-2:
+      effortLevel: high
+
   extraKnownMarketplaces:
     terminal-browser:
       source:
