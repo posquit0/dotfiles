@@ -1,0 +1,9 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $current := .chezmoi.stdin | fromToml -}}
+{{- $merged := mustMergeOverwrite (deepCopy $current) (deepCopy .codex) -}}
+{{- /* Preserve local formatting when the settings already match. */ -}}
+{{- if eq (toJson $current) (toJson $merged) -}}
+{{-   .chezmoi.stdin -}}
+{{- else -}}
+{{ $merged | toToml }}
+{{ end -}}
