@@ -1,6 +1,13 @@
 codex:
+  model: gpt-6-astra
+  model_reasoning_effort: high
+  service_tier: ultrafast
+
   # Cumulative file size limit for AGENTS.md file chains
   project_doc_max_bytes: 65536
+
+  features:
+    hooks: true
 
   plugins:
     eli5@personal:
