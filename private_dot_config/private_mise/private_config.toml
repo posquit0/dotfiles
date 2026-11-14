@@ -1,4 +1,4 @@
-min_version = "2026.8.16"
+min_version = "2026.11.8"
 
 [tools]
 "github:tedilabs/tfvault" = "0.6.0"
