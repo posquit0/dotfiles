@@ -29,8 +29,6 @@ claude:
     - Bash(git push:*)
     - Bash(ls:*)
     - Bash(mv:*)
-    - Bash(npm run lint)
-    - Bash(npm run test:*)
     - Bash(source:*)
     - Read(~/.zshrc)
     - WebFetch(domain:docs.aws.amazon.com)
