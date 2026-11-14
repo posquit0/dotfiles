@@ -1,6 +1,8 @@
 claude:
   cleanupPeriodDays: 30
-  includeCoAuthoredBy: false
+  attribution:
+    commit: ""
+    pr: ""
 
   extraKnownMarketplaces:
     terminal-browser:
