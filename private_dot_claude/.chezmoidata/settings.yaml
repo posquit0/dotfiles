@@ -19,7 +19,7 @@ claude:
         agentTool: true
 
   permissions:
-    defaultMode: acceptEdits
+    defaultMode: auto
     allow:
     - Bash(cat:*)
     - Bash(git add:*)
