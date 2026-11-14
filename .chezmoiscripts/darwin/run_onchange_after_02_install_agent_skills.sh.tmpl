@@ -3,6 +3,16 @@
 set -eufo pipefail
 
 # mise config: {{ include "private_dot_config/private_mise/private_config.toml" | sha256sum }}
+# terminal-browser: {{ if lookPath "terminal-browser" }}{{ output "terminal-browser" "--version" | trim }}{{ else }}not installed{{ end }}
+
+# Playwright
 # Install the official skill and its references from the pinned CLI package.
 # Force mise's runtimes ahead of any inherited system Node installation.
 MISE_ACTIVATE_AGGRESSIVE=1 mise exec -- playwright-cli install --skills=agents --global
+
+# terminal-browser
+if command -v terminal-browser > /dev/null 2>&1; then
+  terminal-browser setup
+else
+  echo "[!] terminal-browser is not installed; skipping skill setup."
+fi
