@@ -1,0 +1,35 @@
+[
+  {
+    "id": "scratch",
+    "key": "s",
+    "session": "persistent",
+    "scope": "tab"
+  },
+  {
+    "id": "zsh",
+    "key": "f",
+    "session": "ephemeral",
+    "scope": "tab"
+  },
+  {
+    "id": "lazygit",
+    "key": "g",
+    "command": "lazygit",
+    "session": "ephemeral",
+    "scope": "tab"
+  },
+  {
+    "id": "k9s",
+    "key": "k",
+    "command": "k9s",
+    "session": "ephemeral",
+    "scope": "tab"
+  },
+  {
+    "id": "pug",
+    "key": "t",
+    "command": "pug",
+    "session": "ephemeral",
+    "scope": "tab"
+  }
+]

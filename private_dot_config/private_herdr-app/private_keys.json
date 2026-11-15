@@ -94,7 +94,7 @@
     "alt-l": "pane.go:right",
     "ctrl-a -": "pane.split:down",
     "ctrl-a |": "pane.split:right",
-    "alt-s": "mod.open:popup"
+    "alt-s": "mod.open:floatterm"
   },
   "terminal": {
     "cmd-f": "terminal.search",
