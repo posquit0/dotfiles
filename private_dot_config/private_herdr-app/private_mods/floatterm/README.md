@@ -3,6 +3,15 @@
 `Alt+S` opens the menu. Define its entries in `config.json`; changes are read
 when the menu opens. Add as many entries as needed; the menu scrolls.
 
+Press `/` to start fuzzy-searching names, IDs, commands and key aliases (for example, `lzg`
+matches `lazygit`). Matching ignores case; space-separated words all need to
+match. Exact and contiguous matches appear before scattered letters. Use
+Up/Down to select, Enter to run, or click a result; Escape closes the menu.
+Before entering search, configured shortcuts still launch immediately:
+`Alt+S`, `g`. In search mode, letters enter text instead: `Alt+S`, `/`, `lzg`,
+Enter. `/` is reserved for starting search. Text entry supports the native
+input's editing, paste and IME behavior. Reopening the menu resets search.
+
 ```json
 [
   { "id": "scratch", "key": "s", "session": "persistent", "scope": "tab" },
@@ -21,7 +30,7 @@ when the menu opens. Add as many entries as needed; the menu scrolls.
 | Field | Meaning | Default |
 | --- | --- | --- |
 | `id` | Unique, stable session identifier. Keep it when renaming an entry or changing its key. | Required |
-| `key` | Key pressed **after Alt+S**, such as `g`, `1`, or `shift-g`. Use lowercase Herdr keystroke spelling. Each key must be unique. | Required |
+| `key` | Key pressed **after Alt+S**, such as `g`, `1`, or `shift-g`. Use lowercase Herdr keystroke spelling. Each key must be unique; `/` starts search. Also searchable as an alias. | Required |
 | `name` | Menu label. | `id` |
 | `command` | Shell command, including arguments, executed through `/bin/zsh -lic` so `.zshrc` is loaded. Omit to open `/bin/zsh -l`. | Login shell |
 | `cwd` | Initial working directory: absolute, `~`, `~/…`, or relative to the current directory. | Focused terminal's directory when the menu opens |

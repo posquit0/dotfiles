@@ -1,7 +1,7 @@
-// Alt-s, then a key from config.json. Persistent entries reuse their session;
+// Alt-s, then a configured key, or / to search. Persistent entries reuse their session;
 // ephemeral entries end when selected from inside their popup. Esc closes this menu.
 import { View, div } from "gpui-kit";
-import { v_flex, h_flex } from "gpui-base";
+import { v_flex, h_flex, InputState, Input, ScrollHandle } from "gpui-base";
 import { hc, home, appHome, readTextFile, props, focused, spaces, terminals, openOverlay, closeOverlay, run, notify, theme } from "herdr";
 
 // Shared by the menu and guard copies; contains only currently open overlays.
@@ -44,6 +44,22 @@ function directory(cwd, current) {
   if (cwd === "~") return home();
   if (cwd.startsWith("~/")) return home() + cwd.slice(1);
   return cwd.startsWith("/") ? cwd : `${current}/${cwd}`;
+}
+
+function fuzzyScore(text, query) {
+  text = text.toLowerCase();
+  if (text === query) return 0;
+  const start = text.indexOf(query);
+  if (start !== -1) return 1 + start / (text.length + 1);
+  let at = -1;
+  let gaps = 0;
+  for (const character of query) {
+    const next = text.indexOf(character, at + 1);
+    if (next === -1) return Infinity;
+    gaps += next - at - 1;
+    at = next;
+  }
+  return 2 + gaps / (text.length + 1);
 }
 
 function scopeKey(p, context) {
@@ -138,6 +154,42 @@ async function toggle(cx, p, from, current, context) {
 }
 
 export default class Floatterm extends View {
+  rows() {
+    const words = this.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return this.programs;
+    return this.programs.map(p => ({
+      p,
+      score: words.reduce((score, word) => score + Math.min(
+        ...[p.name, p.id, p.command ?? "", p.key].map(text => fuzzyScore(text, word))), 0),
+    })).filter(match => Number.isFinite(match.score))
+      .sort((a, b) => a.score - b.score).map(match => match.p);
+  }
+
+  submit(cx) {
+    const selected = this.rows()[this.selected];
+    if (selected) this.pick(selected, cx);
+  }
+
+  key(e, cx) {
+    const program = !this.searching && this.programs.find(p => p.key === e.keystroke);
+    if (!this.searching && e.keystroke === "/") {
+      this.searching = true;
+      this.input.focus();
+    } else if (program) {
+      this.pick(program, cx);
+    } else if (!this.searching && e.keystroke === "enter") {
+      this.submit(cx);
+    } else if (e.keystroke === "down" || e.keystroke === "up") {
+      const count = this.rows().length;
+      if (count) {
+        this.selected = (this.selected + (e.keystroke === "down" ? 1 : count - 1)) % count;
+        this.scroll.scroll_to_item(this.selected);
+      }
+    } else return;
+    cx.stop_propagation();
+    cx.notify();
+  }
+
   init(_props, cx) {
     this.restorer = props()?.restorer;
     if (this.restorer) return;
@@ -155,10 +207,22 @@ export default class Floatterm extends View {
     this.programs = [];
     this.message = "Loading…";
     this.busy = false;
+    this.searching = false;
+    this.query = "";
+    this.selected = 0;
+    this.scroll = ScrollHandle.new();
+    this.input = InputState.new({ placeholder: "Search terminals…" });
+    this.input.on("change", (_e, cx) => {
+      this.query = this.input.value();
+      this.selected = 0;
+      this.scroll.scroll_to_item(0);
+      cx.notify();
+    });
+    this.input.on("submit", (_e, cx) => this.submit(cx));
     this.handle = cx.focus_handle();
     this.handle.focus();
     // Opened by a key, the window can hand the keyboard back to the pane: take it again.
-    cx.timer.after(150, () => this.handle.focus());
+    cx.timer.after(150, () => (this.searching ? this.input : this.handle).focus());
     cx.spawn(async (cx) => {
       try {
         this.programs = parseConfig(await readTextFile(`${appHome()}/mods/floatterm/config.json`));
@@ -247,22 +311,23 @@ export default class Floatterm extends View {
       return div().size_full();
     }
     const t = theme();
+    const rows = this.rows();
     return v_flex()
       .id("floatterm")
       .track_focus(this.handle)
-      .on_key_down((e, cx) => {
-        // By the key's own letter, not what it types: works with Korean input too.
-        const p = this.programs.find((p) => p.key === e.keystroke);
-        if (p) this.pick(p, cx);
-      })
+      .on_key_down((e, cx) => this.key(e, cx))
       .size_full()
-      .overflow_y_scrollbar()
       .p(6)
-      .gap(2)
+      .gap(6)
       .text_size(13)
-      .when(Boolean(this.message), (el) => el.child(div().text_color(t.muted).child(this.message)))
-      .children(
-        this.programs.map((p) =>
+      .when(this.searching, el => el.child(Input.new(this.input).h(32).flex_none().px(8).rounded(4)
+        .border_1().border_color(t.input).bg(t.background).text_color(t.foreground)))
+      .child(v_flex().id("floatterm-results").h(150).flex_none().gap(2)
+        .overflow_y_scrollbar().track_scroll(this.scroll)
+        .when(Boolean(this.message), (el) => el.child(div().px(8).text_color(t.muted).child(this.message)))
+        .when(!this.message && !rows.length, (el) => el.child(div().px(8).text_color(t.muted).child("No matching terminals")))
+        .children(
+        rows.map((p, index) =>
           h_flex()
             .id(`floatterm-${p.key}`)
             .h(28)
@@ -271,6 +336,7 @@ export default class Floatterm extends View {
             .gap(10)
             .items_center()
             .rounded(4)
+            .when(index === this.selected, (el) => el.bg(t.selected))
             .hover((s) => s.bg(t.hover))
             .on_click((_e, cx) => this.pick(p, cx))
             .child(div().min_w(14).font_semibold().text_color(t.accent).child(p.key))
@@ -279,6 +345,8 @@ export default class Floatterm extends View {
               el.child(div().text_size(12).text_color(t.muted).child(
                 p.keep ? "running: shows/hides" : liveTerminal(p, this.context)?.address === this.from ? "open: ends it" : "running: shows"))),
         ),
-      );
+      ))
+      .child(div().px(8).flex_none().text_size(11).text_color(t.dim).child(
+        this.searching ? "↑↓ select · Enter run · Esc close" : "Press a shortcut · / search · Esc close"));
   }
 }
