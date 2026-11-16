@@ -71,13 +71,18 @@ shortcut itself, edit `global` → `mod.open:floatterm` in Herdr's `keys.json`.
   Popups explicitly dismissed with the close button, a background click, or
   the entry's shortcut do not automatically return when switching tabs.
 
-Automatic restoration uses the `main-floatterm` layout, a copy of `main` with
-a zero-height controller block (`floatterm-restore`, props
-`{ "restorer": true }`). The controller stays alive after a popup closes and
-reacts to navigation without polling. Other custom layouts need the same
-controller block for automatic restoration. Pending visibility is held in
-memory; restarting Herdr or reloading the mod clears it. Ended sessions and
-deleted owner tabs/spaces are not reopened.
+Automatic restoration works with the standard `main` layout and custom layouts;
+no layout block or separate layout file is required. Opening the menu creates
+one invisible, zero-size controller window inside Herdr. It keeps running when
+menus and terminal popups close, reacts to navigation without polling, and does
+not take keyboard focus. Repeated menu openings reuse the same controller.
+
+Switching Herdr layouts closes the controller; the next `Alt+S` recreates it.
+Until then, automatic restoration is inactive, but terminal sessions keep running.
+Tab/space navigation does not close the controller. Pending visibility is held in
+memory; restarting Herdr or reloading the mod clears it. Ended sessions and deleted
+owner tabs/spaces are not reopened. Restoration waits while the menu is open so
+it does not interrupt searching or selecting an entry.
 
 Changing `scope` selects a different session; it does not move or end the old
 one. Sessions created before scope support remain accessible with `"scope":

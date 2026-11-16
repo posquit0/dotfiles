@@ -7,6 +7,8 @@ import { hc, home, appHome, readTextFile, props, focused, spaces, terminals, ope
 // Shared by the menu and guard copies; contains only currently open overlays.
 const floating = new Map();
 const suspended = new Map();
+const menus = new Set();
+let restorer = null;
 
 function parseConfig(text) {
   if (text === null) throw new Error("mods/floatterm/config.json is missing");
@@ -95,6 +97,7 @@ function showTerminal(p, terminal, context) {
 }
 
 function restoreSuspended() {
+  if (menus.size) return;
   const current = focused();
   // Closing the previous tab's overlay restores pane focus. Let that finish
   // before opening this tab's popup, so it keeps the keyboard.
@@ -191,9 +194,12 @@ export default class Floatterm extends View {
   }
 
   init(_props, cx) {
-    this.restorer = props()?.restorer;
-    if (this.restorer) return;
     this.overlay = props()?.overlay;
+    this.restorer = props()?.restorer;
+    if (this.restorer) {
+      restorer = this.overlay ?? this;
+      return;
+    }
     this.guard = props()?.scopeGuard;
     if (this.guard) {
       floating.set(this.guard.terminal, { ...this.guard, overlay: this.overlay });
@@ -204,6 +210,13 @@ export default class Floatterm extends View {
     const space = spaces().find((s) => s.id === f?.space);
     this.from = f?.terminal ?? null;
     this.current = space && !space.machine && f?.cwd ? f.cwd : home();
+    if (this.overlay) {
+      menus.add(this);
+      if (!restorer) restorer = openOverlay({
+        mod: "floatterm", props: { restorer: true }, kind: "window",
+        key: "floatterm-restorer", frame: "none", at: { x: 0, y: 0 },
+      });
+    }
     this.programs = [];
     this.message = "Loading…";
     this.busy = false;
@@ -260,6 +273,11 @@ export default class Floatterm extends View {
   // Dismissed (Esc, alt-s) over one of these popups: the keyboard went to the pane
   // below, so give it back to the popup that's still showing.
   async close() {
+    if (this.restorer) {
+      if (restorer === (this.overlay ?? this)) restorer = null;
+      return;
+    }
+    menus.delete(this);
     if (this.guard) {
       if (floating.get(this.guard.terminal)?.overlay === this.overlay) {
         floating.delete(this.guard.terminal);
@@ -279,7 +297,7 @@ export default class Floatterm extends View {
 
   render(cx) {
     if (this.restorer) {
-      // This zero-height layout block stays alive while popups are hidden.
+      // An invisible window keeps this controller alive after the menu closes.
       // Read live data even with no pending popup so Herdr tracks dependencies.
       focused();
       spaces();
@@ -291,7 +309,7 @@ export default class Floatterm extends View {
           restoreSuspended();
         });
       }
-      return div().size_full();
+      return div().w(0).h(0);
     }
     if (this.guard) {
       if (!this.closing && scopeKey(this.guard, focused()) !== scopeKey(this.guard, this.guard.context)) {
