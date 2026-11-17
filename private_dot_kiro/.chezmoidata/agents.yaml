@@ -41,6 +41,10 @@ kiro_agents:
     ## Powers
     includePowers: true
 
+    ## Skills
+    resources:
+    - "skill://~/.kiro/skills/terminal-browser/SKILL.md"
+
     ## Permissions
     permissions:
       rules:
