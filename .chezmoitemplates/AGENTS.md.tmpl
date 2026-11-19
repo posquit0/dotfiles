@@ -70,3 +70,20 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 # Git worktrees
 
 Always create worktrees under `~/.git-worktrees/{github-org}/{repo-name}/{worktree-name}/`.
+
+
+---
+
+# Code review: Pn rule
+
+Start every review comment with its priority, e.g. `**P2** ...`, and list the priorities used in the review summary. One issue per comment, one priority per issue.
+
+| Level | Meaning | Criterion | Author's obligation |
+| --- | --- | --- | --- |
+| **P1** | Must fix | Merging as-is causes an outage, data loss, a security hole, or incorrect behavior, or it contradicts a decision or policy the team already agreed on. | Fix before merge. |
+| **P2** | Should fix | Nothing breaks today, but it leaves a real cost: deviation from an established design or convention, a structure that is expensive to change later, or unrelated changes mixed into the PR. | Fix, or reply with the reason for keeping it. |
+| **P3** | Recommended | Works and fits the design, but a clearly better alternative exists (consistency across similar resources, readability, future maintenance). | Fix if cheap; a follow-up PR is fine. |
+| **P4** | Optional | Cosmetic only: ordering, naming, formatting, comment wording. No effect on behavior or structure. | Author's call; no reply needed. |
+| **P5** | FYI | A question, a note for context, or praise. No change is expected. | None. |
+
+Pick the level by the cost of merging unchanged, not by how large the fix is. Between two levels, choose the lower priority (higher number) unless you can name the concrete damage.
