@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+# settings.json only enables plugins; Claude Code does not download them.
+# Install every enabled plugin so a fresh machine does not fail with "not cached".
+# Re-runs when the plugin or marketplace lists in .chezmoidata/settings.yaml change.
+
+if ! command -v claude >/dev/null 2>&1; then
+  echo "[!] claude not found; skipping Claude Code plugin install" >&2
+  exit 0
+fi
+
+{{ range $name, $source := .claude.extraKnownMarketplaces -}}
+{{   if eq $source.source.source "github" -}}
+echo "[+] Adding Claude Code marketplace {{ $name }}"
+claude plugin marketplace add {{ $source.source.repo | quote }}
+{{   end -}}
+{{ end -}}
+
+{{ range $plugin, $enabled := .claude.enabledPlugins -}}
+{{   if $enabled -}}
+echo "[+] Installing Claude Code plugin {{ $plugin }}"
+claude plugin install -y {{ $plugin | quote }}
+{{   end -}}
+{{ end -}}
