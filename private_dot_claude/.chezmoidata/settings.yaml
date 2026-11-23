@@ -18,9 +18,19 @@ claude:
       source:
         source: github
         repo: zenbu-labs/terminal-browser
+    claude-hud:
+      source:
+        source: github
+        repo: jarrodwatts/claude-hud
 
   enabledPlugins:
     terminal-browser@terminal-browser: true
+    claude-hud@claude-hud: true
+
+  # Plugin (claude-hud)
+  statusLine:
+    type: command
+    command: 'node "$HOME/.claude/plugins/claude-hud/statusline.mjs"'
 
   pluginConfigs:
     terminal-browser@terminal-browser:

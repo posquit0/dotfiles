@@ -1,0 +1,4 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /* Merge the managed keys in .chezmoidata/settings.yaml over the live settings.json, keeping keys Claude Code writes itself. */ -}}
+{{- $live := .chezmoi.stdin | default "{}" | fromJson -}}
+{{ mergeOverwrite $live .claude | toPrettyJson }}

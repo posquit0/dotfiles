@@ -1,0 +1,18 @@
+{
+  "lineLayout": "compact",
+  "gitStatus": {
+    "enabled": false
+  },
+  "display": {
+    "showTools": true,
+    "showAgents": true,
+    "showTodos": true,
+    "showEffortLevel": true,
+    "showDuration": true,
+    "showProject": false,
+    "usagePace": true,
+    "showCost": true,
+    "showSessionTokens": true,
+    "showCacheHitRate": true
+  }
+}
