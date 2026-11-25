@@ -109,5 +109,29 @@
     "cmd-left": "send:\u0001",
     "cmd-right": "send:\u0005",
     "cmd-backspace": "send:\u0015"
+  },
+  "layout:Offbit": {
+    "cmd-alt-]": "offbit-spaces.next",
+    "cmd-alt-[": "offbit-spaces.prev",
+    "ctrl-1": "offbit-spaces.select.1",
+    "ctrl-2": "offbit-spaces.select.2",
+    "ctrl-3": "offbit-spaces.select.3",
+    "ctrl-4": "offbit-spaces.select.4",
+    "ctrl-5": "offbit-spaces.select.5",
+    "ctrl-6": "offbit-spaces.select.6",
+    "ctrl-7": "offbit-spaces.select.7",
+    "ctrl-8": "offbit-spaces.select.8",
+    "ctrl-9": "offbit-spaces.select.9",
+    "ctrl-a shift-1": "offbit-spaces.select.1",
+    "ctrl-a shift-2": "offbit-spaces.select.2",
+    "ctrl-a shift-3": "offbit-spaces.select.3",
+    "ctrl-a shift-4": "offbit-spaces.select.4",
+    "ctrl-a shift-5": "offbit-spaces.select.5",
+    "ctrl-a shift-6": "offbit-spaces.select.6",
+    "ctrl-a shift-7": "offbit-spaces.select.7",
+    "ctrl-a shift-8": "offbit-spaces.select.8",
+    "ctrl-a shift-9": "offbit-spaces.select.9",
+    "ctrl-a up": "offbit-spaces.prev",
+    "ctrl-a down": "offbit-spaces.next"
   }
 }

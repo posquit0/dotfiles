@@ -5,7 +5,7 @@
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle } from "gpui-base";
-import { spaces, machines, panes, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout } from "herdr";
+import { spaces, machines, panes, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout, nextCommand } from "herdr";
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -89,6 +89,8 @@ export default class Spaces extends View {
     this.scroll = ScrollHandle.new(); // the list's position: the active space is brought into view through it
     this.activeAt = -1; // the active space's place among the list's children (headers and rows), -1 when not drawn
     this.machines = [];
+    this.machineFilter = undefined; // undefined: All, null: this computer, string: remote name
+    this.swipe = { acc: 0, at: 0, direction: 0, switched: false };
     try {
       this.reconnecting = JSON.parse(localStorage.getItem("machines.reconnecting") ?? "{}");
       if (!this.reconnecting || typeof this.reconnecting !== "object" || Array.isArray(this.reconnecting)) this.reconnecting = {};
@@ -99,6 +101,17 @@ export default class Spaces extends View {
     cx.timer.every(15000, cx => this.refreshMachines(cx));
     // Refresh only when the refs could have changed (see `due`).
     cx.timer.every(250, (cx) => this.checkNew(cx));
+    this.commandTask = cx.spawn(async commandCx => {
+      for (;;) {
+        let command;
+        try { command = await nextCommand(); } catch { break; }
+        this.selectCommand(command, commandCx);
+      }
+    });
+  }
+
+  close() {
+    this.commandTask?.cancel();
   }
 
   checkNew(cx) {
@@ -148,7 +161,9 @@ export default class Spaces extends View {
     if (window().active) {
       for (const k of keys) {
         const asks = this.git[k] || this.unsure.has(k);
-        if (asks && !this.folded.has(JSON.parse(k)[0]) && now - (this.checked[k] ?? 0) > FALLBACK) due.add(k);
+        const machine = JSON.parse(k)[0];
+        const visible = this.machineFilter === undefined ? !this.folded.has(machine) : machine === this.machineFilter;
+        if (asks && visible && now - (this.checked[k] ?? 0) > FALLBACK) due.add(k);
       }
     }
     return due;
@@ -343,27 +358,104 @@ export default class Spaces extends View {
     return out.filter(r => this.shown.has(r.w.id));
   }
 
-  // The rows, under a header per machine once one isn't this computer.
-  grouped(t, collapsed) {
+  machineNames() {
+    const remote = [
+      ...spaces().map(s => s.machine),
+      ...machines().filter(m => !m.temporary).map(m => m.name),
+      ...this.machines.map(m => m.name),
+      ...Object.keys(this.reconnecting),
+    ].filter(name => typeof name === "string" && name.length);
+    return [null, ...new Set(remote)].sort((a, b) => a === null ? -1 : b === null ? 1 : a.localeCompare(b));
+  }
+
+  cycleMachine(direction, cx) {
+    const choices = [undefined, ...this.machineNames()];
+    const index = Math.max(0, choices.indexOf(this.machineFilter));
+    this.machineFilter = choices[(index + direction + choices.length) % choices.length];
+    this.pressed = null;
+    this.over = null;
+    this.revealedAt = -1;
+    this.scroll.scroll_to_item(0);
+    cx.notify();
+  }
+
+  scopedRows() {
+    const known = this.machineNames();
+    if (this.machineFilter !== undefined && !known.includes(this.machineFilter)) this.machineFilter = undefined;
     const rows = this.ordered();
+    const names = this.machineFilter === undefined ? known : [this.machineFilter];
+    // Keep i for global drag/reorder commands; only the displayed number is scoped.
+    return names.flatMap(machine => rows.filter(r => (r.w.machine ?? null) === machine))
+      .map((row, index) => ({ ...row, number: index + 1 }));
+  }
+
+  selectCommand(command, cx) {
+    const action = String(command).replace(/^offbit-spaces\./, "");
+    const match = /^select\.(\d+)$/.exec(action);
+    if (!match && action !== "next" && action !== "prev") return;
+    const rows = this.scopedRows();
+    if (!rows.length) return;
+    const active = rows.findIndex(row => row.w.active);
+    const index = match ? Number(match[1]) - 1
+      : active < 0 ? (action === "next" ? 0 : rows.length - 1)
+      : (active + (action === "next" ? 1 : -1) + rows.length) % rows.length;
+    const target = rows[index]?.w;
+    if (!target) return;
+    if (this.machineFilter === undefined && this.folded.delete(target.machine ?? null)) {
+      localStorage.setItem("machines.folded", JSON.stringify([...this.folded]));
+    }
+    run("space.select", { id: target.id });
+    cx.notify();
+  }
+
+  wheel(event, cx) {
+    const now = Date.now(), swipe = this.swipe;
+    const delta = event.delta_lines ?? event.delta;
+    const x = delta.x, y = delta.y;
+    if (event.touch_phase === "cancelled") {
+      Object.assign(swipe, { acc: 0, at: now, switched: true });
+      return;
+    }
+    if (event.touch_phase === "started" || now - swipe.at > 250 || (x && Math.sign(x) !== swipe.direction)) {
+      Object.assign(swipe, { acc: 0, direction: Math.sign(x), switched: false });
+    }
+    swipe.at = now;
+    // Leave vertical/diagonal scrolling to the retained list. A touchpad swipe
+    // changes one machine, even while its momentum continues after release.
+    if (!x || Math.abs(x) <= Math.abs(y) * 1.25) { swipe.acc = 0; return; }
+    cx.stop_propagation();
+    if (event.delta_lines) { this.cycleMachine(x < 0 ? 1 : -1, cx); return; }
+    if (swipe.switched) return;
+    swipe.acc += x;
+    if (Math.abs(swipe.acc) < 24) return;
+    swipe.switched = true;
+    this.cycleMachine(x < 0 ? 1 : -1, cx);
+  }
+
+  // All keeps the machine groups; a specific machine shows its rows unfolded.
+  grouped(t, collapsed) {
+    const rows = this.scopedRows();
     const draw = (r) => (collapsed ? this.compact(r, t) : this.row(r, t));
     // Where the active space's row lands among the children this returns: the list scrolls by its direct
     // children, and machine headers, login notes and loading rows count too.
     this.activeAt = -1;
     let before = 0;
-    const remote = [...new Set([...rows.map(r => r.w.machine).filter(Boolean), ...this.machines.map(m => m.name), ...Object.keys(this.reconnecting)])].sort();
+    const known = this.machineNames();
+    if (this.machineFilter !== undefined && !known.includes(this.machineFilter)) this.machineFilter = undefined;
+    const all = this.machineFilter === undefined;
+    const remote = known.slice(1);
     const loading = m => {
       const layout = machines().find(k => k.name === m)?.layout;
       return layout === "loading" || (!layout && this.machines.some(k => k.name === m && k.state === "connected"))
         || spaces().some(s => (s.machine ?? null) === m && !this.shown.has(s.id));
     };
     const loadingRow = m => h_flex().id(`machine-loading-${m ?? "local"}`).h(28).flex_none().px(collapsed ? 0 : 8).items_center().when(collapsed, el => el.justify_center()).text_size(12).text_color(t.dim).child(collapsed ? "…" : "Loading…");
-    if (!remote.length) {
+    if (all && !remote.length) {
       if (loading(null) && !rows.length) return [loadingRow(null)];
       this.activeAt = rows.findIndex(r => r.w.active);
       return rows.map(draw);
     }
-    const machineNames = [null, ...remote];
+    const machineNames = all ? known : [this.machineFilter];
     return machineNames.flatMap((m) => {
       const mine = rows.filter((r) => (r.w.machine ?? null) === m);
       const repair = this.reconnecting[m];
@@ -371,18 +463,18 @@ export default class Spaces extends View {
       const connected = !m || machine?.state === "connected";
       const rebuilt = this.rebuilt(machine) || !!repair;
       const login = machine?.state === "needs_login" ? `hc machine login ${m}` : null;
-      const folded = this.folded.has(m);
+      const folded = all && this.folded.has(m);
       const icon = svg(`mods/workspace-chrome/${m ? "server" : "monitor"}.svg`).size(13).flex_none();
       const badge = div().absolute().right(-3).bottom(-2).size(6).rounded(3).border_1().border_color(t.chrome).bg(connected ? t.ansi2 : t.dim);
       const head = h_flex().id(`machine-${m ?? "local"}`).h(26).flex_none().px(collapsed ? 0 : 8).gap(7).items_center().text_size(11).text_color(t.dim)
         .when(collapsed, el => el.mt(4).w(RAIL_CELL).justify_center().rounded(6).tooltip(login ? `${m} needs a login: run ${login}. Click for Copy.` : m ? `${m} · ${connected ? "connected" : (machine?.state ?? "asleep").replace(/_/g, " ")}` : "This computer"))
-        .cursor_pointer().hover(s => s.bg(t.hover))
+        .when(all, el => el.cursor_pointer().hover(s => s.bg(t.hover))
         .on_click((_e, cx) => {
           if (collapsed && login) { run("app.settings", { section: "machines" }); return; }
           folded ? this.folded.delete(m) : this.folded.add(m);
           localStorage.setItem("machines.folded", JSON.stringify([...this.folded]));
           cx.notify();
-        })
+        }))
         .when(machine?.keeps_running_after_logout === false, el => el.child(div().id(`machine-logout-${m}`)
           .flex_none().text_color(t.blocked).tooltip("Agents stop when you disconnect. Click for the fix.")
           .on_click((_e, cx) => { cx.stop_propagation(); openOverlay({ mod: "machine-add", kind: "dialog", width: 560 }); }).child("⚠")))
@@ -400,7 +492,7 @@ export default class Spaces extends View {
           .when(connected, el => el.child(div().id(`machine-add-${m ?? "local"}`).flex_none().px(4).rounded(4).hover(s => s.bg(t.hover).text_color(t.foreground))
             .on_click((_e, cx) => { cx.stop_propagation(); run("space.new", { machine: m ?? "" }); }).child("+")))
           .child(div().size(6).rounded(3).flex_none().bg(connected ? t.ansi2 : t.dim))
-          .child(svg(`mods/workspace-chrome/chevron-${folded ? "right" : "down"}.svg`).size(11).flex_none()));
+          .when(all, el => el.child(svg(`mods/workspace-chrome/chevron-${folded ? "right" : "down"}.svg`).size(11).flex_none())));
       const empty = h_flex().id(`machine-new-${m ?? "local"}`).h(28).flex_none().px(collapsed ? 0 : 8).gap(7).items_center().rounded(7)
         .text_size(12).text_color(t.dim).hover(s => s.bg(t.hover).text_color(t.foreground))
         .on_click(() => run("space.new", { machine: m ?? "" }))
@@ -418,9 +510,10 @@ export default class Spaces extends View {
             .text_size(11).text_color(t.foreground).bg(t.raised).cursor_pointer().hover(s => s.bg(t.hover))
             .on_click((_e, cx) => { cx.stop_propagation(); cx.write_to_clipboard(login); this.copiedLogin = login; cx.notify(); })
             .child(this.copiedLogin === login ? "Copied" : "Copy")))] : [];
-      const items = [cell(head), ...guidance, ...(folded ? [] : mine.length ? mine.map(draw) : [loading(m) ? loadingRow(m) : cell(empty)])];
+      const headers = all || !connected ? [cell(head)] : [];
+      const items = [...headers, ...guidance, ...(folded ? [] : mine.length ? mine.map(draw) : [loading(m) ? loadingRow(m) : cell(empty)])];
       const first = folded ? -1 : mine.findIndex(r => r.w.active);
-      if (first >= 0) this.activeAt = before + 1 + guidance.length + first;
+      if (first >= 0) this.activeAt = before + headers.length + guidance.length + first;
       before += items.length;
       return items;
     });
@@ -455,7 +548,7 @@ export default class Spaces extends View {
       .when(g.behind > 0, (el) => el.child(div().flex_none().text_color(t.ansi1).child(`\u2193${g.behind}`)));
   }
 
-  row({ w, i, g, tree }, t) {
+  row({ w, i, number, g, tree }, t) {
     const on = w.active;
     const fromIndex = this.pressed === null ? -1 : spaces().findIndex(s => s.id === this.pressed);
     return v_flex()
@@ -503,14 +596,14 @@ export default class Spaces extends View {
           .gap(9)
           .items_center()
           .child(h_flex().w(22).flex_none().items_center().justify_center().text_size(12)
-            .text_color(on ? t.foreground : t.dim).child(String(i + 1)))
+            .text_color(on ? t.foreground : t.dim).child(String(number)))
           .child(div().flex_initial().min_w(SIDE_MIN).when(Boolean(tree), el => el.pl(14))
             .truncate().text_color(t.foreground).child(w.name))
           .child(g ? this.gitTail(g, tree, w.name, t) : div().flex_1()),
       );
   }
 
-  compact({ w, i }, t) {
+  compact({ w, number }, t) {
     return railCell(h_flex()
       .id(`space-${w.id}`)
       .relative()
@@ -522,7 +615,7 @@ export default class Spaces extends View {
       .when(w.active, (el) => el.bg(t.selected))
       .when(!w.active, (el) => el.hover((s) => s.bg(t.hover)))
       .on_click(() => run("space.select", { id: w.id }))
-      .child(div().text_color(w.active ? t.foreground : t.muted).child(String(i + 1)))
+      .child(div().text_color(w.active ? t.foreground : t.muted).child(String(number)))
       .child(div().absolute().right(5).text_color(tone(t, w.status)).child(glyph(w.status))));
   }
 
@@ -542,6 +635,7 @@ export default class Spaces extends View {
     }
     if (changed) setShared("space.colors", kept);
     const list = this.grouped(t, collapsed);
+    const scope = this.machineFilter === undefined ? "All" : this.machineFilter ?? "This computer";
     // Bring the active space into view when it, or its place in the list, changes; a row already in view stays put.
     const active = sp.find(p => p.active)?.id;
     if (active !== this.revealed || this.activeAt !== this.revealedAt) {
@@ -549,13 +643,19 @@ export default class Spaces extends View {
       this.revealedAt = this.activeAt;
       if (this.activeAt >= 0) this.scroll.scroll_to_item(this.activeAt);
     }
-    return v_flex().size_full().min_h(0).bg(t.chrome).text_size(13)
+    return v_flex().id("offbit-spaces").size_full().min_h(0).bg(t.chrome).text_size(13)
       .child(h_flex().h(31).pl(16).pr(10).items_center().justify_between().text_size(11.5).text_color(t.dim)
+        .on_scroll_wheel((event, cx) => this.wheel(event, cx))
+        .tooltip(`Spaces · ${scope} — scroll horizontally to switch machines`)
         .when(collapsed, el => el.pl(0).pr(0).justify_center())
-        .when(!collapsed, el => el.child("Spaces"))
+        .when(!collapsed, el => el.child(h_flex().flex_1().min_w(0).gap(7).items_center()
+          .child("Spaces").child(div().flex_1().min_w(0).truncate().text_color(t.muted).child(scope))))
         .child(div().id("space-new").size(26).flex_none().flex().items_center().justify_center().rounded(6).hover(s => s.bg(t.hover).text_color(t.foreground))
-          .on_click(() => run("space.new")).child(svg("mods/workspace-chrome/plus.svg").size(14))))
-      .child(v_flex().flex_1().min_h(0).px(collapsed ? 0 : 8).pb(14).overflow_y_scrollbar().mode("always").track_scroll(this.scroll)
+          .on_click(() => this.machineFilter === undefined ? run("space.new") : run("space.new", { machine: this.machineFilter ?? "" }))
+          .child(svg("mods/workspace-chrome/plus.svg").size(14))))
+      .child(v_flex().id("offbit-spaces-list").flex_1().min_h(0).px(collapsed ? 0 : 8).pb(14)
+        .on_scroll_wheel((event, cx) => this.wheel(event, cx))
+        .overflow_y_scrollbar().mode("always").track_scroll(this.scroll)
         // A block above (another mod's) growing, or the window resizing, shrinks this list and can push the active space out.
         .on_size_change((_size, cx) => { if (this.activeAt >= 0) { this.scroll.scroll_to_item(this.activeAt); cx.notify(); } })
         .on_mouse_up("left", (_e, cx) => { this.pressed = null; cx.notify(); })
