@@ -1,0 +1,261 @@
+{
+  "id": "root",
+  "cloned_from": {
+    "name": "main",
+    "version": "0.1.16"
+  },
+  "type": "row",
+  "children": [
+    {
+      "id": "sidebar",
+      "type": "column",
+      "children": [
+        {
+          "id": "brand",
+          "type": "block",
+          "content": {
+            "mod": "workspace-chrome"
+          },
+          "size": {
+            "px": 46
+          },
+          "window_drag": true
+        },
+        {
+          "id": "sidebar-lists",
+          "type": "column",
+          "children": [
+            {
+              "id": "spaces",
+              "type": "block",
+              "content": {
+                "mod": "spaces"
+              },
+              "size": {
+                "weight": 1
+              },
+              "min": 90
+            },
+            {
+              "id": "agents",
+              "type": "block",
+              "content": {
+                "mod": "agents"
+              },
+              "size": {
+                "weight": 1
+              },
+              "min": 90
+            }
+          ]
+        },
+        {
+          "id": "analytics-sidebar",
+          "type": "block",
+          "content": {
+            "mod": "analytics",
+            "props": {
+              "mode": "sidebar"
+            }
+          },
+          "size": {
+            "px": 280
+          },
+          "resizable": false
+        },
+        {
+          "id": "sidebar-footer",
+          "type": "block",
+          "content": {
+            "mod": "workspace-chrome",
+            "props": {
+              "footer": true
+            }
+          },
+          "size": {
+            "px": 69
+          }
+        }
+      ],
+      "size": {
+        "px": 268
+      },
+      "min": 44,
+      "max": 480,
+      "background": "#ffffff00",
+      "border": {
+        "width": 1,
+        "color": "#dbeafe66"
+      },
+      "radius": 14,
+      "padding": 2,
+      "resizable": false
+    },
+    {
+      "id": "work",
+      "type": "column",
+      "children": [
+        {
+          "id": "tabs",
+          "type": "row",
+          "size": {
+            "px": 46
+          },
+          "window_drag": true,
+          "resizable": false,
+          "background": "#ffffff00",
+          "border": {
+            "width": 1,
+            "color": "#dbeafe66"
+          },
+          "radius": 14,
+          "padding": 2,
+          "children": [
+            {
+              "id": "analytics-original-tabs",
+              "type": "block",
+              "size": {
+                "weight": 1
+              },
+              "content": {
+                "mod": "tabs"
+              }
+            },
+            {
+              "id": "analytics-toolbar-button",
+              "type": "block",
+              "size": {
+                "px": 104
+              },
+              "content": {
+                "mod": "analytics",
+                "props": {
+                  "mode": "toolbar"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "work-body",
+          "type": "row",
+          "children": [
+            {
+              "id": "main",
+              "type": "block",
+              "content": {
+                "tab": "active",
+                "pane": {
+                  "header": {
+                    "content": {
+                      "mod": "pane"
+                    },
+                    "reveal": "always",
+                    "height": 30,
+                    "position": "top"
+                  },
+                  "background": "#20242bcc",
+                  "border": {
+                    "width": 1,
+                    "color": "#dbeafe66"
+                  },
+                  "focus": {
+                    "width": 1,
+                    "color": "#9ddcffdd"
+                  },
+                  "radius": 14,
+                  "gap": 10,
+                  "lone": true
+                }
+              }
+            },
+            {
+              "id": "panel",
+              "type": "column",
+              "children": [
+                {
+                  "id": "panel-body",
+                  "type": "stack",
+                  "children": [
+                    {
+                      "id": "files",
+                      "type": "block",
+                      "background": "#20242bcc",
+                      "content": {
+                        "mod": "files"
+                      }
+                    },
+                    {
+                      "id": "changes",
+                      "type": "block",
+                      "content": {
+                        "mod": "gitdeck"
+                      }
+                    }
+                  ],
+                  "active": "files"
+                }
+              ],
+              "size": {
+                "px": 420
+              },
+              "min": 280,
+              "max": 900,
+              "hidden": true,
+              "border": {
+                "width": 1,
+                "color": "#dbeafe66"
+              },
+              "radius": 14,
+              "padding": 2
+            }
+          ],
+          "gap": 10
+        },
+        {
+          "id": "status",
+          "type": "block",
+          "content": {
+            "mod": "workspace-status"
+          },
+          "size": {
+            "px": 28
+          },
+          "radius": 10
+        }
+      ],
+      "resizable": false,
+      "gap": 10
+    }
+  ],
+  "window_blur": true,
+  "background": {
+    "gradient": [
+      "#b8a5e500",
+      "#7dd3fc00"
+    ],
+    "angle": 135
+  },
+  "colors": {
+    "background": "#20242b00",
+    "canvas": "#00000000",
+    "chrome": "#171c28cc",
+    "surface": "#20242bcc"
+  },
+  "padding": 10,
+  "gap": 10,
+  "terminal_opacity": 0,
+  "terminal_padding": [
+    14,
+    12
+  ],
+  "divider": {
+    "width": 0,
+    "color": "#00000000"
+  },
+  "titlebar": "none",
+  "traffic_lights": [
+    25,
+    29
+  ]
+}
