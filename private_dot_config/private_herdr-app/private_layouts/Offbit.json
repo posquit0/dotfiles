@@ -85,7 +85,7 @@
       "background": "#ffffff00",
       "border": {
         "width": 1,
-        "color": "#dbeafe66"
+        "color": "#cbd5e124"
       },
       "radius": 14,
       "padding": 2,
@@ -106,7 +106,7 @@
           "background": "#ffffff00",
           "border": {
             "width": 1,
-            "color": "#dbeafe66"
+            "color": "#cbd5e124"
           },
           "radius": 14,
           "padding": 2,
@@ -157,11 +157,11 @@
                   "background": "#20242bcc",
                   "border": {
                     "width": 1,
-                    "color": "#dbeafe66"
+                    "color": "#cbd5e124"
                   },
                   "focus": {
                     "width": 1,
-                    "color": "#9ddcffdd"
+                    "color": "#a9b8cd80"
                   },
                   "radius": 14,
                   "gap": 10,
@@ -204,7 +204,7 @@
               "hidden": true,
               "border": {
                 "width": 1,
-                "color": "#dbeafe66"
+                "color": "#cbd5e124"
               },
               "radius": 14,
               "padding": 2
