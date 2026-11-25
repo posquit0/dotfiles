@@ -11,7 +11,7 @@ The optional toolbar button is included in the chezmoi-managed `Offbit` layout, 
 To select that layout on another machine:
 
 ```sh
-chezmoi apply ~/.config/herdr-app/mods/analytics ~/.config/herdr-app/layouts/Offbit.json
+chezmoi apply ~/.config/herdr-app/mods ~/.config/herdr-app/layouts/Offbit.json
 herdr-app do layout.switch '{"name":"Offbit"}'
 ```
 
@@ -36,7 +36,7 @@ Switching machines clears the previous history and filters, and discards late re
 
 ## Sidebar usage limits
 
-The `Offbit` layout pins `{ "mod": "analytics", "props": { "mode": "sidebar" } }` above the sidebar footer. It follows the **focused pane's machine**, including a focused remote terminal peek. On that machine, running Claude Code, Codex and Kiro agents are grouped by kind across spaces; live child agents count too. A kind disappears when none remain. The sidebar shows used percentages, bars, reset countdowns and the machine name. The collapsed sidebar shows icons and the highest main-window used percentage, with details on hover. Click a provider or the heading to open **Accounts** for that machine; the toolbar and shortcut start on the focused pane’s machine.
+The `Offbit` layout pins `{ "mod": "analytics", "props": { "mode": "sidebar" } }` at the bottom of the sidebar. Offbit removes the Settings/Add machine footer and uses the custom `offbit-spaces` mod for numbered space rows; sync that mod together with the layout. It follows the **focused pane's machine**, including a focused remote terminal peek. On that machine, running Claude Code, Codex and Kiro agents are grouped by kind across spaces; live child agents count too. A kind disappears when none remain. The sidebar shows used percentages, bars, reset countdowns and the machine name. The collapsed sidebar shows icons and the highest main-window used percentage, with details on hover. Click a provider or the heading to open **Accounts** for that machine; the toolbar and shortcut start on the focused pane’s machine.
 
 These are the limits of the CLI accounts signed in on the selected machine, not usage attributable to that machine. The same account on two machines shares its provider's quota. Main session/weekly limits and Kiro monthly credits appear in the sidebar; model-specific limits and overage details remain on Accounts. Missing data is never shown as zero, passed reset times require a new reading, and disconnected machines never fall back to the local account.
 

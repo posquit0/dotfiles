@@ -29,7 +29,7 @@
               "id": "spaces",
               "type": "block",
               "content": {
-                "mod": "spaces"
+                "mod": "offbit-spaces"
               },
               "size": {
                 "weight": 1
@@ -62,19 +62,6 @@
             "px": 280
           },
           "resizable": false
-        },
-        {
-          "id": "sidebar-footer",
-          "type": "block",
-          "content": {
-            "mod": "workspace-chrome",
-            "props": {
-              "footer": true
-            }
-          },
-          "size": {
-            "px": 69
-          }
         }
       ],
       "size": {
