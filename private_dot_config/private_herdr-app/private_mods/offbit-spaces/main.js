@@ -655,7 +655,7 @@ export default class Spaces extends View {
           .child(svg("mods/workspace-chrome/plus.svg").size(14))))
       .child(v_flex().id("offbit-spaces-list").flex_1().min_h(0).px(collapsed ? 0 : 8).pb(14)
         .on_scroll_wheel((event, cx) => this.wheel(event, cx))
-        .overflow_y_scrollbar().mode("always").track_scroll(this.scroll)
+        .overflow_y_scrollbar().mode("scrolling").track_scroll(this.scroll)
         // A block above (another mod's) growing, or the window resizing, shrinks this list and can push the active space out.
         .on_size_change((_size, cx) => { if (this.activeAt >= 0) { this.scroll.scroll_to_item(this.activeAt); cx.notify(); } })
         .on_mouse_up("left", (_e, cx) => { this.pressed = null; cx.notify(); })

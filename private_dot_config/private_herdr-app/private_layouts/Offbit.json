@@ -40,7 +40,7 @@
               "id": "agents",
               "type": "block",
               "content": {
-                "mod": "agents"
+                "mod": "offbit-agents"
               },
               "size": {
                 "weight": 1
