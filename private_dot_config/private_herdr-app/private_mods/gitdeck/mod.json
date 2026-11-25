@@ -1,0 +1,6 @@
+{
+  "place": "none",
+  "title": "Gitdeck",
+  "focusable": true,
+  "overlay": { "kind": "popup", "width": 360, "height": 150 }
+}
