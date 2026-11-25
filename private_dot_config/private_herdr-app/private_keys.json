@@ -95,7 +95,8 @@
     "alt-l": "pane.go:right",
     "ctrl-a -": "pane.split:down",
     "ctrl-a |": "pane.split:right",
-    "alt-s": "mod.open:floatterm"
+    "alt-s": "mod.open:floatterm",
+    "cmd-shift-g": "mod.open:gitdeck"
   },
   "terminal": {
     "cmd-f": "terminal.search",
