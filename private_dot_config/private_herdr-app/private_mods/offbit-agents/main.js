@@ -423,8 +423,8 @@ export default class Agents extends View {
       .size_full()
       .min_h(0)
       .bg(t.chrome)
-      .border_t(1)
-      .border_color(t.border)
+      .border_t(2)
+      .border_color(t.input)
       .text_size(13)
       .when(!collapsed, (el) =>
         el.child(
@@ -436,7 +436,7 @@ export default class Agents extends View {
             .flex_none()
             .items_center()
             .justify_between()
-            .child(div().text_size(11.5).font_medium().text_color(t.dim).child("Agents"))
+            .child(div().text_size(12).font_bold().text_color(t.foreground).child("AGENTS"))
             .child(
               div()
                 .id("ag-sort")

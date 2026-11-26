@@ -1737,7 +1737,7 @@ export default class Analytics extends View {
       : stale && state.updatedAt ? "Last known usage"
       : state.updatedAt ? `Updated ${accountDuration(now - state.updatedAt)} ago` : "Waiting for usage";
     const root = v_flex().id("analytics-sidebar").size_full().min_h(0).bg(t.chrome)
-      .border_t(1).border_color(t.border).px(compact ? 6 : 12).py(10).gap(10)
+      .border_t(2).border_color(t.input).px(compact ? 6 : 12).py(10).gap(10)
       .text_color(c.text).overflow_y_scrollbar()
       .on_size_change((size, sizeCx) => {
         const zoom = Number(settings().zoom) > 0 ? Number(settings().zoom) : 1;
@@ -1747,7 +1747,7 @@ export default class Analytics extends View {
     const open = div().id("analytics-sidebar-open").flex_1().min_w(0).cursor_pointer()
       .tooltip(`Account limits · CLI accounts on ${machine ?? "this Mac"}. Follows the focused pane's machine.`)
       .on_click(() => this.openAccounts())
-      .child(compact ? svg("mods/analytics/analytics.svg").size(16) : metaLabel("Usage limits", c));
+      .child(compact ? svg("mods/analytics/analytics.svg").size(16) : div().text_size(12).font_bold().text_color(t.foreground).child("USAGE LIMITS"));
     root.child(h_flex().w_full().items_center().gap(6).child(open)
       .when(!compact && enabled && providers.length > 0, (el) => el.child(div()
         .id("analytics-sidebar-refresh").size(20).rounded(4).flex().items_center().justify_center()

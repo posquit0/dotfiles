@@ -649,7 +649,7 @@ export default class Spaces extends View {
         .tooltip(`Spaces · ${scope} — scroll horizontally to switch machines`)
         .when(collapsed, el => el.pl(0).pr(0).justify_center())
         .when(!collapsed, el => el.child(h_flex().flex_1().min_w(0).gap(7).items_center()
-          .child("Spaces").child(div().flex_1().min_w(0).truncate().text_color(t.muted).child(scope))))
+          .child(div().text_size(12).font_bold().text_color(t.foreground).child("SPACES")).child(div().flex_1().min_w(0).truncate().text_color(t.muted).child(scope))))
         .child(div().id("space-new").size(26).flex_none().flex().items_center().justify_center().rounded(6).hover(s => s.bg(t.hover).text_color(t.foreground))
           .on_click(() => this.machineFilter === undefined ? run("space.new") : run("space.new", { machine: this.machineFilter ?? "" }))
           .child(svg("mods/workspace-chrome/plus.svg").size(14))))
