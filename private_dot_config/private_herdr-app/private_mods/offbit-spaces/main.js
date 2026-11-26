@@ -89,8 +89,6 @@ export default class Spaces extends View {
     this.scroll = ScrollHandle.new(); // the list's position: the active space is brought into view through it
     this.activeAt = -1; // the active space's place among the list's children (headers and rows), -1 when not drawn
     this.machines = [];
-    this.machineFilter = undefined; // undefined: All, null: this computer, string: remote name
-    this.swipe = { acc: 0, at: 0, direction: 0, switched: false };
     try {
       this.reconnecting = JSON.parse(localStorage.getItem("machines.reconnecting") ?? "{}");
       if (!this.reconnecting || typeof this.reconnecting !== "object" || Array.isArray(this.reconnecting)) this.reconnecting = {};
@@ -368,20 +366,12 @@ export default class Spaces extends View {
     return [null, ...new Set(remote)].sort((a, b) => a === null ? -1 : b === null ? 1 : a.localeCompare(b));
   }
 
-  cycleMachine(direction, cx) {
-    const choices = [undefined, ...this.machineNames()];
-    const index = Math.max(0, choices.indexOf(this.machineFilter));
-    this.machineFilter = choices[(index + direction + choices.length) % choices.length];
-    this.pressed = null;
-    this.over = null;
-    this.revealedAt = -1;
-    this.scroll.scroll_to_item(0);
-    cx.notify();
+  get machineFilter() {
+    return shared("offbit.machine-scope")?.machine;
   }
 
   scopedRows() {
     const known = this.machineNames();
-    if (this.machineFilter !== undefined && !known.includes(this.machineFilter)) this.machineFilter = undefined;
     const rows = this.ordered();
     const names = this.machineFilter === undefined ? known : [this.machineFilter];
     // Keep i for global drag/reorder commands; only the displayed number is scoped.
@@ -408,30 +398,6 @@ export default class Spaces extends View {
     cx.notify();
   }
 
-  wheel(event, cx) {
-    const now = Date.now(), swipe = this.swipe;
-    const delta = event.delta_lines ?? event.delta;
-    const x = delta.x, y = delta.y;
-    if (event.touch_phase === "cancelled") {
-      Object.assign(swipe, { acc: 0, at: now, switched: true });
-      return;
-    }
-    if (event.touch_phase === "started" || now - swipe.at > 250 || (x && Math.sign(x) !== swipe.direction)) {
-      Object.assign(swipe, { acc: 0, direction: Math.sign(x), switched: false });
-    }
-    swipe.at = now;
-    // Leave vertical/diagonal scrolling to the retained list. A touchpad swipe
-    // changes one machine, even while its momentum continues after release.
-    if (!x || Math.abs(x) <= Math.abs(y) * 1.25) { swipe.acc = 0; return; }
-    cx.stop_propagation();
-    if (event.delta_lines) { this.cycleMachine(x < 0 ? 1 : -1, cx); return; }
-    if (swipe.switched) return;
-    swipe.acc += x;
-    if (Math.abs(swipe.acc) < 24) return;
-    swipe.switched = true;
-    this.cycleMachine(x < 0 ? 1 : -1, cx);
-  }
-
   // All keeps the machine groups; a specific machine shows its rows unfolded.
   grouped(t, collapsed) {
     const rows = this.scopedRows();
@@ -441,7 +407,6 @@ export default class Spaces extends View {
     this.activeAt = -1;
     let before = 0;
     const known = this.machineNames();
-    if (this.machineFilter !== undefined && !known.includes(this.machineFilter)) this.machineFilter = undefined;
     const all = this.machineFilter === undefined;
     const remote = known.slice(1);
     const loading = m => {
@@ -634,8 +599,15 @@ export default class Spaces extends View {
       changed = true;
     }
     if (changed) setShared("space.colors", kept);
+    const scope = this.machineFilter;
+    if (scope !== this.shownScope) {
+      this.shownScope = scope;
+      this.pressed = null;
+      this.over = null;
+      this.revealedAt = -1;
+      this.scroll.scroll_to_item(0);
+    }
     const list = this.grouped(t, collapsed);
-    const scope = this.machineFilter === undefined ? "All" : this.machineFilter ?? "This computer";
     // Bring the active space into view when it, or its place in the list, changes; a row already in view stays put.
     const active = sp.find(p => p.active)?.id;
     if (active !== this.revealed || this.activeAt !== this.revealedAt) {
@@ -645,17 +617,14 @@ export default class Spaces extends View {
     }
     return v_flex().id("offbit-spaces").size_full().min_h(0).bg(t.chrome).text_size(13)
       .child(h_flex().h(31).pl(16).pr(10).items_center().justify_between().text_size(11.5).text_color(t.dim)
-        .on_scroll_wheel((event, cx) => this.wheel(event, cx))
-        .tooltip(`Spaces · ${scope} — scroll horizontally to switch machines`)
         .when(collapsed, el => el.pl(0).pr(0).justify_center())
         .when(!collapsed, el => el.child(h_flex().flex_1().min_w(0).gap(7).items_center()
           .child(svg("mods/workspace-chrome/layers.svg").size(14).flex_none().text_color(t.foreground))
-          .child(div().text_size(12).font_bold().text_color(t.foreground).child("SPACES")).child(div().flex_1().min_w(0).truncate().text_color(t.muted).child(scope))))
+          .child(div().text_size(12).font_bold().text_color(t.foreground).child("SPACES"))))
         .child(div().id("space-new").size(26).flex_none().flex().items_center().justify_center().rounded(6).hover(s => s.bg(t.hover).text_color(t.foreground))
           .on_click(() => this.machineFilter === undefined ? run("space.new") : run("space.new", { machine: this.machineFilter ?? "" }))
           .child(svg("mods/workspace-chrome/plus.svg").size(14))))
       .child(v_flex().id("offbit-spaces-list").flex_1().min_h(0).px(collapsed ? 0 : 8).pb(14)
-        .on_scroll_wheel((event, cx) => this.wheel(event, cx))
         .overflow_y_scrollbar().mode("scrolling").track_scroll(this.scroll)
         // A block above (another mod's) growing, or the window resizing, shrinks this list and can push the active space out.
         .on_size_change((_size, cx) => { if (this.activeAt >= 0) { this.scroll.scroll_to_item(this.activeAt); cx.notify(); } })

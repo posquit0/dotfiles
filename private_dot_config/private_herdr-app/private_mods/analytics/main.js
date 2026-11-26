@@ -475,6 +475,8 @@ function preferenceRow(label, control, c) {
     .child(control);
 }
 
+const machineLabel = machine => machine === undefined ? "All" : machine ?? "Local";
+
 export default class Analytics extends View {
   init(_props, cx) {
     this.toolbarMode = props()?.mode === "toolbar";
@@ -505,7 +507,7 @@ export default class Analytics extends View {
       this.resolveRuntime(cx);
       this.accountTimer = cx.timer.every(60000, (timerCx) => {
         if (this.closed || !appWindow()?.visible) return;
-        if (this.sidebarProviders().length) this.accountClient(this.sidebarMachine()).refresh(timerCx);
+        this.refreshSidebar(timerCx);
         timerCx.notify();
       });
       return;
@@ -818,7 +820,7 @@ export default class Analytics extends View {
       if (!current()) return;
       if (this.nodeBinary) {
         if (this.sidebarMode) {
-          if (this.sidebarProviders().length) this.accountClient(this.sidebarMachine()).refresh(runtimeCx);
+          this.refreshSidebar(runtimeCx);
         } else {
           this.refresh(runtimeCx);
           this.schedule(runtimeCx);
@@ -1633,10 +1635,9 @@ export default class Analytics extends View {
   render(_cx) {
     if (this.toolbarMode) return this.toolbar();
     if (this.sidebarMode) {
-      if (!checking() && appWindow()?.visible && this.sidebarProviders().length) {
-        this.accountClient(this.sidebarMachine()).refresh(_cx);
-      }
-      return this.accountSidebar();
+      const groups = this.sidebarGroups();
+      if (!checking() && appWindow()?.visible) this.refreshSidebar(_cx, groups);
+      return this.accountSidebar(groups);
     }
     const c = tokens(theme());
     const width = this.width || 960;
@@ -1704,38 +1705,65 @@ export default class Analytics extends View {
     return this.accountClients.get(machine);
   }
 
-  sidebarMachine() {
-    return accountMachine(focused(), spaces());
+  sidebarGroups() {
+    const remote = [...spaces().map(space => space.machine), ...machines().filter(machine => !machine.temporary).map(machine => machine.name)]
+      .filter(name => typeof name === "string" && name.length);
+    const names = [null, ...[...new Set(remote)].sort((a, b) => a.localeCompare(b))];
+    const scope = shared("offbit.machine-scope")?.machine;
+    const rows = fleetSnapshot(agents(), terminals(), spaces(), machines()).rows;
+    const now = Date.now();
+    return (scope === undefined ? names : [scope]).map(machine => {
+      const accounts = this.accountClient(machine);
+      const state = accounts.state();
+      const providers = accountSidebarProviders(rows.filter(row => (row.address.includes("/") ? row.address.split("/")[0] : null) === machine));
+      const enabled = !accounts.localOnly();
+      const offline = machine !== null && !machines().some(entry => entry.name === machine && entry.layout === "ready");
+      const stale = offline || !state.updatedAt || now - state.updatedAt >= 10 * 60000;
+      const status = accounts.refreshStatus({ manual: true });
+      const pending = status.kind === "pending";
+      const caption = !enabled ? "Lookup disabled" : offline ? "Machine unavailable" : pending ? "Updating…"
+        : status.kind === "rate-limited" ? `Retry in ${accountDuration(status.waitMs)}`
+        : machine === null && this.runtimeError ? "Helper unavailable"
+        : stale && state.updatedAt ? "Last known usage"
+        : state.updatedAt ? `Updated ${accountDuration(now - state.updatedAt)} ago` : "Waiting for usage";
+      return { machine, accounts, state, providers, enabled, offline, stale, status, pending, caption };
+    });
   }
 
-  sidebarProviders() {
-    const machine = this.sidebarMachine();
-    return accountSidebarProviders(fleetSnapshot(agents(), terminals(), spaces(), machines()).rows.filter((row) => row.machine === machine));
+  refreshSidebar(cx, groups = this.sidebarGroups(), options = {}) {
+    for (const group of groups) {
+      if (!group.providers.length) continue;
+      if (options.manual && group.machine === null && this.runtimeError) this.resolveRuntime(cx);
+      else group.accounts.refresh(cx, options);
+    }
   }
 
-  openAccounts() {
-    openOverlay({ mod: "analytics", props: { page: "accounts", machine: this.sidebarMachine() }, kind: "dialog", width: 0.9, height: 0.85 });
+  openAccounts(machine = shared("offbit.machine-scope")?.machine ?? null) {
+    openOverlay({ mod: "analytics", props: { page: "accounts", machine }, kind: "dialog", width: 0.9, height: 0.85 });
   }
 
-  accountSidebar() {
+  accountSidebar(groups) {
     const t = theme();
     const c = tokens(t);
     const now = Date.now();
-    const machine = this.sidebarMachine();
-    const accounts = this.accountClient(machine);
-    const state = accounts.state();
-    const enabled = !accounts.localOnly();
-    const providers = this.sidebarProviders();
+    const scope = shared("offbit.machine-scope")?.machine;
+    const all = scope === undefined;
     const compact = this.width < 160;
-    const offline = machine !== null && !machines().some((entry) => entry.name === machine && entry.layout === "ready");
-    const stale = offline || !state.updatedAt || now - state.updatedAt >= 10 * 60000;
-    const status = accounts.refreshStatus({ manual: true });
-    const pending = status.kind === "pending";
-    const caption = !enabled ? "Lookup disabled" : offline ? "Machine unavailable" : pending ? "Updating…"
-      : status.kind === "rate-limited" ? `Retry in ${accountDuration(status.waitMs)}`
-      : machine === null && this.runtimeError ? "Helper unavailable"
-      : stale && state.updatedAt ? "Last known usage"
-      : state.updatedAt ? `Updated ${accountDuration(now - state.updatedAt)} ago` : "Waiting for usage";
+    const enabled = groups.some(group => group.enabled);
+    const visible = all ? groups.filter(group => group.providers.length || group.offline) : groups;
+    const active = visible.filter(group => group.providers.length);
+    const pending = active.some(group => group.pending);
+    const ready = active.some(group => group.status.kind === "ready");
+    const updatedAt = active.length && active.every(group => group.state.updatedAt)
+      ? Math.min(...active.map(group => group.state.updatedAt)) : null;
+    const caption = !enabled ? "Lookup disabled" : pending ? "Updating…"
+      : !active.length && !visible.some(group => group.offline) ? "No active providers"
+      : visible.length === 1 ? visible[0].caption
+      : visible.some(group => group.offline) ? "Some unavailable"
+      : active.some(group => group.status.kind === "rate-limited") ? "Some rate-limited"
+      : updatedAt ? `Updated ${accountDuration(now - updatedAt)} ago`
+      : active.length ? "Waiting for usage" : "No active providers";
+    const detail = visible.map(group => `${machineLabel(group.machine)} · ${group.caption}`).join("\n") || caption;
     const root = v_flex().id("analytics-sidebar").size_full().min_h(0).bg(t.chrome)
       .border_t(2).border_color(t.input).px(compact ? 6 : 12).py(10).gap(10)
       .text_color(c.text).overflow_y_scrollbar()
@@ -1745,47 +1773,57 @@ export default class Analytics extends View {
         if (Math.abs(this.width - width) >= 1) { this.width = width; sizeCx.notify(); }
       });
     const open = div().id("analytics-sidebar-open").flex_none().min_w(0).cursor_pointer()
-      .tooltip(`Account limits · CLI accounts on ${machine ?? "this Mac"}. Follows the focused pane's machine.`)
+      .tooltip(`Account limits · ${machineLabel(scope)} machine scope`)
       .on_click(() => this.openAccounts())
       .child(compact ? svg("mods/analytics/analytics.svg").size(16) : h_flex().gap(7).items_center().text_color(t.foreground)
         .child(svg("mods/analytics/analytics.svg").size(14).flex_none())
         .child(div().text_size(12).font_bold().child("USAGE LIMITS")));
     root.child(h_flex().w_full().items_center().gap(6).child(open)
-      .when(!compact, (el) => el.child(div().flex_1().min_w(0).truncate().text_right().text_size(9.5).text_color(c.dim)
-        .tooltip(`${machine ?? "This Mac"} · ${caption}`).child(caption)))
-      .when(!compact && enabled && providers.length > 0, (el) => el.child(div()
+      .when(!compact, el => el.child(div().flex_1().min_w(0).truncate().text_right().text_size(9.5).text_color(c.dim)
+        .tooltip(detail).child(caption)))
+      .when(!compact && enabled && active.length > 0, el => el.child(div()
         .id("analytics-sidebar-refresh").size(20).flex_none().rounded(4).flex().items_center().justify_center()
-        .text_color(status.kind === "ready" ? c.mutedForeground : c.dim)
-        .hover((style) => style.bg(t.hover))
-        .tooltip(status.kind === "ready" ? "Refresh account limits" : caption)
-        .on_click((_event, clickCx) => {
-          if (machine === null && this.runtimeError) this.resolveRuntime(clickCx);
-          else accounts.refresh(clickCx, { manual: true });
-        })
+        .text_color(ready ? c.mutedForeground : c.dim)
+        .hover(style => style.bg(t.hover))
+        .tooltip(`Refresh ${machineLabel(scope)} account limits\n${detail}`)
+        .on_click((_event, clickCx) => this.refreshSidebar(clickCx, this.sidebarGroups(), { manual: true }))
         .child(pending ? svg("mods/workspace-chrome/spinner.svg").size(13).spin(900)
           : div().text_size(15).child("↻")))));
     if (!enabled) return root.child(div().id("analytics-sidebar-enable").text_size(11)
       .cursor_pointer().tooltip("Enable account usage lookup in Analytics → Accounts")
       .on_click(() => this.openAccounts()).child(compact ? "Off" : "Enable account lookup →"));
-    if (!providers.length) return root.child(mutedText(compact ? "—" : `${machine ?? "This Mac"} · No supported agents running`, c));
+    if (!visible.length) return root.child(mutedText(compact ? "—" : "No supported agents running", c));
+    for (const group of visible) root.child(this.sidebarAccountGroup(group, all, compact, c, now));
+    return root;
+  }
+
+  sidebarAccountGroup(group, showMachine, compact, c, now) {
+    const { machine, state, providers, offline, stale, pending, caption } = group;
+    const key = JSON.stringify(machine);
+    const root = v_flex().id(`analytics-sidebar-machine-${key}`).w_full().gap(10);
+    if (showMachine) root.child(h_flex().w_full().min_w(0).items_center().gap(6)
+      .tooltip(`${machineLabel(machine)} · ${caption}`)
+      .child(div().flex_1().min_w(0).truncate().text_size(10.5).font_semibold().text_color(c.mutedForeground).child(machineLabel(machine)))
+      .when(!compact, el => el.child(div().max_w(110).truncate().text_size(9).text_color(c.dim).child(caption))));
+    if (!providers.length) return root.child(mutedText(compact ? "—" : offline ? "Machine unavailable" : "No supported agents running", c));
     for (const provider of providers) {
-      const entry = (state.entries ?? []).find((item) => item.provider === provider.provider)
-        ?? (state.entries ?? []).find((item) => item.provider === "Accounts");
-      const windows = entry?.status === "ok" ? (entry.windows ?? []).filter((w) => w.scope !== "additional") : [];
+      const entry = (state.entries ?? []).find(item => item.provider === provider.provider)
+        ?? (state.entries ?? []).find(item => item.provider === "Accounts");
+      const windows = entry?.status === "ok" ? (entry.windows ?? []).filter(w => w.scope !== "additional") : [];
       const error = entry?.status !== "ok" ? entry?.message : null;
       const message = error || (!windows.length ? entry?.note || (pending ? "Updating…" : "Usage unavailable") : "");
-      const panel = v_flex().id(`analytics-sidebar-${provider.provider}`).w_full().gap(5)
-        .cursor_pointer().on_click(() => this.openAccounts())
-        .tooltip([provider.label, message, ...windows.map((w) => {
+      const panel = v_flex().id(`analytics-sidebar-${key}-${provider.provider}`).w_full().gap(5)
+        .cursor_pointer().on_click(() => this.openAccounts(machine))
+        .tooltip([`${machineLabel(machine)} · ${provider.label}`, message, ...windows.map(w => {
           const q = quotaPresentation(w, now, stale);
           return `${w.label}: ${q.used} · ${q.status || q.reset}`;
         })].filter(Boolean).join("\n"));
       panel.child(h_flex().gap(6).items_center()
-        .child(agentIcon(`analytics-sidebar-icon-${provider.provider}`, provider.provider, c, { size: 14 }))
-        .when(!compact, (el) => el.child(div().text_size(11.5).font_medium().child(provider.label))));
+        .child(agentIcon(`analytics-sidebar-icon-${key}-${provider.provider}`, provider.provider, c, { size: 14 }))
+        .when(!compact, el => el.child(div().text_size(11.5).font_medium().child(provider.label))));
       if (compact) {
-        const known = windows.filter((w) => Number.isFinite(w.usedPercent) && w.usedPercent >= 0);
-        const peak = known.length ? Math.max(...known.map((w) => w.usedPercent)) : null;
+        const known = windows.filter(w => Number.isFinite(w.usedPercent) && w.usedPercent >= 0);
+        const peak = known.length ? Math.max(...known.map(w => w.usedPercent)) : null;
         panel.child(div().text_size(10).text_color(stale ? c.dim : c.mutedForeground)
           .child(peak === null ? "—" : `${Math.round(peak)}%`));
       } else if (message) {
@@ -1796,8 +1834,7 @@ export default class Analytics extends View {
       }
       root.child(panel);
     }
-    return root.when(!compact, (el) => el.child(div().text_size(9.5).text_color(c.dim)
-      .child(machine ?? "This Mac")));
+    return root;
   }
 
   sidebarQuota(quotaWindow, now, stale, c) {

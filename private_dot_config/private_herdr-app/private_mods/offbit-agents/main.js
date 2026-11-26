@@ -226,11 +226,15 @@ export default class Agents extends View {
     const sort = sortOf();
     let list = agents();
     this.listed = new Map(list.map((a) => [a.address, a.status]));
-    const all = terminals();
-    this.migratePins(all);
+    const allTerminals = terminals();
+    this.migratePins(allTerminals);
+    const scope = shared("offbit.machine-scope")?.machine;
+    const inScope = address => scope === undefined || (address.includes("/") ? address.split("/")[0] : null) === scope;
+    const all = allTerminals.filter(terminal => inScope(terminal.address));
     const shown = focused()?.agent;
     const now = Date.now();
     this.track(list, now);
+    list = list.filter(agent => inScope(agent.address));
     // A kept sub-agent (one with a pane) is in agents() too: where a tree shows
     // it, it gets no row of its own, unless it's pinned.
     const nested = new Set(collapsed ? [] : list.flatMap((a) => this.tree(all, a.address).map((s) => s.t.address)));
@@ -452,7 +456,7 @@ export default class Agents extends View {
         ),
       )
       .when(list.length === 0 && !collapsed, (el) =>
-        el.child(div().px(12).text_size(12).text_color(t.dim).child("No agent status yet. Agents show up here when they report their status. Older versions and agents inside tmux may not.")),
+        el.child(div().px(12).text_size(12).text_color(t.dim).child(scope === undefined ? "No agent status yet. Agents show up here when they report their status. Older versions and agents inside tmux may not." : "No agents in this machine scope.")),
       )
       .child(v_flex().id("ag-list").flex_1().min_h(0).px(collapsed ? 0 : 8).overflow_y_scrollbar().mode("scrolling").children(rows))
       .when(collapsed, (el) =>

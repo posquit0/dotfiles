@@ -62,6 +62,17 @@
             "px": 280
           },
           "resizable": false
+        },
+        {
+          "id": "machine-scope",
+          "type": "block",
+          "content": {
+            "mod": "offbit-machine-scope"
+          },
+          "size": {
+            "px": 42
+          },
+          "resizable": false
         }
       ],
       "size": {
