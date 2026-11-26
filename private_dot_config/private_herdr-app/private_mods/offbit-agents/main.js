@@ -436,7 +436,9 @@ export default class Agents extends View {
             .flex_none()
             .items_center()
             .justify_between()
-            .child(div().text_size(12).font_bold().text_color(t.foreground).child("AGENTS"))
+            .child(h_flex().gap(7).items_center().text_color(t.foreground)
+              .child(svg("mods/workspace-chrome/terminal.svg").size(14).flex_none())
+              .child(div().text_size(12).font_bold().child("AGENTS")))
             .child(
               div()
                 .id("ag-sort")

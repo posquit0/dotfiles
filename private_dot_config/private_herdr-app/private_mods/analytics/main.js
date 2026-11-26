@@ -1747,7 +1747,9 @@ export default class Analytics extends View {
     const open = div().id("analytics-sidebar-open").flex_1().min_w(0).cursor_pointer()
       .tooltip(`Account limits · CLI accounts on ${machine ?? "this Mac"}. Follows the focused pane's machine.`)
       .on_click(() => this.openAccounts())
-      .child(compact ? svg("mods/analytics/analytics.svg").size(16) : div().text_size(12).font_bold().text_color(t.foreground).child("USAGE LIMITS"));
+      .child(compact ? svg("mods/analytics/analytics.svg").size(16) : h_flex().gap(7).items_center().text_color(t.foreground)
+        .child(svg("mods/analytics/analytics.svg").size(14).flex_none())
+        .child(div().text_size(12).font_bold().child("USAGE LIMITS")));
     root.child(h_flex().w_full().items_center().gap(6).child(open)
       .when(!compact && enabled && providers.length > 0, (el) => el.child(div()
         .id("analytics-sidebar-refresh").size(20).rounded(4).flex().items_center().justify_center()
