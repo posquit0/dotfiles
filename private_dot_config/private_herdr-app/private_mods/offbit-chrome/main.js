@@ -2,6 +2,13 @@ import { View, div, svg } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import { theme, run, props, window, shared, setShared, updates, layout } from "herdr";
 
+// Keep gesture state in the footer, shared by every sidebar section.
+function scrollMachineScope(event, cx) {
+  const delta = event.delta_lines ?? event.delta;
+  run(`offbit-machine-scope.scroll-${JSON.stringify({ delta: event.delta, delta_lines: event.delta_lines, touch_phase: event.touch_phase, at: Date.now() })}`);
+  if (Math.abs(delta.x) > Math.abs(delta.y) * 1.25) cx.stop_propagation();
+}
+
 // Native text frames move the palette right once every five seconds.
 const brandColors = ["#c4b5fd", "#ccb3f7", "#d3b1f1", "#dbafeb", "#e2aee6", "#eaace0", "#f1aada", "#f9a8d4", "#eaacda", "#dcb0e0", "#cdb4e6", "#bfb9eb", "#b0bdf1", "#a2c1f7", "#93c5fd", "#9ac3fd", "#a1c0fd", "#a8befd", "#afbcfd", "#b6bafd", "#bdb7fd"];
 
@@ -49,6 +56,7 @@ export default class WorkspaceChrome extends View {
         .child(row("machine", "plus", "Add machine", true, () => run("mod.open", { name: "machine-add" })));
     }
     return h_flex().size_full().bg(t.chrome).pl(collapsed ? 6 : 14).pr(10).gap(4).items_center().text_size(13.5)
+      .on_scroll_wheel(scrollMachineScope)
       .when(window()?.platform === "macos" && !window()?.fullscreen && !collapsed, el => el.pl(76))
       .when(!collapsed, el => el.child(h_flex().flex_1().min_w(0).items_center().overflow_hidden()
         .child(h_flex().flex_none().font_family("Ubuntu").text_size(14).font_bold().accessibility_label("offbit terminal")

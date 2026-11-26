@@ -7,6 +7,13 @@ import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, ScrollHandle } from "gpui-base";
 import { spaces, machines, panes, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout, nextCommand } from "herdr";
 
+// Keep gesture state in the footer, shared by every sidebar section.
+function scrollMachineScope(event, cx) {
+  const delta = event.delta_lines ?? event.delta;
+  run(`offbit-machine-scope.scroll-${JSON.stringify({ delta: event.delta, delta_lines: event.delta_lines, touch_phase: event.touch_phase, at: Date.now() })}`);
+  if (Math.abs(delta.x) > Math.abs(delta.y) * 1.25) cx.stop_propagation();
+}
+
 function find(node, id) {
   if (node?.id === id) return node;
   for (const child of node?.children ?? []) {
@@ -616,6 +623,7 @@ export default class Spaces extends View {
       if (this.activeAt >= 0) this.scroll.scroll_to_item(this.activeAt);
     }
     return v_flex().id("offbit-spaces").size_full().min_h(0).bg(t.chrome).text_size(13)
+      .on_scroll_wheel(scrollMachineScope)
       .child(h_flex().h(31).pl(16).pr(10).items_center().justify_between().text_size(11.5).text_color(t.dim)
         .when(collapsed, el => el.pl(0).pr(0).justify_center())
         .when(!collapsed, el => el.child(h_flex().flex_1().min_w(0).gap(7).items_center()
@@ -626,6 +634,7 @@ export default class Spaces extends View {
           .child(svg("mods/workspace-chrome/plus.svg").size(14))))
       .child(v_flex().id("offbit-spaces-list").flex_1().min_h(0).px(collapsed ? 0 : 8).pb(14)
         .overflow_y_scrollbar().mode("scrolling").track_scroll(this.scroll)
+        .on_scroll_wheel(scrollMachineScope)
         // A block above (another mod's) growing, or the window resizing, shrinks this list and can push the active space out.
         .on_size_change((_size, cx) => { if (this.activeAt >= 0) { this.scroll.scroll_to_item(this.activeAt); cx.notify(); } })
         .on_mouse_up("left", (_e, cx) => { this.pressed = null; cx.notify(); })

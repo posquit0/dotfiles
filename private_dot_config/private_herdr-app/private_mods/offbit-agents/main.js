@@ -81,6 +81,13 @@ function icon(p, size, color) {
   return p.tint ? svg(p.icon).size(size).flex_none().text_color(color) : image(p.icon).w(size).h(size).flex_none();
 }
 
+// Keep gesture state in the footer, shared by every sidebar section.
+function scrollMachineScope(event, cx) {
+  const delta = event.delta_lines ?? event.delta;
+  run(`offbit-machine-scope.scroll-${JSON.stringify({ delta: event.delta, delta_lines: event.delta_lines, touch_phase: event.touch_phase, at: Date.now() })}`);
+  if (Math.abs(delta.x) > Math.abs(delta.y) * 1.25) cx.stop_propagation();
+}
+
 export default class Agents extends View {
   init(_props, cx) {
     if (props()?.sortMenu) return;
@@ -426,6 +433,7 @@ export default class Agents extends View {
     return v_flex()
       .size_full()
       .min_h(0)
+      .on_scroll_wheel(scrollMachineScope)
       .bg(t.chrome)
       .border_t(2)
       .border_color(t.input)
@@ -458,7 +466,7 @@ export default class Agents extends View {
       .when(list.length === 0 && !collapsed, (el) =>
         el.child(div().px(12).text_size(12).text_color(t.dim).child(scope === undefined ? "No agent status yet. Agents show up here when they report their status. Older versions and agents inside tmux may not." : "No agents in this machine scope.")),
       )
-      .child(v_flex().id("ag-list").flex_1().min_h(0).px(collapsed ? 0 : 8).overflow_y_scrollbar().mode("scrolling").children(rows))
+      .child(v_flex().id("ag-list").flex_1().min_h(0).px(collapsed ? 0 : 8).overflow_y_scrollbar().mode("scrolling").on_scroll_wheel(scrollMachineScope).children(rows))
       .when(collapsed, (el) =>
         el.child(
           h_flex()

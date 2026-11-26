@@ -1,12 +1,34 @@
 import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { spaces, machines, shared, setShared, theme, settings } from "herdr";
+import { spaces, machines, shared, setShared, theme, settings, nextCommand } from "herdr";
 import { SCOPE_KEY, machineNames, selectedMachine, cycleScope, machineLabel, swipeDirection } from "./scope.js";
 
 export default class MachineScope extends View {
-  init() {
+  init(_props, cx) {
     this.width = 268;
     this.swipe = { acc: 0, at: 0, direction: 0, switched: false };
+    // All sidebar mods send their wheel events here so a gesture stays one gesture
+    // even when the pointer crosses from one section into another.
+    this.commandTask = cx.spawn(async commandCx => {
+      for (;;) {
+        let command;
+        try { command = await nextCommand(); } catch { break; }
+        if (!command.startsWith("scroll-")) continue;
+        let event;
+        try { event = JSON.parse(command.slice(7)); } catch { continue; }
+        this.scroll(event, event.at);
+        commandCx.notify();
+      }
+    });
+  }
+
+  scroll(event, at = Date.now()) {
+    const direction = swipeDirection(this.swipe, event, at);
+    if (direction) this.cycle(direction);
+  }
+
+  close() {
+    this.commandTask?.cancel();
   }
 
   cycle(direction) {
@@ -29,14 +51,13 @@ export default class MachineScope extends View {
       .child(svg(`mods/workspace-chrome/chevron-${icon}.svg`).size(12));
     return h_flex().id("machine-scope").size_full().px(compact ? 2 : 10).gap(compact ? 0 : 6)
       .items_center().bg(t.chrome).border_t(2).border_color(t.input)
-      .tooltip(`Machine scope: ${label} · Swipe left/right · All → Local${names.slice(1).map(name => ` → ${name}`).join("")} → All`)
+      .tooltip(`Machine scope: ${label} · Swipe left/right anywhere in the sidebar · All → Local${names.slice(1).map(name => ` → ${name}`).join("")} → All`)
       .on_size_change((size, cx) => {
         const width = size.width / (Number(settings().zoom) || 1);
         if (Math.abs(this.width - width) >= 1) { this.width = width; cx.notify(); }
       })
       .on_scroll_wheel((event, cx) => {
-        const direction = swipeDirection(this.swipe, event, Date.now());
-        if (direction) this.cycle(direction);
+        this.scroll(event);
         if (Math.abs((event.delta_lines ?? event.delta).x) > Math.abs((event.delta_lines ?? event.delta).y) * 1.25) cx.stop_propagation();
       })
       .child(arrow(-1, "left"))

@@ -475,6 +475,13 @@ function preferenceRow(label, control, c) {
     .child(control);
 }
 
+// Keep gesture state in the footer, shared by every sidebar section.
+function scrollMachineScope(event, cx) {
+  const delta = event.delta_lines ?? event.delta;
+  run(`offbit-machine-scope.scroll-${JSON.stringify({ delta: event.delta, delta_lines: event.delta_lines, touch_phase: event.touch_phase, at: Date.now() })}`);
+  if (Math.abs(delta.x) > Math.abs(delta.y) * 1.25) cx.stop_propagation();
+}
+
 const machineLabel = machine => machine === undefined ? "All" : machine ?? "Local";
 
 export default class Analytics extends View {
@@ -1765,6 +1772,7 @@ export default class Analytics extends View {
       : active.length ? "Waiting for usage" : "No active providers";
     const detail = visible.map(group => `${machineLabel(group.machine)} · ${group.caption}`).join("\n") || caption;
     const root = v_flex().id("analytics-sidebar").size_full().min_h(0).bg(t.chrome)
+      .on_scroll_wheel(scrollMachineScope)
       .border_t(2).border_color(t.input).px(compact ? 6 : 12).py(10).gap(10)
       .text_color(c.text).overflow_y_scrollbar()
       .on_size_change((size, sizeCx) => {
