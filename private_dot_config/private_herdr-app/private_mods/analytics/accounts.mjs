@@ -63,8 +63,12 @@ export function parseUsage(provider, data) {
       windows.push(window(`${label} · ${durationLabel(extra?.rate_limit?.secondary_window, "Secondary")}`, extra?.rate_limit?.secondary_window, provider, "additional"));
     }
   } else {
+    // Claude can retain a zero-valued five_hour counter after removing this limit.
+    // Only explicit inactivity overrides it; zero usage or no reset is not proof.
+    const sessionLimit = Array.isArray(data?.limits)
+      ? data.limits.find(limit => limit?.kind === "session" && limit?.scope == null) : null;
     windows = [
-      window("Session · 5 hours", data?.five_hour, provider),
+      sessionLimit?.is_active === false ? null : window("Session · 5 hours", data?.five_hour, provider),
       window("Weekly · 7 days", data?.seven_day, provider),
       window("Sonnet · 7 days", data?.seven_day_sonnet, provider, "additional"),
       window("Opus · 7 days", data?.seven_day_opus, provider, "additional"),
